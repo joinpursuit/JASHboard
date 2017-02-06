@@ -13,7 +13,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         let tabController = UITabBarController()
         
@@ -35,7 +34,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabController.viewControllers = [rootVCForCategorySelection, uploadVC, logInVC]
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window?.rootViewController = tabController
+        let navVC = UINavigationController(rootViewController: tabController)
+        self.window?.rootViewController = navVC
         self.window?.makeKeyAndVisible()
         return true
     }
