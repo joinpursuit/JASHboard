@@ -1,0 +1,14 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'jashBoard' do
+  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for jashBoard
+  pod 'SnapKit', '~> 3.1'
+  pod 'Firebase', '~> 3.12'
+  pod 'FirebaseAuth', '~> 3.1'
+  pod 'FirebaseStorage', '~> 1.0'
+  
+end
