@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +15,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        FIRApp.configure()
+        
         let tabController = UITabBarController()
         
         let categorySelectionTVC = CategorySelectionTableViewController()
@@ -34,8 +38,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabController.viewControllers = [rootVCForCategorySelection, uploadVC, logInVC]
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        let navVC = UINavigationController(rootViewController: tabController)
-        self.window?.rootViewController = navVC
+        //let navVC = UINavigationController(rootViewController: tabController)
+        self.window?.rootViewController = tabController
         self.window?.makeKeyAndVisible()
         return true
     }

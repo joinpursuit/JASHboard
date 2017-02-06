@@ -7,8 +7,11 @@
 //
 
 import UIKit
+import Firebase
 
 class LogInViewController: UIViewController {
+    
+    var signInUser: FIRUser?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,16 +20,6 @@ class LogInViewController: UIViewController {
         setupViewHierarchy()
         configureConstraints()
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
     // MARK: - Setup
     private func setupViewHierarchy() {
@@ -59,12 +52,18 @@ class LogInViewController: UIViewController {
             view.leading.equalToSuperview().inset(16.0)
         }
         
-        usernameTextField.snp.makeConstraints { (view) in
-            view.top.equalTo(usernameLabel.snp.top)
-            view.leading.equalTo(usernameLabel.snp.trailing).offset(8.0)
-            view.trailing.equalToSuperview().inset(16.0)
-            view.bottom.equalTo(usernameLabel.snp.bottom)
+        usernameTextField.snp.makeConstraints { (textField) in
+            textField.top.equalTo(usernameLabel.snp.bottom).offset(16)
+            textField.leading.equalToSuperview().offset(16)
+            textField.trailing.equalToSuperview().inset(16)
         }
+        
+//        usernameTextField.snp.makeConstraints { (view) in
+//            view.top.equalTo(usernameLabel.snp.top)
+//            view.leading.equalTo(usernameLabel.snp.trailing).offset(8.0)
+//            view.trailing.equalToSuperview().inset(16.0)
+//            view.bottom.equalTo(usernameLabel.snp.bottom)
+//        }
         
         usernameLine.snp.makeConstraints { (view) in
             view.top.equalTo(usernameLabel.snp.bottom).offset(3.0)
@@ -79,12 +78,18 @@ class LogInViewController: UIViewController {
             view.leading.equalToSuperview().inset(16.0)
         }
         
-        passwordTextField.snp.makeConstraints { (view) in
-            view.top.equalTo(passwordLabel.snp.top)
-            view.leading.equalTo(passwordLabel.snp.trailing).offset(8.0)
-            view.trailing.equalToSuperview().inset(16.0)
-            view.bottom.equalTo(passwordLabel.snp.bottom)
+        passwordTextField.snp.makeConstraints { (textField) in
+            textField.top.equalTo(passwordLabel.snp.bottom).offset(16)
+            textField.leading.equalToSuperview().offset(16)
+            textField.trailing.equalToSuperview().inset(16)
         }
+        
+//        passwordTextField.snp.makeConstraints { (view) in
+//            view.top.equalTo(passwordLabel.snp.top)
+//            view.leading.equalTo(passwordLabel.snp.trailing).offset(8.0)
+//            view.trailing.equalToSuperview().inset(16.0)
+//            view.bottom.equalTo(passwordLabel.snp.bottom)
+//        }
         
         passwordLine.snp.makeConstraints { (view) in
             view.top.equalTo(passwordLabel.snp.bottom).offset(3.0)
@@ -109,12 +114,77 @@ class LogInViewController: UIViewController {
     }
     
     internal func didTapLogin(sender: UIButton) {
+        guard let userName = usernameTextField.text,
+            let password = passwordTextField.text else { return }
+        FIRAuth.auth()?.signIn(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
+            if error != nil {
+                print("Error present when login button is pressed")
+                let errorAlertController = UIAlertController(title: "User Not Present", message: "Please register first", preferredStyle: UIAlertControllerStyle.alert)
+                let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
+                errorAlertController.addAction(okay)
+                self.present(errorAlertController, animated: true, completion: nil)
+            }
+            guard let validUser = user else { return }
+            self.signInUser = validUser
+            let logginAlertController = UIAlertController(title: "Logged In Successfully", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+            let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
+            logginAlertController.addAction(okay)
+            self.present(logginAlertController, animated: true, completion: nil)
+            self.loginButton.setTitle("LOGOUT", for: UIControlState.normal)
+            self.loginButton.addTarget(self, action: #selector(self.didTapLogout(sender:)), for: UIControlEvents.touchUpInside)
+        })
     }
     
     internal func didTapRegister(sender: UIButton) {
+        guard let userName = usernameTextField.text,
+            let password = passwordTextField.text else { return }
+        FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
+            if error != nil {
+                print("Error present when register button is pressed")
+            }
+            guard let validUser = user else { return }
+            self.signInUser = validUser
+            print("User is registered")
+        })
+    }
+    
+    private func loginAnonymously() {
+        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
+            if error != nil {
+                print("Error attempting to long in anonymously: \(error!)")
+            }
+            if user != nil {
+                print("Signed in anonymously!")
+                self.signInUser = user
+            }
+        })
+    }
+    
+    func didTapLogout(sender: UIButton) {
+        let firebaseAuth = FIRAuth.auth()
+        do {
+            try firebaseAuth?.signOut()
+            let alertController = UIAlertController(title: "Logged Out Successfully", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+            let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
+            alertController.addAction(okay)
+            present(alertController, animated: true, completion: nil)
+            
+            self.loginButton.setTitle("LOGIN", for: UIControlState.normal)
+            self.loginButton.addTarget(self, action: #selector(didTapLogin(sender:)), for: UIControlEvents.touchUpInside)
+        } catch let signOutError as NSError {
+            print ("Error signing out: %@", signOutError)
+        }
     }
     
     // MARK: - Views
+    
+    // containerView 
+    
+    internal lazy var containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.lightGray
+        return view
+    }()
     
     // logo
     internal lazy var logo: UIImageView = {
@@ -149,18 +219,20 @@ class LogInViewController: UIViewController {
     // text fields
     internal lazy var usernameTextField: UITextField = {
         let textField = UITextField()
-        textField.textColor = .clear
+        textField.textColor = .white
         textField.tintColor = .clear
         textField.borderStyle = .bezel
+        textField.backgroundColor = UIColor.green
         return textField
     }()
     
     internal lazy var passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.textColor = .clear
+        textField.textColor = .white
         textField.tintColor = .clear
         textField.borderStyle = .none
         textField.isSecureTextEntry = true
+        textField.backgroundColor = UIColor.green
         return textField
     }()
     
