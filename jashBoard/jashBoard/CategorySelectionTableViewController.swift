@@ -41,7 +41,7 @@ class CategorySelectionTableViewController: UITableViewController {
 //        cell.backgroundColor = .lightGray
 //        // TO DO: FIX THIS - height line is not working
 //        cell.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.33)
-        cell.categoryLabel.text = categories[indexPath.row]
+        cell.cellCategory = categories[indexPath.row]
        // cell.textLabel?.text = categories[indexPath.row]
         return cell
     }
