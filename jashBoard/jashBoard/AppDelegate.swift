@@ -15,7 +15,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        let tabController = UITabBarController()
+        
+        let categorySelectionTVC = CategorySelectionTableViewController()
+        
+        let uploadVC = UploadViewController()
+        let logInVC = LogInViewController()
+        
+        let galleryIcon = UITabBarItem(title: "", image: UIImage(named: "gallery_icon"), tag: 0)
+        let cameraIcon = UITabBarItem(title: "", image: UIImage(named: "camera_icon"), tag: 1)
+        let userIcon = UITabBarItem(title: "", image: UIImage(named: "user_icon"), tag: 2)
+        
+        categorySelectionTVC.tabBarItem = galleryIcon
+        uploadVC.tabBarItem = cameraIcon
+        logInVC.tabBarItem = userIcon
+        
+        let rootVCForCategorySelection = UINavigationController(rootViewController: categorySelectionTVC)
+        
+        tabController.viewControllers = [rootVCForCategorySelection, uploadVC, logInVC]
+        
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window?.rootViewController = tabController
+        self.window?.makeKeyAndVisible()
         return true
     }
 
