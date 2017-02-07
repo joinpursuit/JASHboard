@@ -364,6 +364,7 @@
 				4759A6C51E490D7F00F21794 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
