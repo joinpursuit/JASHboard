@@ -10,14 +10,12 @@ import UIKit
 import SnapKit
 
 class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    var tableView = UITableView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        var tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
-        self.view.backgroundColor = .yellow
-        
         setupViewHierarchy()
         configureConstraints()
     }
@@ -29,11 +27,11 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         self.view.addSubview(downvoteButton)
         self.view.addSubview(upvoteNumberLabel)
         self.view.addSubview(downvoteNumberLabel)
+        self.view.addSubview(tableView)
     }
     
     private func configureConstraints() {
         self.edgesForExtendedLayout = []
-        
         // image
         photoImageView.snp.makeConstraints { (view) in
             view.top.leading.trailing.equalToSuperview()
@@ -47,7 +45,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             view.trailing.equalTo(self.view.snp.centerX)
         }
         
-        upvoteNumberLabel.snp.makeConstraints { (view) in
+        downvoteNumberLabel.snp.makeConstraints { (view) in
             view.trailing.equalToSuperview()
             view.bottom.equalTo(self.view.snp.centerY)
             view.leading.equalTo(self.view.snp.centerX)
@@ -67,29 +65,17 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         }
         
         // tableView
-//        tableView.snp.makeConstraints { (view) in
-//            view.bottom.leading.trailing.equalToSuperview()
-//            view.top.equalTo(self.view.snp.centerY)
-//        }
-        
+        tableView.snp.makeConstraints { (view) in
+            view.bottom.leading.trailing.equalToSuperview()
+            view.top.equalTo(self.view.snp.centerY)
+        }
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
     // MARK: - TableView Delegates
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return 0
     }
-
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 0
@@ -110,7 +96,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     internal lazy var photoImageView: UIImageView = {
         let image = UIImage(named: "siberian-tiger-profile")
         let imageView: UIImageView = UIImageView(image: image)
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -119,10 +105,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     internal lazy var upvoteButton: UIButton = {
         let button: UIButton = UIButton(type: .roundedRect)
         button.setTitle("↑", for: .normal)
-        button.backgroundColor = JashColors.primaryColor
-        
-        // TO DO: Background needs to be trasnlucent
-        button.backgroundColor?.withAlphaComponent(0.01)
+        button.backgroundColor = JashColors.darkPrimaryColor(alpha: 0.75)
         //        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
         button.setTitleColor(JashColors.accentColor, for: .normal)
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
@@ -132,8 +115,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     internal lazy var downvoteButton: UIButton = {
         let button: UIButton = UIButton(type: .roundedRect)
         button.setTitle("↓", for: .normal)
-        button.backgroundColor = JashColors.primaryColor
-        button.backgroundColor?.withAlphaComponent(0.01)
+        button.backgroundColor = JashColors.darkPrimaryColor(alpha: 0.75)
         //        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
         button.setTitleColor(JashColors.accentColor, for: .normal)
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
@@ -147,6 +129,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         label.textColor = JashColors.accentColor
         label.backgroundColor = JashColors.primaryColor
         label.text = "0"
+        label.textAlignment = .center
         return label
     }()
     
@@ -156,6 +139,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         label.textColor = JashColors.accentColor
         label.backgroundColor = JashColors.primaryColor
         label.text = "0"
+        label.textAlignment = .center
         return label
     }()
 }
