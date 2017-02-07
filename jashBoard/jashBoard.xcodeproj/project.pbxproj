@@ -17,6 +17,8 @@
 		4B3B72321E49180A00F42041 /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3B722D1E49180A00F42041 /* LogInViewController.swift */; };
 		4B3B72361E49351A00F42041 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3B72351E49351A00F42041 /* Utilities.swift */; };
 		A751FDE01E49415400B53D1A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */; };
+		A751FDE21E49708700B53D1A /* PhotoUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */; };
+		A751FDE41E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A751FDE31E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift */; };
 		E1270E7221A399C7EF7A5B20 /* Pods_jashBoard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4928526CB9318AFD7A23769 /* Pods_jashBoard.framework */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +37,8 @@
 		4B3B72351E49351A00F42041 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		A4928526CB9318AFD7A23769 /* Pods_jashBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_jashBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoUploadCollectionViewCell.swift; sourceTree = "<group>"; };
+		A751FDE31E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatagoryButtonInUploadCollectionViewCell.swift; sourceTree = "<group>"; };
 		F792D325396F289052B4E114 /* Pods-jashBoard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jashBoard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-jashBoard/Pods-jashBoard.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +88,8 @@
 				4B3B722A1E49180A00F42041 /* CategoryTableViewCell.swift */,
 				4B3B722B1E49180A00F42041 /* CategoryPhotosCollectionViewController.swift */,
 				4B3B722C1E49180A00F42041 /* UploadViewController.swift */,
+				A751FDE31E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift */,
+				A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */,
 				4B3B722D1E49180A00F42041 /* LogInViewController.swift */,
 				4B3B72351E49351A00F42041 /* Utilities.swift */,
 				4759A6BB1E490D7F00F21794 /* Assets.xcassets */,
@@ -227,9 +233,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B3B722E1E49180A00F42041 /* CategorySelectionTableViewController.swift in Sources */,
+				A751FDE41E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift in Sources */,
 				4B3B72311E49180A00F42041 /* UploadViewController.swift in Sources */,
 				4B3B72361E49351A00F42041 /* Utilities.swift in Sources */,
 				4B3B72321E49180A00F42041 /* LogInViewController.swift in Sources */,
+				A751FDE21E49708700B53D1A /* PhotoUploadCollectionViewCell.swift in Sources */,
 				4B3B72301E49180A00F42041 /* CategoryPhotosCollectionViewController.swift in Sources */,
 				4759A6B51E490D7F00F21794 /* AppDelegate.swift in Sources */,
 				4B3B722F1E49180A00F42041 /* CategoryTableViewCell.swift in Sources */,

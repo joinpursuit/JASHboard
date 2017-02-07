@@ -34,11 +34,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         logInVC.tabBarItem = userIcon
         
         let rootVCForCategorySelection = UINavigationController(rootViewController: categorySelectionTVC)
+        //let rootVCForUploadVC = UINavigationController(rootViewController: uploadVC)
         
         tabController.viewControllers = [rootVCForCategorySelection, uploadVC, logInVC]
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        //let navVC = UINavigationController(rootViewController: tabController)
         self.window?.rootViewController = tabController
         self.window?.makeKeyAndVisible()
         return true
