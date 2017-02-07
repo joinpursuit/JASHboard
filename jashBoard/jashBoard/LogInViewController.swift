@@ -11,6 +11,7 @@ import Firebase
 
 class LogInViewController: UIViewController {
     
+    let testLogin: JashTextField = JashTextField(placeHolder: "Jermaine")
     var signInUser: FIRUser?
 
     override func viewDidLoad() {
@@ -32,6 +33,7 @@ class LogInViewController: UIViewController {
         self.view.addSubview(passwordLine)
         self.view.addSubview(loginButton)
         self.view.addSubview(registerButton)
+        self.view.addSubview(testLogin)
         loginButton.addTarget(self, action: #selector(didTapLogin(sender:)), for: .touchUpInside)
         registerButton.addTarget(self, action: #selector(didTapRegister(sender:)), for: .touchUpInside)
     }
@@ -58,6 +60,10 @@ class LogInViewController: UIViewController {
             textField.trailing.equalToSuperview().inset(16)
         }
         
+        testLogin.snp.makeConstraints { (view) in
+            view.trailing.leading.equalToSuperview()
+            view.bottom.equalTo(loginButton.snp.top)
+        }
 //        usernameTextField.snp.makeConstraints { (view) in
 //            view.top.equalTo(usernameLabel.snp.top)
 //            view.leading.equalTo(usernameLabel.snp.trailing).offset(8.0)

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1AB285C81E492D9F00D9E34B /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */; };
+		1AB285CA1E497E3D00D9E34B /* JashTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285C91E497E3D00D9E34B /* JashTextField.swift */; };
 		4759A6B51E490D7F00F21794 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4759A6B41E490D7F00F21794 /* AppDelegate.swift */; };
 		4759A6BC1E490D7F00F21794 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4759A6BB1E490D7F00F21794 /* Assets.xcassets */; };
 		4759A6BF1E490D7F00F21794 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4759A6BD1E490D7F00F21794 /* LaunchScreen.storyboard */; };
@@ -24,6 +25,7 @@
 /* Begin PBXFileReference section */
 		0841D9FD5BE52B7E49871A7F /* Pods-jashBoard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jashBoard.release.xcconfig"; path = "Pods/Target Support Files/Pods-jashBoard/Pods-jashBoard.release.xcconfig"; sourceTree = "<group>"; };
 		1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
+		1AB285C91E497E3D00D9E34B /* JashTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashTextField.swift; sourceTree = "<group>"; };
 		4759A6B11E490D7F00F21794 /* jashBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jashBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4759A6B41E490D7F00F21794 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4759A6BB1E490D7F00F21794 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				4759A6B41E490D7F00F21794 /* AppDelegate.swift */,
+				1AB285C91E497E3D00D9E34B /* JashTextField.swift */,
 				1AB285C61E49278000D9E34B /* Controllers */,
 				4B3B722A1E49180A00F42041 /* CategoryTableViewCell.swift */,
 				1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */,
@@ -238,6 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B3B722E1E49180A00F42041 /* CategorySelectionTableViewController.swift in Sources */,
+				1AB285CA1E497E3D00D9E34B /* JashTextField.swift in Sources */,
 				4B3B72311E49180A00F42041 /* UploadViewController.swift in Sources */,
 				4B3B72361E49351A00F42041 /* Utilities.swift in Sources */,
 				4B3B72321E49180A00F42041 /* LogInViewController.swift in Sources */,

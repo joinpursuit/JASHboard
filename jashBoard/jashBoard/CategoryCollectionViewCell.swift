@@ -12,7 +12,8 @@ import SnapKit
 class CategoryCollectionViewCell: UICollectionViewCell {
     static let cellIdentifier: String = "cellIdentifier"
     let upCount: Int = 20
-    private let padding: Int = 5
+    private let padding: Int = 7
+    internal static let arrowAlpha: CGFloat = 0.7
     var downCount: Int = 20{
         didSet{
          setupCell()
@@ -46,13 +47,13 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         }
         
         self.downCountLabel.snp.makeConstraints { (view) in
-            view.bottom.equalTo(self.snp.bottom).offset(-padding)
+            view.bottom.equalTo(downvoteArrow.snp.bottom)
             view.leading.equalTo(downvoteArrow.snp.trailing).offset(padding)
         }
         
         self.upCountLabel.snp.makeConstraints { (view) in
             view.leading.equalTo(upvoteArrow.snp.trailing).offset(padding)
-            view.bottom.equalTo(downCountLabel.snp.top).offset(-padding)
+            view.bottom.equalTo(upvoteArrow.snp.bottom)
         }
         
         self.upCountLabel.text = String(upCount)
@@ -62,14 +63,16 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     private let upCountLabel: UILabel = {
         let label : UILabel = UILabel()
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 15)
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.alpha = arrowAlpha
         return label
     }()
     
     private let downCountLabel: UILabel = {
         let label : UILabel = UILabel()
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 15)
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.alpha = arrowAlpha
         return label
     }()
     
@@ -78,6 +81,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         imageView.image = UIImage(named: "up_arrow")
         imageView.image = imageView.image!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
         imageView.tintColor = .white
+        imageView.alpha = arrowAlpha
         return imageView
     }()
     
@@ -86,6 +90,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         imageView.image = UIImage(named: "down_arrow")
         imageView.image = imageView.image!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
         imageView.tintColor = .white
+        imageView.alpha = arrowAlpha
         return imageView
     }()
     
