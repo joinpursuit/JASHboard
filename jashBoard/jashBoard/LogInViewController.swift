@@ -95,6 +95,7 @@ class LogInViewController: UIViewController {
             self.loginButton.setTitle("LOGOUT", for: UIControlState.normal)
             self.loginButton.addTarget(self, action: #selector(self.didTapLogout(sender:)), for: UIControlEvents.touchUpInside)
         })
+        self.showUserHomeVC()
     }
     
     internal func didTapRegister(sender: UIButton) {
@@ -108,6 +109,7 @@ class LogInViewController: UIViewController {
             self.signInUser = validUser
             print("User is registered and now logged in.")
         })
+        self.showUserHomeVC()
     }
     
     private func loginAnonymously() {
@@ -136,6 +138,12 @@ class LogInViewController: UIViewController {
         } catch let signOutError as NSError {
             print ("Error signing out: %@", signOutError)
         }
+    }
+    
+    // MARK: - Navigation
+
+    func showUserHomeVC() {
+        self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
     }
     
     // MARK: - Views
