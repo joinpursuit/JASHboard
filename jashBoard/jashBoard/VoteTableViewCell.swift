@@ -12,12 +12,14 @@ import SnapKit
 class VoteTableViewCell: UITableViewCell {
     static let cellIdentifier = "VoteCell"
     
-//    let voteDescription: String!
-//    let date: NSDate!
-//    let imageIcon: UIImage!
+    var voteDescription: String!
+    var date: Date!
+    var imageIcon: UIImage!
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
+        
+        setupPlaceHolderCellInfo()
         
         self.addSubview(photoImageView)
         self.addSubview(voteDescriptionLabel)
@@ -46,13 +48,21 @@ class VoteTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Placeholder - TODO: Delete this when we have info
+    
+    internal func setupPlaceHolderCellInfo() {
+        self.date = Date()
+        self.voteDescription = "Ruth Lindsey voted up"
+        self.imageIcon = UIImage(named: "siberian-tiger-profile")
+    }
+    
     // MARK: - Views
     
     // Left Icon View
     internal lazy var photoImageView: UIImageView = {
         let imageView: UIImageView = UIImageView()
         imageView.contentMode = .scaleToFill
-        imageView.image = UIImage(named: "siberian-tiger-profile")
+        imageView.image = self.imageIcon
         imageView.layer.borderWidth = 1
         imageView.layer.masksToBounds = false
         imageView.layer.borderColor = JashColors.primaryTextColor.cgColor
@@ -67,7 +77,7 @@ class VoteTableViewCell: UITableViewCell {
         let label = UILabel()
         //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
         label.textColor = JashColors.primaryTextColor
-        label.text = "Ruth Lindsey voted up"
+        label.text = self.voteDescription
         return label
     }()
     
@@ -75,7 +85,11 @@ class VoteTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 13)
         label.textColor = JashColors.lightPrimaryColor
-        label.text = "3:33 PM"
+        let formatter = DateFormatter()
+        formatter.dateStyle = DateFormatter.Style.short
+        formatter.timeStyle = .short
+        let dateString = formatter.string(from: self.date)
+        label.text = dateString
         return label
     }()
     
