@@ -41,6 +41,16 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
         return cell
     }
     
+    // MARK: - Navigation
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let navController = self.navigationController{
+            let categoryController = IndividualPhotoViewController()
+//            categoryController.title = categories[indexPath.row]
+            navController.pushViewController(categoryController, animated: true)
+        }
+    }
+    
     //MARK:- Utilities
     
     private func setUpCollectionView(){

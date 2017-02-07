@@ -20,6 +20,7 @@ class LogInViewController: UIViewController {
         self.view.backgroundColor = JashColors.primaryColor
         setupViewHierarchy()
         configureConstraints()
+        loginAnonymously()
     }
     
     // MARK: - Setup

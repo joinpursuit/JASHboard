@@ -43,7 +43,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabController.tabBar.tintColor = JashColors.accentColor
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
+
         self.window?.rootViewController = tabController
+
         self.window?.makeKeyAndVisible()
         return true
     }

@@ -22,18 +22,26 @@ class CatagoryButtonInUploadCollectionViewCell: UICollectionViewCell {
     }
     
     func setupViewHierarchy() {
-        self.addSubview(catagoryButton)
+        self.addSubview(catagoryLabel)
     }
     
     func configureConstraints() {
-        catagoryButton.snp.makeConstraints { (view) in
-            view.leading.top.trailing.bottom.equalToSuperview()
+        catagoryLabel.snp.makeConstraints { (label) in
+            label.top.leading.equalToSuperview().offset(4)
+            label.trailing.bottom.equalToSuperview().inset(4)
+            //label.leading.top.trailing.bottom.equalToSuperview()
         }
     }
     
-    lazy var catagoryButton: UIButton = {
-        let button = UIButton()
-        button.setTitleColor(UIColor.white, for: UIControlState.normal)
-        return button
+    lazy var catagoryLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = JashColors.textAndIconColor
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.backgroundColor = JashColors.primaryColor
+        label.layer.borderColor = JashColors.primaryTextColor.cgColor
+        label.layer.borderWidth = 2
+        label.textAlignment = .center
+        return label
     }()
+    
 }
