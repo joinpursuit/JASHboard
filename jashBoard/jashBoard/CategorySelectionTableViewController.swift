@@ -19,6 +19,7 @@ class CategorySelectionTableViewController: UITableViewController {
         
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.showsVerticalScrollIndicator = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -50,6 +51,9 @@ class CategorySelectionTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let navController = self.navigationController{
             let categoryController = CategoryPhotosCollectionViewController(collectionViewLayout: .init())
+            let backItem = UIBarButtonItem()
+            backItem.title = " "
+            navigationItem.backBarButtonItem = backItem
             categoryController.title = categories[indexPath.row]
             navController.pushViewController(categoryController, animated: true)
         }

@@ -27,13 +27,19 @@ class CatagoryButtonInUploadCollectionViewCell: UICollectionViewCell {
     
     func configureConstraints() {
         catagoryLabel.snp.makeConstraints { (label) in
-            label.leading.top.trailing.bottom.equalToSuperview()
+            label.top.leading.equalToSuperview().offset(4)
+            label.trailing.bottom.equalToSuperview().inset(4)
+            //label.leading.top.trailing.bottom.equalToSuperview()
         }
     }
     
     lazy var catagoryLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.white
+        label.textColor = JashColors.textAndIconColor
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.backgroundColor = JashColors.primaryColor
+        label.layer.borderColor = JashColors.primaryTextColor.cgColor
+        label.layer.borderWidth = 2
         label.textAlignment = .center
         return label
     }()

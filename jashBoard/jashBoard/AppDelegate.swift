@@ -25,9 +25,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let uploadVC = UploadViewController()
         let logInVC = LogInViewController()
         
-        let galleryIcon = UITabBarItem(title: "", image: UIImage(named: "gallery_icon"), tag: 0)
-        let cameraIcon = UITabBarItem(title: "", image: UIImage(named: "camera_icon"), tag: 1)
-        let userIcon = UITabBarItem(title: "", image: UIImage(named: "user_icon"), tag: 2)
+        let galleryIcon = UITabBarItem(title: "", image: UIImage(named: "gallery_icon")?.withRenderingMode(.alwaysTemplate), tag: 0)
+        let cameraIcon = UITabBarItem(title: "", image: UIImage(named: "camera_icon")?.withRenderingMode(.alwaysTemplate), tag: 1)
+        let userIcon = UITabBarItem(title: "", image: UIImage(named: "user_icon")?.withRenderingMode(.alwaysTemplate), tag: 2)
+    
+        
         
         categorySelectionTVC.tabBarItem = galleryIcon
         uploadVC.tabBarItem = cameraIcon
@@ -41,7 +43,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabController.tabBar.tintColor = JashColors.accentColor
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
+
         self.window?.rootViewController = tabController
+
         self.window?.makeKeyAndVisible()
         return true
     }
