@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 
 class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    var votes = ["So and So voted up", "So and so voted down"]
     var tableView = UITableView()
 
     override func viewDidLoad() {
@@ -18,6 +20,11 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         tableView.dataSource = self
         setupViewHierarchy()
         configureConstraints()
+        
+        self.tableView.register(VoteTableViewCell.self, forCellReuseIdentifier: VoteTableViewCell.cellIdentifier)
+        
+        tableView.estimatedRowHeight = 100
+        tableView.rowHeight = UITableViewAutomaticDimension
     }
     
     // MARK: - Setup
@@ -74,17 +81,17 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     // MARK: - TableView Delegates
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 0
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return votes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
         
-        // Configure the cell
+//        cell.categoryTitleLabel.text = categories[indexPath.row]
         
         return cell
     }
