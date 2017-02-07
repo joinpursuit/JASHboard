@@ -8,11 +8,15 @@
 
 import UIKit
 import SnapKit
+import Photos
 
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
     var photosArr: [UIImage] = [#imageLiteral(resourceName: "default-placeholder"),#imageLiteral(resourceName: "logo")]
-    var buttonTitlesArr: [String] = ["Animals", "Cars"]
+    var catagoryTitlesArr: [String] = ["Animals", "Beach Days" ,"Cars", "Flowers & Plants"]
+    var photoAssetsArr: [PHAsset] = []
+    
+    let manager = PHImageManager.default()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,18 +30,39 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.imagePickerCollectionView.register(PhotoInUploadCollectionViewCell.self, forCellWithReuseIdentifier: PhotoInUploadCollectionViewCell.identifier)
         self.catagoryCollectionView.register(CatagoryButtonInUploadCollectionViewCell.self, forCellWithReuseIdentifier: CatagoryButtonInUploadCollectionViewCell.identifier)
         
+        //Setup Navigation Bar
         let navItem = UINavigationItem(title: "UPLOAD")
         let uploadBarButton = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed))
         navItem.rightBarButtonItem = uploadBarButton
         self.navigationBar.items = [navItem]
+        
+        //Fetch Photos
+        fetchPhotos()
     }
     
-    // MARK: - Selector Functions
+    // MARK: - Functions
     func uploadPhotoToFireBaseButtonPressed(_ sender: UIBarButtonItem) {
         print("uploadPhotoToFireBaseButtonPressed")
     }
     
-    // MARK: - CollectionViewDelegate & CollectionView Methods
+    func fetchPhotos() {
+        let momentsList = PHCollectionList.fetchMomentLists(with: PHCollectionListSubtype.momentListCluster, options: nil)
+        
+        for i in 0..<momentsList.count {
+            let moments: PHCollectionList = momentsList[i]
+            
+            let collectionList = PHCollectionList.fetchCollections(in: moments, options: nil)
+            for i in 0..<collectionList.count {
+                let results = PHAsset.fetchAssets(in: collectionList[i] as! PHAssetCollection, options: nil)
+                results.enumerateObjects({ (object: PHAsset, _, _) in
+                    self.photoAssetsArr.append(object)
+                })
+            }
+            dump(self.photoAssetsArr)
+        }
+    }
+    
+    // MARK: - CollectionViewDelegate & CollectionViewDataSource Methods
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -46,8 +71,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         switch collectionView{
         case imagePickerCollectionView:
             return self.photosArr.count
+        case catagoryCollectionView:
+            return self.catagoryTitlesArr.count
         default:
-            return self.buttonTitlesArr.count
+            return self.catagoryTitlesArr.count
         }
     }
     
@@ -56,17 +83,27 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         case imagePickerCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoInUploadCollectionViewCell.identifier, for: indexPath) as! PhotoInUploadCollectionViewCell
             
-            let photo = photosArr[indexPath.row]
+            //let photo = photosArr[indexPath.row]
+            let photo = photoAssetsArr[indexPath.row]
             
-            cell.imageView.image = photo
+            manager.requestImage(for: photo, targetSize: cell.imageView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
+                cell.imageView.image = image
+            })
+            
             cell.backgroundColor = .white
+            return cell
+        case catagoryCollectionView:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CatagoryButtonInUploadCollectionViewCell.identifier, for: indexPath) as! CatagoryButtonInUploadCollectionViewCell
+            
+            let catagoryTitle = catagoryTitlesArr[indexPath.row]
+            cell.catagoryLabel.text = catagoryTitle
+
             return cell
         default:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CatagoryButtonInUploadCollectionViewCell.identifier, for: indexPath) as! CatagoryButtonInUploadCollectionViewCell
             
-            let buttonTitle = buttonTitlesArr[indexPath.row]
-            cell.catagoryButton.setTitle(buttonTitle, for: UIControlState.normal)
-            
+            let catagoryTitle = catagoryTitlesArr[indexPath.row]
+            cell.catagoryLabel.text = catagoryTitle
             return cell
         }
     }
@@ -74,9 +111,15 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch collectionView {
         case imagePickerCollectionView:
-            print(photosArr[indexPath.row])
+            print(photoAssetsArr[indexPath.row])
+            let photo = photoAssetsArr[indexPath.row]
+            manager.requestImage(for: photo, targetSize: selectedImageView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
+                self.selectedImageView.image = image
+            })
+        case catagoryCollectionView:
+            print(catagoryTitlesArr[indexPath.row])
         default:
-            print(buttonTitlesArr[indexPath.row])
+            print(catagoryTitlesArr[indexPath.row])
         }
     }
     
@@ -96,15 +139,17 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         self.imagePickerView.addSubview(self.imagePickerCollectionView)
         self.catagoryContainerView.addSubview(self.catagoryCollectionView)
-        
     }
     
     // MARK: - Configure Constraints
     private func configureConstraints() {
         self.edgesForExtendedLayout = []
+        
         //navigationBar
         navigationBar.snp.makeConstraints { (bar) in
-            bar.leading.top.trailing.equalToSuperview()
+            bar.top.equalTo(self.topLayoutGuide.snp.bottom)
+            bar.leading.trailing.equalToSuperview()
+            //bar.leading.top.trailing.equalToSuperview()
         }
         
         //containerView
@@ -190,14 +235,13 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     lazy var catagoryCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 2, left: 10, bottom: 2, right: 10)
-        layout.itemSize = CGSize(width: 110, height: 120)
+        layout.sectionInset = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+        layout.itemSize = CGSize(width: 130, height: 60)
         layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 10
+        layout.minimumLineSpacing = 0
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
         cView.collectionViewLayout = layout
-        cView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)
         cView.delegate = self
         cView.dataSource = self
         return cView
@@ -219,17 +263,15 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     lazy var imagePickerCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 2, left: 10, bottom: 2, right: 10)
-        layout.itemSize = CGSize(width: 110, height: 120)
+        layout.sectionInset = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+        layout.itemSize = CGSize(width: 120, height: 120)
         layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 10
+        layout.minimumLineSpacing = 0
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
         cView.collectionViewLayout = layout
-        cView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)
         cView.delegate = self
         cView.dataSource = self
         return cView
     }()
-    
 }
