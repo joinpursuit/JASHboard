@@ -14,12 +14,15 @@ class CategorySelectionTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.title = "Categories"
-        self.view.backgroundColor = .blue
+        
         self.tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.cellIdentifier)
         
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.title = "Categories"
     }
 
     // MARK: - Table view data source
@@ -38,7 +41,10 @@ class CategorySelectionTableViewController: UITableViewController {
         cell.categoryTitleLabel.text = categories[indexPath.row]
         
         return cell
+    }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        return .lightContent
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -17,21 +17,16 @@ class CategoryTableViewCell: UITableViewCell {
         self.addSubview(cellBackgroundImage)
         self.addSubview(cellTint)
         self.addSubview(categoryTitleLabel)
-        self.backgroundColor = .green
-    
+        //Removes selection highlight
+        self.selectionStyle = .none
+        
         self.cellBackgroundImage.snp.makeConstraints { (view) in
-            view.top.equalTo(self.snp.top)
-            view.bottom.equalTo(self.snp.bottom)
-            view.leading.equalTo(self.snp.leading)
-            view.trailing.equalTo(self.snp.trailing)
+            view.bottom.top.leading.trailing.equalToSuperview()
             view.height.equalTo(200)
         }
         
         self.cellTint.snp.makeConstraints { (view) in
-            view.top.equalTo(self.snp.top)
-            view.bottom.equalTo(self.snp.bottom)
-            view.leading.equalTo(self.snp.leading)
-            view.trailing.equalTo(self.snp.trailing)
+            view.bottom.top.leading.trailing.equalToSuperview()
         }
         self.categoryTitleLabel.snp.makeConstraints { (view) in
             view.centerX.equalTo(self.snp.centerX)
@@ -51,11 +46,11 @@ class CategoryTableViewCell: UITableViewCell {
         imageView.image = UIImage(named: "siberian-tiger-profile")
         return imageView
     }()
-    //Adds ting to cell so categories label is more visable
-    let cellTint: UIView = {
+    //Adds tint to cell so categories label is more visable
+    private let cellTint: UIView = {
         let view:UIView = UIView()
         view.backgroundColor = .black
-        view.alpha = 0.3
+        view.alpha = 0.1
         return view
     }()
     //Category label
