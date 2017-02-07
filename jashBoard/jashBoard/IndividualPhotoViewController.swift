@@ -67,10 +67,10 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         }
         
         // tableView
-        tableView.snp.makeConstraints { (view) in
-            view.bottom.leading.trailing.equalToSuperview()
-            view.top.equalTo(self.view.snp.centerY)
-        }
+//        tableView.snp.makeConstraints { (view) in
+//            view.bottom.leading.trailing.equalToSuperview()
+//            view.top.equalTo(self.view.snp.centerY)
+//        }
         
     }
 
@@ -94,13 +94,21 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 0
     }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        
+        // Configure the cell
+        
+        return cell
+    }
 
 
     // MARK: - Views
     
     // logo
     internal lazy var photoImageView: UIImageView = {
-        let image = UIImage(named: "logo")
+        let image = UIImage(named: "siberian-tiger-profile")
         let imageView: UIImageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
