@@ -105,7 +105,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     private let cellTint: UIView = {
         let view:UIView = UIView()
         view.backgroundColor = .black
-        view.alpha = 0.3
+        view.alpha = 0.2
         return view
     }()
     
