@@ -37,6 +37,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //let rootVCForUploadVC = UINavigationController(rootViewController: uploadVC)
         
         tabController.viewControllers = [rootVCForCategorySelection, uploadVC, logInVC]
+        tabController.tabBar.barTintColor = JashColors.lightPrimaryColor
+        tabController.tabBar.tintColor = JashColors.accentColor
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = tabController
@@ -64,6 +66,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+       
+        let navigationBarAppearace = UINavigationBar.appearance()
+        navigationBarAppearace.titleTextAttributes = [NSForegroundColorAttributeName:UIColor.white,
+                                                      NSFontAttributeName:UIFont.systemFont(ofSize: 20)]
+        navigationBarAppearace.tintColor = JashColors.accentColor
+        navigationBarAppearace.barTintColor = JashColors.darkPrimaryColor
+        
+        UIApplication.shared.statusBarStyle = .lightContent
+        
+        return true
     }
 
 
