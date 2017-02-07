@@ -89,7 +89,10 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
         
-        //        cell.categoryTitleLabel.text = categories[indexPath.row]
+        // TO DO: Refactor to correct data
+        cell.voteDescription = "You voted iphone 7s down"
+        cell.imageIcon = UIImage(named: "siberian-tiger-profile")
+        cell.date = Date()
         
         return cell
     }
