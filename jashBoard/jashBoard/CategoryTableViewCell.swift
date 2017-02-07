@@ -50,7 +50,7 @@ class CategoryTableViewCell: UITableViewCell {
     private let cellTint: UIView = {
         let view:UIView = UIView()
         view.backgroundColor = .black
-        view.alpha = 0.1
+        view.alpha = 0.2
         return view
     }()
     //Category label

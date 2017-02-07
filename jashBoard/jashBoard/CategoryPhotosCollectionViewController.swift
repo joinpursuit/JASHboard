@@ -68,6 +68,5 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
        // self.navigationController?.hidesBarsOnSwipe = true
         self.navigationController?.title = categoryTitle
     }
-    
 
 }
