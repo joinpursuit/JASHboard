@@ -11,20 +11,33 @@ import SnapKit
 
 class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var votes = ["So and So voted up", "So and so voted down"]
-    var tableView = UITableView()
-
+    var selectedPhoto: UIImage!
+    var upvoteCount: Int!
+    var downvoteCount: Int!
+    var votes: [String]! // Would probably be type Vote
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.delegate = self
-        tableView.dataSource = self
+        
+        setupPlaceHolderCellInfo()
+        
         setupViewHierarchy()
         configureConstraints()
         
+        tableView.delegate = self
+        tableView.dataSource = self
         self.tableView.register(VoteTableViewCell.self, forCellReuseIdentifier: VoteTableViewCell.cellIdentifier)
-        
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
+    }
+    
+    // MARK: - Placeholder - TODO: Delete this when we have info
+    
+    internal func setupPlaceHolderCellInfo() {
+        self.votes = ["So and So voted up", "So and so voted down"]
+        self.selectedPhoto = UIImage(named: "siberian-tiger-profile")
+        self.upvoteCount = 0
+        self.downvoteCount = 0
     }
     
     // MARK: - Setup
@@ -99,32 +112,35 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
 
     // MARK: - Views
     
+    // tableView
+    internal lazy var tableView: UITableView = {
+        let tableview = UITableView()
+        return tableview
+    }()
+    
     // logo
     internal lazy var photoImageView: UIImageView = {
-        let image = UIImage(named: "siberian-tiger-profile")
+        let image = self.selectedPhoto
         let imageView: UIImageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     // buttons
     internal lazy var upvoteButton: UIButton = {
         let button: UIButton = UIButton(type: .roundedRect)
-        button.setTitle("↑", for: .normal)
+        button.setImage(UIImage(named: "up_arrow"), for: .normal)
+        button.tintColor = JashColors.accentColor
         button.backgroundColor = JashColors.darkPrimaryColor(alpha: 0.75)
-        //        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
-        button.setTitleColor(JashColors.accentColor, for: .normal)
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
         return button
     }()
     
     internal lazy var downvoteButton: UIButton = {
         let button: UIButton = UIButton(type: .roundedRect)
-        button.setTitle("↓", for: .normal)
+        button.setImage(UIImage(named: "down_arrow"), for: .normal)
+        button.tintColor = JashColors.accentColor
         button.backgroundColor = JashColors.darkPrimaryColor(alpha: 0.75)
-        //        button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: UIFontWeightMedium)
-        button.setTitleColor(JashColors.accentColor, for: .normal)
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
         return button
     }()
@@ -135,7 +151,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
         label.textColor = JashColors.accentColor
         label.backgroundColor = JashColors.primaryColor
-        label.text = "0"
+        label.text = String(self.upvoteCount)
         label.textAlignment = .center
         return label
     }()
@@ -145,7 +161,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
         label.textColor = JashColors.accentColor
         label.backgroundColor = JashColors.primaryColor
-        label.text = "0"
+        label.text = String(self.downvoteCount)
         label.textAlignment = .center
         return label
     }()
