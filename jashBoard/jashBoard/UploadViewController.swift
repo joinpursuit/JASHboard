@@ -14,8 +14,7 @@ import FirebaseAuth
 
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
-    var photosArr: [UIImage] = [#imageLiteral(resourceName: "default-placeholder"),#imageLiteral(resourceName: "logo")]
-    var catagoryTitlesArr: [String] = ["Animals", "Beach Days" ,"Cars", "Flowers & Plants"]
+    var catagoryTitlesArr: [String] = ["ANIMALS", "BEACH DAYS" ,"CARS", "FLOWERS & PLANTS"]
     var photoAssetsArr: [PHAsset] = []
     
     let manager = PHImageManager.default()
@@ -25,7 +24,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "UPLOAD"
-        self.view.backgroundColor = .purple
+        self.view.backgroundColor = JashColors.darkPrimaryColor
         
         setupViewHierarchy()
         configureConstraints()
@@ -36,7 +35,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         //Setup Navigation Bar
         let navItem = UINavigationItem(title: "UPLOAD")
-        //let uploadBarButton = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed))
+        uploadBarButton.isEnabled = false
         navItem.rightBarButtonItem = uploadBarButton
         self.navigationBar.items = [navItem]
         
@@ -85,7 +84,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView{
         case imagePickerCollectionView:
-            return self.photosArr.count
+            return self.photoAssetsArr.count
         case catagoryCollectionView:
             return self.catagoryTitlesArr.count
         default:
@@ -132,7 +131,18 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 self.selectedImageView.image = image
             })
         case catagoryCollectionView:
-            print(catagoryTitlesArr[indexPath.row])
+            // Deselect all cells
+            for i in collectionView.indexPathsForSelectedItems! {
+                dump(collectionView.indexPathsForSelectedItems!)
+                collectionView.deselectItem(at: i, animated: true)
+                let deselectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryButtonInUploadCollectionViewCell
+                deselectedCell.catagoryLabel.backgroundColor = JashColors.primaryColor
+                deselectedCell.catagoryLabel.textColor = JashColors.textAndIconColor
+            }
+            // Select cell and change label color
+            let selectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryButtonInUploadCollectionViewCell
+            selectedCell.catagoryLabel.backgroundColor = JashColors.accentColor
+            selectedCell.catagoryLabel.textColor = JashColors.textAndIconColor
         default:
             print(catagoryTitlesArr[indexPath.row])
         }
@@ -150,9 +160,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         self.containerView.addSubview(self.titleAndCatagoryContainerView)
         self.containerView.addSubview(self.selectedImageView)
-        self.containerView.addSubview(self.imagePickerView)
+        self.containerView.addSubview(self.imagePickerContainerView)
         
-        self.imagePickerView.addSubview(self.imagePickerCollectionView)
+        self.imagePickerContainerView.addSubview(self.imagePickerCollectionView)
         self.catagoryContainerView.addSubview(self.catagoryCollectionView)
     }
     
@@ -183,9 +193,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         //catagoryCollectionView
         catagoryContainerView.snp.makeConstraints { (collectionView) in
             collectionView.leading.trailing.equalToSuperview()
-            collectionView.top.equalTo(self.titleTextfield.snp.bottom).offset(8)
-            collectionView.bottom.equalToSuperview().offset(8)
-            collectionView.height.equalTo(52.0)
+            collectionView.top.equalTo(self.titleTextfield.snp.bottom)
+            collectionView.bottom.equalToSuperview().inset(4)
+            collectionView.height.equalTo(36.0)
         }
         
         //ContainerView's SubView
@@ -206,7 +216,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         
         //imagePickerCollectionView
-        imagePickerView.snp.makeConstraints { (view) in
+        imagePickerContainerView.snp.makeConstraints { (view) in
             view.top.equalTo(self.selectedImageView.snp.bottom)
             view.leading.trailing.bottom.equalToSuperview()
         }
@@ -218,45 +228,48 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     //MARK: - lazy vars
     lazy var navigationBar: UINavigationBar = {
         let navBar = UINavigationBar()
-        navBar.backgroundColor = UIColor.darkGray
+        navBar.backgroundColor = JashColors.primaryColor
         return navBar
     }()
     
     lazy var containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.blue
+        view.backgroundColor = JashColors.primaryColor
         return view
     }()
     
     lazy var titleAndCatagoryContainerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.yellow
+        view.backgroundColor = JashColors.primaryColor
         return view
     }()
     
     lazy var titleTextfield: UITextField = {
         let textField = UITextField()
         textField.placeholder = "title"
-        textField.backgroundColor = UIColor.purple
+        textField.textColor = JashColors.accentColor
+        textField.backgroundColor = JashColors.primaryColor
         return textField
     }()
     
     lazy var catagoryContainerView: UIView = {
         let collectionView = UIView()
-        collectionView.backgroundColor = UIColor.brown
+        collectionView.backgroundColor = UIColor.clear
         return collectionView
     }()
     
     lazy var catagoryCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
-        layout.itemSize = CGSize(width: 130, height: 60)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.itemSize = CGSize(width: 150, height: 36)
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
         cView.collectionViewLayout = layout
+        cView.backgroundColor = JashColors.primaryColor
+        cView.allowsMultipleSelection = false
         cView.delegate = self
         cView.dataSource = self
         return cView
@@ -269,17 +282,17 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         return imageView
     }()
     
-    lazy var imagePickerView: UIView = {
+    lazy var imagePickerContainerView: UIView = {
         let collectionView = UIView()
-        collectionView.backgroundColor = UIColor.red
+        collectionView.backgroundColor = UIColor.clear
         return collectionView
     }()
     
     lazy var imagePickerCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
-        layout.itemSize = CGSize(width: 120, height: 120)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.itemSize = CGSize(width: 130, height: 130)
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
