@@ -59,9 +59,6 @@
 		1AB285C61E49278000D9E34B /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				4B3B722B1E49180A00F42041 /* CategoryPhotosCollectionViewController.swift */,
-				4B3B722C1E49180A00F42041 /* UploadViewController.swift */,
-				4B3B722D1E49180A00F42041 /* LogInViewController.swift */,
 				4B3B72291E49180A00F42041 /* CategorySelectionTableViewController.swift */,
 			);
 			name = Controllers;
@@ -99,12 +96,12 @@
 				4759A6B41E490D7F00F21794 /* AppDelegate.swift */,
 				1AB285C61E49278000D9E34B /* Controllers */,
 				4B3B722A1E49180A00F42041 /* CategoryTableViewCell.swift */,
+				1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */,
 				4B3B722B1E49180A00F42041 /* CategoryPhotosCollectionViewController.swift */,
 				4B3B722C1E49180A00F42041 /* UploadViewController.swift */,
 				A751FDE31E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift */,
 				A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */,
 				4B3B722D1E49180A00F42041 /* LogInViewController.swift */,
-				1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */,
 				4B3B72351E49351A00F42041 /* Utilities.swift */,
 				4759A6BB1E490D7F00F21794 /* Assets.xcassets */,
 				4759A6BD1E490D7F00F21794 /* LaunchScreen.storyboard */,
