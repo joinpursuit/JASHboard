@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
         let navVC = UINavigationController(rootViewController: tabController)
-        self.window?.rootViewController = navVC
+        self.window?.rootViewController = IndividualPhotoViewController()
         self.window?.makeKeyAndVisible()
         return true
     }
