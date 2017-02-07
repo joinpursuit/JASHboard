@@ -17,7 +17,6 @@ extension UITextField{
         let str = NSAttributedString(string: placeHolder.uppercased(), attributes: [NSForegroundColorAttributeName:JashColors.accentColor])
         self.attributedPlaceholder = str
         
-        
         let border = CALayer()
         let width = CGFloat(2.0)
         
@@ -33,15 +32,7 @@ extension UITextField{
         border.borderWidth = width
         self.layer.addSublayer(border)
         self.layer.masksToBounds = true
-        
-//        self.borderStyle = .none
-//        self.layer.backgroundColor = UIColor.white.cgColor
-//        
-//        self.layer.masksToBounds = false
-//        self.layer.shadowColor = UIColor.red.cgColor
-//        self.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
-//        self.layer.shadowOpacity = 1.0
-//        self.layer.shadowRadius = 0.0
+
     }
     
 }
