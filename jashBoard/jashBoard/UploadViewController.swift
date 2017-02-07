@@ -9,6 +9,8 @@
 import UIKit
 import SnapKit
 import Photos
+import Firebase
+import FirebaseAuth
 
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
@@ -17,6 +19,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     var photoAssetsArr: [PHAsset] = []
     
     let manager = PHImageManager.default()
+    
+    let uploadBarButton = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed))
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,19 +36,29 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         //Setup Navigation Bar
         let navItem = UINavigationItem(title: "UPLOAD")
-        let uploadBarButton = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed))
+        //let uploadBarButton = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed))
         navItem.rightBarButtonItem = uploadBarButton
         self.navigationBar.items = [navItem]
         
         //Fetch Photos
         fetchPhotos()
+        
+        //Firebase
+        let _ = FIRAuth.auth()?.addStateDidChangeListener({ (auth, user) in
+            guard let validUser = user else { return }
+            if validUser.email == nil {
+                self.uploadBarButton.isEnabled = false
+            } else {
+                self.uploadBarButton.isEnabled = true
+            }
+        })
     }
     
     // MARK: - Functions
     func uploadPhotoToFireBaseButtonPressed(_ sender: UIBarButtonItem) {
         print("uploadPhotoToFireBaseButtonPressed")
     }
-    
+
     func fetchPhotos() {
         let momentsList = PHCollectionList.fetchMomentLists(with: PHCollectionListSubtype.momentListCluster, options: nil)
         
@@ -61,6 +75,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             dump(self.photoAssetsArr)
         }
     }
+    
     
     // MARK: - CollectionViewDelegate & CollectionViewDataSource Methods
     func numberOfSections(in collectionView: UICollectionView) -> Int {
