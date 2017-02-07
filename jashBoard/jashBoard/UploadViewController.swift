@@ -13,15 +13,14 @@ import Firebase
 import FirebaseAuth
 
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
-    
-    var photosArr: [UIImage] = [#imageLiteral(resourceName: "default-placeholder"),#imageLiteral(resourceName: "logo")]
+    //MARK: - Properties
     var catagoryTitlesArr: [String] = ["Animals", "Beach Days" ,"Cars", "Flowers & Plants"]
     var photoAssetsArr: [PHAsset] = []
-    
     let manager = PHImageManager.default()
     
-    let uploadBarButton = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed))
+    var selectedCategory: String!
     
+    //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "UPLOAD"
@@ -32,18 +31,17 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         //Register Cells
         self.imagePickerCollectionView.register(PhotoInUploadCollectionViewCell.self, forCellWithReuseIdentifier: PhotoInUploadCollectionViewCell.identifier)
-        self.catagoryCollectionView.register(CatagoryButtonInUploadCollectionViewCell.self, forCellWithReuseIdentifier: CatagoryButtonInUploadCollectionViewCell.identifier)
+        self.categoryCollectionView.register(CatagoryButtonInUploadCollectionViewCell.self, forCellWithReuseIdentifier: CatagoryButtonInUploadCollectionViewCell.identifier)
         
         //Setup Navigation Bar
         let navItem = UINavigationItem(title: "UPLOAD")
-        //let uploadBarButton = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed))
         navItem.rightBarButtonItem = uploadBarButton
         self.navigationBar.items = [navItem]
         
-        //Fetch Photos
+        //Populate array with assets for imagePickerCollectionView
         fetchPhotos()
         
-        //Firebase
+        //Firebase: if user is anonymous (no email) they will be restricted from uploading pictures.
         let _ = FIRAuth.auth()?.addStateDidChangeListener({ (auth, user) in
             guard let validUser = user else { return }
             if validUser.email == nil {
@@ -57,25 +55,62 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     // MARK: - Functions
     func uploadPhotoToFireBaseButtonPressed(_ sender: UIBarButtonItem) {
         print("uploadPhotoToFireBaseButtonPressed")
+        //need to create a unique picture ID for for DB and storage each time we upload an image.
+        guard let category = self.selectedCategory else {
+            let alertController = UIAlertController(title: "Wait a minute!", message: "Select a category before uploading.", preferredStyle: UIAlertControllerStyle.alert)
+            let okay = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+            alertController.addAction(okay)
+            self.present(alertController, animated: true, completion: nil)
+            return
+        }
+        
+        //update real time database
+        let databaseReference = FIRDatabase.database().reference().child("\(category)")
+        let newItemReference = databaseReference.childByAutoId()
+        let id = newItemReference.key
+        
+        let newItemDetails: [String : AnyObject] = [
+            "upvotes" : 0 as AnyObject,
+            "downvotes" : 0 as AnyObject
+        ]
+        newItemReference.setValue(newItemDetails)
+        
+        //update storage
+        let storageReference = FIRStorage.storage().reference().child("\(category)").child("\(id)")
+        let uploadMetadata = FIRStorageMetadata()
+        uploadMetadata.contentType = "image/jpeg"
+        
+        if let image = self.selectedImageView.image,
+            let imageData = UIImageJPEGRepresentation(image, 0.8) {
+            
+            let uploadTask = storageReference.put(imageData, metadata: uploadMetadata) { (metadata: FIRStorageMetadata?, error: Error?) in
+                if error != nil {
+                    print("Encountered an error: \(error?.localizedDescription)")
+                }
+                else {
+                    print("Upload complete: \(metadata)")
+                    print("HERE'S YOUR DOWNLOAD URL: \(metadata?.downloadURL())")
+                }
+            }
+        }
+        //Update the progress bar
+//        uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
+//            guard let progress = snapshot.progress else { return }
+//            
+//            self.progressView.progress = Float(progress.fractionCompleted)
+//        }
     }
 
     func fetchPhotos() {
-        let momentsList = PHCollectionList.fetchMomentLists(with: PHCollectionListSubtype.momentListCluster, options: nil)
+        //sorting results by creation date
+        let allPhotosOptions = PHFetchOptions()
+        allPhotosOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         
-        for i in 0..<momentsList.count {
-            let moments: PHCollectionList = momentsList[i]
-            
-            let collectionList = PHCollectionList.fetchCollections(in: moments, options: nil)
-            for i in 0..<collectionList.count {
-                let results = PHAsset.fetchAssets(in: collectionList[i] as! PHAssetCollection, options: nil)
-                results.enumerateObjects({ (object: PHAsset, _, _) in
-                    self.photoAssetsArr.append(object)
-                })
-            }
-            dump(self.photoAssetsArr)
-        }
+        let allPhotosResult = PHAsset.fetchAssets(with: .image, options: allPhotosOptions)
+        
+        //get assets from PHFetchResult<PHAsset> object and populate the array we populate the collectionview with.
+        allPhotosResult.enumerateObjects({ self.photoAssetsArr.append($0.0) })
     }
-    
     
     // MARK: - CollectionViewDelegate & CollectionViewDataSource Methods
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -85,8 +120,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView{
         case imagePickerCollectionView:
-            return self.photosArr.count
-        case catagoryCollectionView:
+            return self.photoAssetsArr.count
+        case categoryCollectionView:
             return self.catagoryTitlesArr.count
         default:
             return self.catagoryTitlesArr.count
@@ -98,7 +133,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         case imagePickerCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoInUploadCollectionViewCell.identifier, for: indexPath) as! PhotoInUploadCollectionViewCell
             
-            //let photo = photosArr[indexPath.row]
             let photo = photoAssetsArr[indexPath.row]
             
             manager.requestImage(for: photo, targetSize: cell.imageView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
@@ -107,7 +141,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             
             cell.backgroundColor = .white
             return cell
-        case catagoryCollectionView:
+        case categoryCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CatagoryButtonInUploadCollectionViewCell.identifier, for: indexPath) as! CatagoryButtonInUploadCollectionViewCell
             
             let catagoryTitle = catagoryTitlesArr[indexPath.row]
@@ -119,6 +153,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             
             let catagoryTitle = catagoryTitlesArr[indexPath.row]
             cell.catagoryLabel.text = catagoryTitle
+            
             return cell
         }
     }
@@ -131,8 +166,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             manager.requestImage(for: photo, targetSize: selectedImageView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
                 self.selectedImageView.image = image
             })
-        case catagoryCollectionView:
+        case categoryCollectionView:
             print(catagoryTitlesArr[indexPath.row])
+            self.selectedCategory = catagoryTitlesArr[indexPath.row]
         default:
             print(catagoryTitlesArr[indexPath.row])
         }
@@ -153,7 +189,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.containerView.addSubview(self.imagePickerView)
         
         self.imagePickerView.addSubview(self.imagePickerCollectionView)
-        self.catagoryContainerView.addSubview(self.catagoryCollectionView)
+        self.catagoryContainerView.addSubview(self.categoryCollectionView)
     }
     
     // MARK: - Configure Constraints
@@ -194,7 +230,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             view.top.equalToSuperview()
             view.leading.top.trailing.equalToSuperview()
         }
-        catagoryCollectionView.snp.makeConstraints { (view) in
+        categoryCollectionView.snp.makeConstraints { (view) in
             view.top.leading.trailing.bottom.equalToSuperview()
         }
         
@@ -247,7 +283,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         return collectionView
     }()
     
-    lazy var catagoryCollectionView: UICollectionView = {
+    lazy var categoryCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
@@ -266,6 +302,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "default-placeholder")
         imageView.backgroundColor = UIColor.orange
+        
+        //aspect Fit/ Fill?
+        
         return imageView
     }()
     
@@ -288,5 +327,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         cView.delegate = self
         cView.dataSource = self
         return cView
+    }()
+    
+    lazy var uploadBarButton: UIBarButtonItem =  {
+        let button = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed(_:)))
+        return button
     }()
 }

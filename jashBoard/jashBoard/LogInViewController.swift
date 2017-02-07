@@ -145,7 +145,7 @@ class LogInViewController: UIViewController {
             }
             guard let validUser = user else { return }
             self.signInUser = validUser
-            print("User is registered")
+            print("User is registered and now logged in.")
         })
     }
     
@@ -224,6 +224,10 @@ class LogInViewController: UIViewController {
         textField.tintColor = .clear
         textField.borderStyle = .bezel
         textField.backgroundColor = UIColor.green
+        
+        //our users will have to use email to log in so this is a small little ux change
+        textField.keyboardType = .emailAddress
+        
         return textField
     }()
     
