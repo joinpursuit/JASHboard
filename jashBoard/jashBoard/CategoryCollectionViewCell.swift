@@ -10,13 +10,19 @@ import UIKit
 import SnapKit
 
 class CategoryCollectionViewCell: UICollectionViewCell {
+    //MARK: - Properties
     static let cellIdentifier: String = "cellIdentifier"
     let pressAndHold :UILongPressGestureRecognizer = UILongPressGestureRecognizer()
-    var upCount: Int = 20
+    var upCount: Int = 0
+    var downCount: Int = 0{
+        didSet{
+            setupCell()
+        }
+    }
     private let padding: Int = 7
     internal static let arrowAlpha: CGFloat = 0.7
-    var downCount: Int = 20
     
+    //MARK: - Initializers
     required override init(frame: CGRect) {
         super.init(frame: frame)
         pressAndHold.addTarget(self, action: #selector(self.longPress))
@@ -28,6 +34,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - Methods
     private func setupCell(){
         self.addSubview(photo)
         self.addSubview(cellTint)
@@ -119,7 +126,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     let photo: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        imageView.image = UIImage(named: "siberian-tiger-profile")
+        //imageView.image = UIImage(named: "siberian-tiger-profile")
         imageView.contentMode = .scaleToFill
         return imageView
     }()

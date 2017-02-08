@@ -15,12 +15,9 @@ import FirebaseAuth
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate, UITextFieldDelegate {
 
     //MARK: - Properties
-    
     var catagoryTitlesArr: [String] = ["ANIMALS", "BEACH DAYS" ,"CARS", "FLOWERS & PLANTS"]
-
     var photoAssetsArr: [PHAsset] = []
     let manager = PHImageManager.default()
-    
     var selectedCategory: String!
     var selectedImage: UIImage!
     
