@@ -15,17 +15,17 @@ class CategorySelectionTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.title = "CATEGORIES"
+        self.tabBarItem.title = ""
         self.tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.cellIdentifier)
         
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.showsVerticalScrollIndicator = false
+        tableView.backgroundColor = JashColors.primaryColor
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.title = "Categories"
-    }
-
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -44,10 +44,6 @@ class CategorySelectionTableViewController: UITableViewController {
         return cell
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle{
-        return .lightContent
-    }
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let navController = self.navigationController{
             let categoryController = CategoryPhotosCollectionViewController(collectionViewLayout: .init())
@@ -55,8 +51,14 @@ class CategorySelectionTableViewController: UITableViewController {
             backItem.title = " "
             navigationItem.backBarButtonItem = backItem
             categoryController.title = categories[indexPath.row]
+            categoryController.modalPresentationStyle = .popover
             navController.pushViewController(categoryController, animated: true)
         }
+    }
+    
+    //Sets status bar to white
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        return .lightContent
     }
 
 

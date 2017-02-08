@@ -30,18 +30,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let userIcon = UITabBarItem(title: "", image: UIImage(named: "user_icon")?.withRenderingMode(.alwaysTemplate), tag: 2)
     
         
-        
         categorySelectionTVC.tabBarItem = galleryIcon
         uploadVC.tabBarItem = cameraIcon
         logInVC.tabBarItem = userIcon
         
         let rootVCForCategorySelection = UINavigationController(rootViewController: categorySelectionTVC)
-        //let rootVCForUploadVC = UINavigationController(rootViewController: uploadVC)
+        let rootVCForUploadVC = UINavigationController(rootViewController: uploadVC)
         let rootVCForLogin = UINavigationController(rootViewController: logInVC)
         
-        tabController.viewControllers = [rootVCForCategorySelection, uploadVC, rootVCForLogin]
+        tabController.viewControllers = [rootVCForCategorySelection, rootVCForUploadVC, rootVCForLogin]
+        //let rootVCForUploadVC = UINavigationController(rootViewController: uploadVC)
+        
         tabController.tabBar.barTintColor = JashColors.lightPrimaryColor
-        tabController.tabBar.tintColor = JashColors.accentColor
+       // tabController.tabBar.tintColor = JashColors.accentColor
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
 
