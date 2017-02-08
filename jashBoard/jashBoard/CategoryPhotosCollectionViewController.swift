@@ -47,7 +47,7 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
             }
         })
         
-        //replace this
+        //replace this?
         cell.upCount = jashImage.votes.upvotes
         cell.downCount = jashImage.votes.downvotes
         
@@ -55,7 +55,6 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
     }
     
     // MARK: - Navigation
-    
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let jashImage = self.jashImages[indexPath.row]
         
@@ -71,7 +70,6 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
     }
     
     //MARK:- Utilities
-    
     private func setUpCollectionView(){
         self.collectionView!.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.cellIdentifier)
         let layout = UICollectionViewFlowLayout()
@@ -88,11 +86,11 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
         self.navigationController?.title = categoryTitle
     }
     
-    func loadPhotosArray() {
-        guard let category = self.title else { return }
+    private func loadPhotosArray() {
+        guard let category = self.title?.uppercased() else { return }
         let databaseReference = FIRDatabase.database().reference().child("\(category)")
         
-        databaseReference.observe(.value, with: { (snapshot) in
+        databaseReference.observeSingleEvent(of: .value, with: { (snapshot) in
             print("Number of pictures: \(snapshot.childrenCount)")
             
             let enumerator = snapshot.children
@@ -107,5 +105,4 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
             self.collectionView?.reloadData()
         })
     }
-
 }

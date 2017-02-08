@@ -15,9 +15,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     var jashImage: JashImage? = nil {
         didSet {
             self.upvoteCount = jashImage?.votes.upvotes
-            self.upvoteNumberLabel.text = String(upvoteCount)
             self.downvoteCount = jashImage?.votes.downvotes
-            self.downvoteNumberLabel.text = String(downvoteCount)
             
             guard let category = jashImage?.category else { return }
             guard let imageId = jashImage?.imageId else { return }
@@ -31,8 +29,20 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             })
         }
     }
-    var upvoteCount: Int!
-    var downvoteCount: Int!
+    var upvoteCount: Int? = nil {
+        willSet {
+            DispatchQueue.main.async {
+                self.upvoteNumberLabel.text = String(describing: newValue!)
+            }
+        }
+    }
+    var downvoteCount: Int? = nil {
+        willSet {
+            DispatchQueue.main.async {
+                self.downvoteNumberLabel.text = String(describing: newValue!)
+            }
+        }
+    }
     var selectedPhoto: UIImage!
     private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
     
@@ -40,7 +50,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupPlaceHolderCellInfo()
+        //setupPlaceHolderCellInfo()
         
         setupViewHierarchy()
         configureConstraints()
@@ -56,32 +66,33 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     
     // MARK: - Placeholder - TODO: Delete this when we have info
     
-    internal func setupPlaceHolderCellInfo() {
-        //self.votes = ["So and So voted up", "So and so voted down"]
-        self.selectedPhoto = UIImage(named: "siberian-tiger-profile")
-        self.upvoteCount = 0
-        self.downvoteCount = 0
+//    internal func setupPlaceHolderCellInfo() {
+//        //self.votes = ["So and So voted up", "So and so voted down"]
+//        self.selectedPhoto = UIImage(named: "siberian-tiger-profile")
+//        self.upvoteCount = 0
+//        self.downvoteCount = 0
+//    }
+    
+    internal func vote(sender: UIButton) {
+        guard let category = jashImage?.category,
+            let imageId = jashImage?.imageId else { return }
+        var databaseReference = FIRDatabase.database().reference()
+        
+        sender.tag == 100 ? (databaseReference = FIRDatabase.database().reference(withPath: "\(category)/\(imageId)/upvotes")) : (databaseReference = FIRDatabase.database().reference(withPath: "\(category)/\(imageId)/downvotes"))
+        
+        databaseReference.runTransactionBlock { (currentData: FIRMutableData) -> FIRTransactionResult in
+            if let x = currentData.value as? Int {
+                currentData.value = x + 1
+                
+                sender.tag == 100 ? (self.upvoteCount = currentData.value as? Int) : (self.downvoteCount = currentData.value as? Int)
+                
+                return FIRTransactionResult.success(withValue: currentData)
+            }
+            return FIRTransactionResult.success(withValue: currentData)
+        }
+        
     }
-    
-    //    func vote(imageId: String, flag: Bool) {
-    //        //hard-coded category but that will have to be changed with index path of collection/table view
-    //        var databaseReference = FIRDatabase.database().reference()
-    //
-    //        flag == true ? (databaseReference = FIRDatabase.database().reference(withPath: "CategoryA/\(imageId)/upvotes")) : (databaseReference = FIRDatabase.database().reference(withPath: "CategoryA/\(imageId)/downvotes"))
-    //
-    //        databaseReference.runTransactionBlock { (currentData: FIRMutableData) -> FIRTransactionResult in
-    //            var value = currentData.value as? Int
-    //
-    //            if value == nil {
-    //                value = 0
-    //            }
-    //
-    //            currentData.value = value! + 1
-    //
-    //            return FIRTransactionResult.success(withValue: currentData)
-    //        }
-    //    }
-    
+
     // MARK: - Setup
     private func setupViewHierarchy() {
         self.view.addSubview(photoImageView)
@@ -212,6 +223,9 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         button.tintColor = JashColors.accentColor
         button.backgroundColor = JashColors.darkPrimaryColor(alpha: 0.75)
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
+        button.tag = 100
+        button.addTarget(self, action: #selector(vote(sender:)), for: .touchUpInside)
+        
         return button
     }()
     
@@ -221,6 +235,9 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         button.tintColor = JashColors.accentColor
         button.backgroundColor = JashColors.darkPrimaryColor(alpha: 0.75)
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
+        button.tag = 101
+        button.addTarget(self, action: #selector(vote(sender:)), for: .touchUpInside)
+        
         return button
     }()
     
@@ -230,7 +247,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
         label.textColor = JashColors.accentColor
         label.backgroundColor = JashColors.primaryColor
-        label.text = String(self.upvoteCount)
+        label.text = String(describing: self.upvoteCount)
         label.textAlignment = .center
         return label
     }()
@@ -249,7 +266,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
         label.textColor = JashColors.accentColor
         label.backgroundColor = JashColors.primaryColor
-        label.text = String(self.downvoteCount)
+        label.text = String(describing: self.downvoteCount)
         label.textAlignment = .center
         return label
     }()

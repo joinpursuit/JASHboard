@@ -13,14 +13,10 @@ import Firebase
 import FirebaseAuth
 
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
-
     //MARK: - Properties
-    
     var catagoryTitlesArr: [String] = ["ANIMALS", "BEACH DAYS" ,"CARS", "FLOWERS & PLANTS"]
-
     var photoAssetsArr: [PHAsset] = []
     let manager = PHImageManager.default()
-    
     var selectedCategory: String!
     
     //MARK: - Methods
