@@ -9,15 +9,16 @@
 import UIKit
 import Firebase
 
-class LogInViewController: UIViewController {
-    
-    let testLogin: UITextField = UITextField()
+class LogInViewController: UIViewController{
+
     var signInUser: FIRUser?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "LOGIN/REGISTER"
+        self.tabBarItem.title = ""
         self.view.backgroundColor = JashColors.primaryColor
+
         setupViewHierarchy()
         configureConstraints()
         loginAnonymously()
@@ -170,14 +171,9 @@ class LogInViewController: UIViewController {
         let textField = UITextField()
         textField.textColor = .white
         textField.tintColor = .clear
-
-        textField.borderStyle = .bezel
-        textField.backgroundColor = UIColor.green
-        
+        textField.autocorrectionType = .no
         //our users will have to use email to log in so this is a small little ux change
         textField.keyboardType = .emailAddress
-        
-
        // textField.underLine(placeHolder: "Username")
 
         return textField
@@ -188,6 +184,7 @@ class LogInViewController: UIViewController {
         textField.textColor = .white
         textField.tintColor = .clear
         //textField.underLine(placeHolder: "Password")
+        textField.autocorrectionType = .no
         textField.isSecureTextEntry = true
         return textField
     }()

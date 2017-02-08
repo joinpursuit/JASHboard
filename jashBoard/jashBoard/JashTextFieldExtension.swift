@@ -21,7 +21,7 @@ extension UITextField{
         let width = CGFloat(2.0)
         
         self.snp.makeConstraints { (view) in
-            view.width.equalTo(300)
+            view.width.equalTo(350)
         }
         
         self.layoutIfNeeded()

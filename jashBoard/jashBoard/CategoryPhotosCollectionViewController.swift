@@ -47,6 +47,9 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
         if let navController = self.navigationController{
             let categoryController = IndividualPhotoViewController()
 //            categoryController.title = categories[indexPath.row]
+            let backItem = UIBarButtonItem()
+            backItem.title = " "
+            navigationItem.backBarButtonItem = backItem
             navController.pushViewController(categoryController, animated: true)
         }
     }
