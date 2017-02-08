@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CatagoryButtonInUploadCollectionViewCell: UICollectionViewCell {
+class CatagoryTapInUploadCollectionViewCell: UICollectionViewCell {
     static let identifier = "catagoryButtonInUploadCellIdentifier"
     
     override init(frame: CGRect) {

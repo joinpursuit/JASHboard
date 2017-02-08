@@ -23,9 +23,10 @@
 		4B3B72381E493FF700F42041 /* IndividualPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3B72371E493FF700F42041 /* IndividualPhotoViewController.swift */; };
 		4B44F2E21E4A2E7E00D7782A /* VoteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */; };
 		4B44F2E41E4A5C9600D7782A /* UserHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */; };
+		A73778AD1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73778AC1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift */; };
 		A751FDE01E49415400B53D1A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */; };
 		A751FDE21E49708700B53D1A /* PhotoUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */; };
-		A751FDE41E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A751FDE31E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift */; };
+		A751FDE41E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A751FDE31E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift */; };
 		E1270E7221A399C7EF7A5B20 /* Pods_jashBoard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4928526CB9318AFD7A23769 /* Pods_jashBoard.framework */; };
 /* End PBXBuildFile section */
 
@@ -50,9 +51,10 @@
 		4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoteTableViewCell.swift; sourceTree = "<group>"; };
 		4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserHomeViewController.swift; sourceTree = "<group>"; };
 		A4928526CB9318AFD7A23769 /* Pods_jashBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_jashBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A73778AC1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSelectedInUploadCollectionViewCell.swift; sourceTree = "<group>"; };
 		A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoUploadCollectionViewCell.swift; sourceTree = "<group>"; };
-		A751FDE31E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatagoryButtonInUploadCollectionViewCell.swift; sourceTree = "<group>"; };
+		A751FDE31E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatagoryTapInUploadCollectionViewCell.swift; sourceTree = "<group>"; };
 		F792D325396F289052B4E114 /* Pods-jashBoard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jashBoard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-jashBoard/Pods-jashBoard.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -145,6 +147,27 @@
 		4759A6B31E490D7F00F21794 /* jashBoard */ = {
 			isa = PBXGroup;
 			children = (
+				4759A6B41E490D7F00F21794 /* AppDelegate.swift */,
+				1AB285C91E497E3D00D9E34B /* JashTextField.swift */,
+				1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */,
+				1AB285CD1E4A42EC00D9E34B /* JashButton.swift */,
+				1AB285C61E49278000D9E34B /* Controllers */,
+				4B3B722A1E49180A00F42041 /* CategoryTableViewCell.swift */,
+				1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */,
+				4B3B72371E493FF700F42041 /* IndividualPhotoViewController.swift */,
+				4B3B722C1E49180A00F42041 /* UploadViewController.swift */,
+				A73778AC1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift */,
+				4B3B722B1E49180A00F42041 /* CategoryPhotosCollectionViewController.swift */,
+				A751FDE31E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift */,
+				A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */,
+				4B3B722D1E49180A00F42041 /* LogInViewController.swift */,
+				4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */,
+				4B3B72351E49351A00F42041 /* Utilities.swift */,
+				4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */,
+				4759A6BB1E490D7F00F21794 /* Assets.xcassets */,
+				4759A6BD1E490D7F00F21794 /* LaunchScreen.storyboard */,
+				4759A6C01E490D7F00F21794 /* Info.plist */,
+				A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */,
 				1AB285D11E4AF7DB00D9E34B /* Views */,
 				1AB285C61E49278000D9E34B /* View Controllers */,
 				1AB285D01E4AF7BC00D9E34B /* Controller Cells */,
@@ -289,12 +312,13 @@
 				4B3B722E1E49180A00F42041 /* CategorySelectionTableViewController.swift in Sources */,
 				1AB285CE1E4A42EC00D9E34B /* JashButton.swift in Sources */,
 				1AB285CA1E497E3D00D9E34B /* JashTextField.swift in Sources */,
-				A751FDE41E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift in Sources */,
+				A751FDE41E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift in Sources */,
 				4B44F2E21E4A2E7E00D7782A /* VoteTableViewCell.swift in Sources */,
 				4B3B72311E49180A00F42041 /* UploadViewController.swift in Sources */,
 				4B3B72361E49351A00F42041 /* Utilities.swift in Sources */,
 				4B3B72321E49180A00F42041 /* LogInViewController.swift in Sources */,
 				A751FDE21E49708700B53D1A /* PhotoUploadCollectionViewCell.swift in Sources */,
+				A73778AD1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift in Sources */,
 				1AB285CC1E4A2C3F00D9E34B /* JashTextFieldExtension.swift in Sources */,
 				4B3B72301E49180A00F42041 /* CategoryPhotosCollectionViewController.swift in Sources */,
 				4759A6B51E490D7F00F21794 /* AppDelegate.swift in Sources */,

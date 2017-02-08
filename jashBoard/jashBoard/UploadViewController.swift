@@ -12,7 +12,7 @@ import Photos
 import Firebase
 import FirebaseAuth
 
-class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITextFieldDelegate {
+class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate, UITextFieldDelegate {
 
     //MARK: - Properties
     
@@ -22,6 +22,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     let manager = PHImageManager.default()
     
     var selectedCategory: String!
+    var selectedImage: UIImage!
     
     //MARK: - Methods
     override func viewDidLoad() {
@@ -38,7 +39,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         //Register Cells
         self.imagePickerCollectionView.register(PhotoInUploadCollectionViewCell.self, forCellWithReuseIdentifier: PhotoInUploadCollectionViewCell.identifier)
-        self.categoryCollectionView.register(CatagoryButtonInUploadCollectionViewCell.self, forCellWithReuseIdentifier: CatagoryButtonInUploadCollectionViewCell.identifier)
+        self.categoryCollectionView.register(CatagoryTapInUploadCollectionViewCell.self, forCellWithReuseIdentifier: CatagoryTapInUploadCollectionViewCell.identifier)
+        self.imageSelectedWithPagingCollectionView.register(ImageSelectedInUploadCollectionViewCell.self, forCellWithReuseIdentifier: ImageSelectedInUploadCollectionViewCell.identifier)
         
         //Setup Navigation Bar
         self.navigationItem.rightBarButtonItem = uploadBarButton
@@ -85,7 +87,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let uploadMetadata = FIRStorageMetadata()
         uploadMetadata.contentType = "image/jpeg"
         
-        if let image = self.selectedImageView.image,
+        if let image = self.selectedImage,
             let imageData = UIImageJPEGRepresentation(image, 0.8) {
             
             let uploadTask = storageReference.put(imageData, metadata: uploadMetadata) { (metadata: FIRStorageMetadata?, error: Error?) in
@@ -128,9 +130,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             return self.photoAssetsArr.count
 
         case categoryCollectionView:
-
-
             return self.catagoryTitlesArr.count
+            
+        case imageSelectedWithPagingCollectionView:
+            return self.photoAssetsArr.count
+            
         default:
             return self.catagoryTitlesArr.count
         }
@@ -140,28 +144,32 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         switch collectionView {
         case imagePickerCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoInUploadCollectionViewCell.identifier, for: indexPath) as! PhotoInUploadCollectionViewCell
-            
             let photo = photoAssetsArr[indexPath.row]
-            
             manager.requestImage(for: photo, targetSize: cell.imageView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
                 cell.imageView.image = image
             })
-            
             cell.backgroundColor = .white
             return cell
+            
         case categoryCollectionView:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CatagoryButtonInUploadCollectionViewCell.identifier, for: indexPath) as! CatagoryButtonInUploadCollectionViewCell
-            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CatagoryTapInUploadCollectionViewCell.identifier, for: indexPath) as! CatagoryTapInUploadCollectionViewCell
             let catagoryTitle = catagoryTitlesArr[indexPath.row]
             cell.catagoryLabel.text = catagoryTitle
-
             return cell
-        default:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CatagoryButtonInUploadCollectionViewCell.identifier, for: indexPath) as! CatagoryButtonInUploadCollectionViewCell
             
+        case imageSelectedWithPagingCollectionView:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageSelectedInUploadCollectionViewCell.identifier, for: indexPath) as! ImageSelectedInUploadCollectionViewCell
+            let photo = photoAssetsArr[indexPath.row]
+            manager.requestImage(for: photo, targetSize: cell.imageView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
+                cell.imageView.image = image
+            })
+            cell.backgroundColor = UIColor.red
+            return cell
+            
+        default:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CatagoryTapInUploadCollectionViewCell.identifier, for: indexPath) as! CatagoryTapInUploadCollectionViewCell
             let catagoryTitle = catagoryTitlesArr[indexPath.row]
             cell.catagoryLabel.text = catagoryTitle
-            
             return cell
         }
     }
@@ -171,10 +179,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         case imagePickerCollectionView:
             print(photoAssetsArr[indexPath.row])
             let photo = photoAssetsArr[indexPath.row]
-            manager.requestImage(for: photo, targetSize: selectedImageView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
-                self.selectedImageView.image = image
+            self.imageSelectedWithPagingCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            manager.requestImage(for: photo, targetSize: imageSelectedWithPagingCollectionView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
+                //To Do: Need to update some logic
+                self.selectedImage = image
             })
-
         case categoryCollectionView:
             print(catagoryTitlesArr[indexPath.row])
             self.selectedCategory = catagoryTitlesArr[indexPath.row]
@@ -183,19 +192,90 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             for i in collectionView.indexPathsForSelectedItems! {
                 dump(collectionView.indexPathsForSelectedItems!)
                 collectionView.deselectItem(at: i, animated: true)
-                let deselectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryButtonInUploadCollectionViewCell
+                let deselectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryTapInUploadCollectionViewCell
                 deselectedCell.catagoryLabel.backgroundColor = JashColors.primaryColor
                 deselectedCell.catagoryLabel.textColor = JashColors.textAndIconColor
             }
             // Select cell and change label color
-            let selectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryButtonInUploadCollectionViewCell
+            let selectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryTapInUploadCollectionViewCell
             selectedCell.catagoryLabel.backgroundColor = JashColors.accentColor
             selectedCell.catagoryLabel.textColor = JashColors.textAndIconColor
+        
+        case imageSelectedWithPagingCollectionView:
+            print(photoAssetsArr[indexPath.row])
+            
         default:
             print(catagoryTitlesArr[indexPath.row])
         }
     }
     
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        switch collectionView {
+//        case imageSelectedWithPagingCollectionView:
+//            return CGSize(width: self.imageSelectedWithPagingCollectionView.frame.size.width, height: self.imageSelectedWithPagingCollectionView.frame.size.height)
+//        case imagePickerCollectionView:
+//            return CGSize(width: self.imagePickerCollectionView.frame.width, height: self.imagePickerCollectionView.frame.width)
+//        default:
+//            return CGSize(width: self.imageSelectedWithPagingCollectionView.frame.size.width, height: self.imageSelectedWithPagingCollectionView.frame.size.height)
+//        }
+//        
+//    }
+    
+    //http://stackoverflow.com/questions/33855945/uicollectionview-to-snap-onto-a-cell-when-scrolling-horizontally
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        switch scrollView {
+        case imageSelectedWithPagingCollectionView:
+            snapToNearestCell(scrollView)
+            print()
+        default:
+            print()
+        }
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        //switch scrollView {
+        //case imageSelectedWithPagingCollectionView:
+        //    snapToNearestCell(scrollView)
+        //    print()
+        //default:
+        //    print()
+        //}
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        switch scrollView {
+        case imageSelectedWithPagingCollectionView:
+            snapToNearestCell(scrollView)
+            print()
+        default:
+            print()
+        }
+    }
+    
+    func snapToNearestCell(_ scrollView: UIScrollView) {
+        let visibleCenterPositionOfScrollView: CGFloat = scrollView.contentOffset.x + self.imageSelectedWithPagingCollectionView.bounds.size.width
+        var closestCellIndex: Int?
+        for (index, item) in photoAssetsArr.enumerated() {
+            let indexPath = IndexPath(item: index, section: 0)
+            if let cell = imageSelectedWithPagingCollectionView.cellForItem(at: indexPath) as UICollectionViewCell? {
+                let cellWidth = cell.bounds.size.width
+                let cellCenter = cell.frame.origin.x + cellWidth / 2
+                if (visibleCenterPositionOfScrollView - cellCenter) <= (cellWidth) {
+                    closestCellIndex = photoAssetsArr.index(of: item)
+                }
+            }
+        }
+        if (closestCellIndex != nil) {
+            let indexPath = IndexPath(item: closestCellIndex!, section: 0)
+            self.imageSelectedWithPagingCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            print(photoAssetsArr[indexPath.row])
+            let photo = photoAssetsArr[indexPath.row]
+            manager.requestImage(for: photo, targetSize: imageSelectedWithPagingCollectionView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
+                self.selectedImage = image
+            })
+        }
+    }
+
     // MARK: - TextField Delegate Methods
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -225,7 +305,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.titleAndCatagoryContainerView.addSubview(self.catagoryContainerView)
         
         self.containerView.addSubview(self.titleAndCatagoryContainerView)
-        self.containerView.addSubview(self.selectedImageView)
+        //self.containerView.addSubview(self.selectedImageView)
+        self.containerView.addSubview(self.imageSelectedWithPagingCollectionView)
         self.containerView.addSubview(self.imagePickerContainerView)
         
 
@@ -276,16 +357,23 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             view.top.leading.trailing.bottom.equalToSuperview()
         }
         
-        //selectedImageView
-        selectedImageView.snp.makeConstraints { (view) in
+        //imageCollectionViewWithPagingContainerView
+        imageSelectedWithPagingCollectionView.snp.makeConstraints { (view) in
             view.top.equalTo(self.titleAndCatagoryContainerView.snp.bottom)
             view.leading.trailing.equalToSuperview()
             view.height.equalTo(self.view.frame.width)
         }
         
+        //selectedImageView
+//        selectedImageView.snp.makeConstraints { (view) in
+//            view.top.equalTo(self.titleAndCatagoryContainerView.snp.bottom)
+//            view.leading.trailing.equalToSuperview()
+//            view.height.equalTo(self.view.frame.width)
+//        }
+        
         //imagePickerCollectionView
         imagePickerContainerView.snp.makeConstraints { (view) in
-            view.top.equalTo(self.selectedImageView.snp.bottom)
+            view.top.equalTo(self.imageSelectedWithPagingCollectionView.snp.bottom)
             view.leading.trailing.bottom.equalToSuperview()
         }
         imagePickerCollectionView.snp.makeConstraints { (view) in
@@ -294,12 +382,26 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     //MARK: - lazy vars
+    // Navigation Bar and Item
+    lazy var navigationBar: UINavigationBar = {
+        let navBar = UINavigationBar()
+        navBar.backgroundColor = JashColors.primaryColor
+        return navBar
+    }()
+    
+    lazy var uploadBarButton: UIBarButtonItem =  {
+        let button = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed(_:)))
+        return button
+    }()
+    
+    // Container View Of all subViews
     lazy var containerView: UIView = {
         let view = UIView()
         view.backgroundColor = JashColors.primaryColor
         return view
     }()
     
+    // Title And Catagory
     lazy var titleAndCatagoryContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = JashColors.primaryColor
@@ -317,6 +419,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         return collectionView
     }()
     
+    // Catagory Collection View
     lazy var categoryCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -334,16 +437,32 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         return cView
     }()
     
-    lazy var selectedImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = #imageLiteral(resourceName: "default-placeholder")
-        imageView.backgroundColor = UIColor.orange
+    // ImageSelected Collection View
+    lazy var imageSelectedWithPagingCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.itemSize = CGSize(width: self.view.frame.width, height: self.view.frame.height)
+        layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 0
         
-        //aspect Fit/ Fill?
-        
-        return imageView
+        let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
+        cView.collectionViewLayout = layout
+        cView.isPagingEnabled = true
+        cView.delegate = self
+        cView.dataSource = self
+        return cView
     }()
     
+//    lazy var selectedImageView: UIImageView = {
+//        let imageView = UIImageView()
+//        imageView.image = #imageLiteral(resourceName: "default-placeholder")
+//        imageView.backgroundColor = UIColor.orange
+//        imageView.contentMode = .scaleAspectFill
+//        return imageView
+//    }()
+    
+    // Image Picker Container View
     lazy var imagePickerContainerView: UIView = {
         let collectionView = UIView()
         collectionView.backgroundColor = UIColor.clear
@@ -360,14 +479,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
         cView.collectionViewLayout = layout
+        cView.bounces = false
         cView.showsHorizontalScrollIndicator = false
         cView.delegate = self
         cView.dataSource = self
         return cView
     }()
     
-    lazy var uploadBarButton: UIBarButtonItem =  {
-        let button = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed(_:)))
-        return button
-    }()
 }
