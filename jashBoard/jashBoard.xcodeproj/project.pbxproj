@@ -11,6 +11,8 @@
 		1AB285CA1E497E3D00D9E34B /* JashTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285C91E497E3D00D9E34B /* JashTextField.swift */; };
 		1AB285CC1E4A2C3F00D9E34B /* JashTextFieldExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */; };
 		1AB285CE1E4A42EC00D9E34B /* JashButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285CD1E4A42EC00D9E34B /* JashButton.swift */; };
+		1AB285D51E4B80BA00D9E34B /* JashProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285D41E4B80BA00D9E34B /* JashProgressViewController.swift */; };
+		1AB285D71E4BC57800D9E34B /* PreviewPopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285D61E4BC57800D9E34B /* PreviewPopViewController.swift */; };
 		4759A6B51E490D7F00F21794 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4759A6B41E490D7F00F21794 /* AppDelegate.swift */; };
 		4759A6BC1E490D7F00F21794 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4759A6BB1E490D7F00F21794 /* Assets.xcassets */; };
 		4759A6BF1E490D7F00F21794 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4759A6BD1E490D7F00F21794 /* LaunchScreen.storyboard */; };
@@ -35,6 +37,8 @@
 		1AB285C91E497E3D00D9E34B /* JashTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashTextField.swift; sourceTree = "<group>"; };
 		1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashTextFieldExtension.swift; sourceTree = "<group>"; };
 		1AB285CD1E4A42EC00D9E34B /* JashButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashButton.swift; sourceTree = "<group>"; };
+		1AB285D41E4B80BA00D9E34B /* JashProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashProgressViewController.swift; sourceTree = "<group>"; };
+		1AB285D61E4BC57800D9E34B /* PreviewPopViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewPopViewController.swift; sourceTree = "<group>"; };
 		4759A6B11E490D7F00F21794 /* jashBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jashBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4759A6B41E490D7F00F21794 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4759A6BB1E490D7F00F21794 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -71,6 +75,8 @@
 		1AB285C61E49278000D9E34B /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				1AB285D61E4BC57800D9E34B /* PreviewPopViewController.swift */,
+				1AB285D41E4B80BA00D9E34B /* JashProgressViewController.swift */,
 				4B3B72371E493FF700F42041 /* IndividualPhotoViewController.swift */,
 				4B3B722B1E49180A00F42041 /* CategoryPhotosCollectionViewController.swift */,
 				4B3B72291E49180A00F42041 /* CategorySelectionTableViewController.swift */,
@@ -296,9 +302,11 @@
 				4B3B72321E49180A00F42041 /* LogInViewController.swift in Sources */,
 				A751FDE21E49708700B53D1A /* PhotoUploadCollectionViewCell.swift in Sources */,
 				1AB285CC1E4A2C3F00D9E34B /* JashTextFieldExtension.swift in Sources */,
+				1AB285D51E4B80BA00D9E34B /* JashProgressViewController.swift in Sources */,
 				4B3B72301E49180A00F42041 /* CategoryPhotosCollectionViewController.swift in Sources */,
 				4759A6B51E490D7F00F21794 /* AppDelegate.swift in Sources */,
 				1AB285C81E492D9F00D9E34B /* CategoryCollectionViewCell.swift in Sources */,
+				1AB285D71E4BC57800D9E34B /* PreviewPopViewController.swift in Sources */,
 				4B44F2E41E4A5C9600D7782A /* UserHomeViewController.swift in Sources */,
 				4B3B722F1E49180A00F42041 /* CategoryTableViewCell.swift in Sources */,
 			);

@@ -9,19 +9,27 @@
 import UIKit
 import SnapKit
 
+protocol JashCollectionViewCellDelegate{
+    func showPopUpWith(image: UIImage)
+    func hidePopUp()
+}
+
 class CategoryCollectionViewCell: UICollectionViewCell {
     static let cellIdentifier: String = "cellIdentifier"
+    let cellImage: UIImage = UIImage(named: "siberian-tiger-profile")!
     let pressAndHold :UILongPressGestureRecognizer = UILongPressGestureRecognizer()
     let upCount: Int = 20
     private let padding: Int = 7
     internal static let arrowAlpha: CGFloat = 0.7
     var downCount: Int = 20
+    var delegate: JashCollectionViewCellDelegate?
+    
     
     required override init(frame: CGRect) {
         super.init(frame: frame)
         pressAndHold.addTarget(self, action: #selector(self.longPress))
         pressAndHold.minimumPressDuration = 1
-         setupCell()
+        setupCell()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -36,10 +44,11 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         self.addSubview(downCountLabel)
         self.addSubview(upCountLabel)
         
-       // cellTint.addGestureRecognizer(pressAndHold)
-
+        cellTint.addGestureRecognizer(pressAndHold)
+        self.photo.image = cellImage
+        
         self.photo.snp.makeConstraints { (view) in
-          view.bottom.top.leading.trailing.equalToSuperview()
+            view.bottom.top.leading.trailing.equalToSuperview()
         }
         self.cellTint.snp.makeConstraints { (view) in
             view.bottom.top.leading.trailing.equalToSuperview()
@@ -70,17 +79,18 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         self.downCountLabel.text = String(downCount)
     }
     
-    //MARK: - Utilities 
+    //MARK: - Utilities
     
-    internal func longPress(){
+    internal func longPress(sender: UILongPressGestureRecognizer){
         print("Long Press")
-        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
         
-        animator.addAnimations{
-            self.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        switch sender.state{
+        case .began:
+            self.delegate?.showPopUpWith(image: cellImage)
+        default:
+            self.delegate?.hidePopUp()
+            
         }
-        
-        animator.startAnimation()
     }
     
     private let upCountLabel: UILabel = {
@@ -119,7 +129,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     let photo: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        imageView.image = UIImage(named: "siberian-tiger-profile")
+        // imageView.image = UIImage(named: "siberian-tiger-profile")
         imageView.contentMode = .scaleToFill
         return imageView
     }()

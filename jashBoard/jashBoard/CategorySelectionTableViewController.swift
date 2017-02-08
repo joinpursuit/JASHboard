@@ -51,7 +51,7 @@ class CategorySelectionTableViewController: UITableViewController {
             backItem.title = " "
             navigationItem.backBarButtonItem = backItem
             categoryController.title = categories[indexPath.row]
-            categoryController.modalPresentationStyle = .popover
+           // categoryController.modalPresentationStyle = .popover
             navController.pushViewController(categoryController, animated: true)
         }
     }

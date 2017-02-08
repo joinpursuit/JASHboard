@@ -10,7 +10,7 @@ import UIKit
 
 private let reuseIdentifier = "Cell"
 
-class CategoryPhotosCollectionViewController: UICollectionViewController {
+class CategoryPhotosCollectionViewController: UICollectionViewController,JashCollectionViewCellDelegate {
     var categoryTitle: String?
 
     override func viewDidLoad() {
@@ -37,6 +37,7 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
     
         // Configure the cell
         cell.downCount = 20
+        cell.delegate = self
     
         return cell
     }
@@ -70,6 +71,21 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
         collectionView?.collectionViewLayout = layout
        // self.navigationController?.hidesBarsOnSwipe = true
         self.navigationController?.title = categoryTitle
+    }
+    
+    //MARK: JashCollectionViewCell Delegate
+    
+    func showPopUpWith(image: UIImage) {
+        let popUp = PreviewPopViewController()
+        popUp.image = image
+        popUp.modalTransitionStyle = .crossDissolve
+        popUp.modalPresentationStyle = .overCurrentContext
+        
+        present(popUp, animated: true, completion: nil)
+    }
+    
+    func hidePopUp() {
+        dismiss(animated: true, completion: nil)
     }
 
 }
