@@ -209,18 +209,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
     }
     
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        switch collectionView {
-//        case imageSelectedWithPagingCollectionView:
-//            return CGSize(width: self.imageSelectedWithPagingCollectionView.frame.size.width, height: self.imageSelectedWithPagingCollectionView.frame.size.height)
-//        case imagePickerCollectionView:
-//            return CGSize(width: self.imagePickerCollectionView.frame.width, height: self.imagePickerCollectionView.frame.width)
-//        default:
-//            return CGSize(width: self.imageSelectedWithPagingCollectionView.frame.size.width, height: self.imageSelectedWithPagingCollectionView.frame.size.height)
-//        }
-//        
-//    }
-    
     //http://stackoverflow.com/questions/33855945/uicollectionview-to-snap-onto-a-cell-when-scrolling-horizontally
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         switch scrollView {
@@ -230,16 +218,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         default:
             print()
         }
-    }
-
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        //switch scrollView {
-        //case imageSelectedWithPagingCollectionView:
-        //    snapToNearestCell(scrollView)
-        //    print()
-        //default:
-        //    print()
-        //}
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -267,7 +245,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         if (closestCellIndex != nil) {
             let indexPath = IndexPath(item: closestCellIndex!, section: 0)
-            self.imageSelectedWithPagingCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
             print(photoAssetsArr[indexPath.row])
             let photo = photoAssetsArr[indexPath.row]
             manager.requestImage(for: photo, targetSize: imageSelectedWithPagingCollectionView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
@@ -305,7 +282,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.titleAndCatagoryContainerView.addSubview(self.catagoryContainerView)
         
         self.containerView.addSubview(self.titleAndCatagoryContainerView)
-        //self.containerView.addSubview(self.selectedImageView)
         self.containerView.addSubview(self.imageSelectedWithPagingCollectionView)
         self.containerView.addSubview(self.imagePickerContainerView)
         
@@ -363,13 +339,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             view.leading.trailing.equalToSuperview()
             view.height.equalTo(self.view.frame.width)
         }
-        
-        //selectedImageView
-//        selectedImageView.snp.makeConstraints { (view) in
-//            view.top.equalTo(self.titleAndCatagoryContainerView.snp.bottom)
-//            view.leading.trailing.equalToSuperview()
-//            view.height.equalTo(self.view.frame.width)
-//        }
         
         //imagePickerCollectionView
         imagePickerContainerView.snp.makeConstraints { (view) in
@@ -453,14 +422,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         cView.dataSource = self
         return cView
     }()
-    
-//    lazy var selectedImageView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.image = #imageLiteral(resourceName: "default-placeholder")
-//        imageView.backgroundColor = UIColor.orange
-//        imageView.contentMode = .scaleAspectFill
-//        return imageView
-//    }()
     
     // Image Picker Container View
     lazy var imagePickerContainerView: UIView = {
