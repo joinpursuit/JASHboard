@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class UserHomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
@@ -18,18 +19,19 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         super.viewDidLoad()
         
         setupPlaceHolderCellInfo()
-        
+
         setupViewHierarchy()
         configureConstraints()
         
+        // TableView and Collection View Delegates and DataSource
         tableView.delegate = self
         tableView.dataSource = self
         self.tableView.register(VoteTableViewCell.self, forCellReuseIdentifier: VoteTableViewCell.cellIdentifier)
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
-        
-        self.collectionView.register(PhotoInUploadCollectionViewCell.self, forCellWithReuseIdentifier: PhotoInUploadCollectionViewCell.identifier)
-        self.navigationItem.hidesBackButton = true
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(PhotoInUploadCollectionViewCell.self, forCellWithReuseIdentifier: PhotoInUploadCollectionViewCell.identifier)
     }
 
     // MARK: - Placeholder - TODO: Delete this when we have info
@@ -42,6 +44,8 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     // MARK: - Setup
     private func setupViewHierarchy() {
+        self.navigationItem.hidesBackButton = true
+        self.navigationItem.rightBarButtonItem  = logOutButton
         self.view.addSubview(photoImageView)
         self.view.addSubview(tableView)
         self.view.addSubview(collectionContainerView)
@@ -117,7 +121,31 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         return cell
     }
     
+    // MARK: - Actions
+    
+    func didTapLogout(sender: UIButton) {
+        
+        let firebaseAuth = FIRAuth.auth()
+        do {
+            try firebaseAuth?.signOut()
+            let alertController = UIAlertController(title: "Logged Out Successfully", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+            let okay = UIAlertAction(title: "Okay", style: .cancel) { _ in
+                self.navigationController?.popViewController(animated: true)
+            }
+            alertController.addAction(okay)
+            present(alertController, animated: true, completion: nil)
+        } catch let signOutError as NSError {
+            print ("Error signing out: %@", signOutError)
+        }
+    }
+    
     // MARK: - Views
+    
+    // logout button
+    internal lazy var logOutButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(self.didTapLogout(sender:)))
+        return button
+    }()
     
     // user image
     internal lazy var photoImageView: UIImageView = {
