@@ -57,6 +57,15 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 self.uploadBarButton.isEnabled = true
             }
         })
+        
+        //TapGesture
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        self.imageSelectedWithPagingCollectionView.addGestureRecognizer(tapGesture)
+    }
+    
+    // MARK: Tab Gesture Selector
+    func dismissKeyboard() {
+        self.titleTextfield.resignFirstResponder()
     }
     
     // MARK: - Functions
@@ -148,7 +157,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             manager.requestImage(for: photo, targetSize: cell.imageView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
                 cell.imageView.image = image
             })
-            cell.backgroundColor = .white
+            cell.backgroundColor = .clear
             return cell
             
         case categoryCollectionView:
@@ -163,7 +172,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             manager.requestImage(for: photo, targetSize: cell.imageView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
                 cell.imageView.image = image
             })
-            cell.backgroundColor = UIColor.red
+            cell.backgroundColor = UIColor.clear
             return cell
             
         default:
@@ -187,19 +196,21 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         case categoryCollectionView:
             print(catagoryTitlesArr[indexPath.row])
             self.selectedCategory = catagoryTitlesArr[indexPath.row]
-
-            // Deselect all cells
-            for i in collectionView.indexPathsForSelectedItems! {
-                dump(collectionView.indexPathsForSelectedItems!)
-                collectionView.deselectItem(at: i, animated: true)
-                let deselectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryTapInUploadCollectionViewCell
-                deselectedCell.catagoryLabel.backgroundColor = JashColors.primaryColor
-                deselectedCell.catagoryLabel.textColor = JashColors.textAndIconColor
-            }
-            // Select cell and change label color
+            
             let selectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryTapInUploadCollectionViewCell
+
+            // Reset not selected cells
+            for cell in collectionView.visibleCells {
+                if let categoryCell = cell as?  CatagoryTapInUploadCollectionViewCell, categoryCell != selectedCell {
+                    categoryCell.catagoryLabel.backgroundColor = JashColors.primaryColor
+                    categoryCell.catagoryLabel.textColor = JashColors.textAndIconColor
+                }
+            }
+            
+            // Update selected cell's label text color and background color
             selectedCell.catagoryLabel.backgroundColor = JashColors.accentColor
             selectedCell.catagoryLabel.textColor = JashColors.textAndIconColor
+            self.catagoryContainerView.reloadInputViews()
         
         case imageSelectedWithPagingCollectionView:
             print(photoAssetsArr[indexPath.row])
@@ -209,12 +220,12 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
     }
     
+    // MARK: - Scroll View Delegate Methods
     //http://stackoverflow.com/questions/33855945/uicollectionview-to-snap-onto-a-cell-when-scrolling-horizontally
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         switch scrollView {
         case imageSelectedWithPagingCollectionView:
             snapToNearestCell(scrollView)
-            print()
         default:
             print()
         }
@@ -224,7 +235,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         switch scrollView {
         case imageSelectedWithPagingCollectionView:
             snapToNearestCell(scrollView)
-            print()
         default:
             print()
         }
@@ -246,6 +256,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         if (closestCellIndex != nil) {
             let indexPath = IndexPath(item: closestCellIndex!, section: 0)
             print(photoAssetsArr[indexPath.row])
+            self.imagePickerCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+
             let photo = photoAssetsArr[indexPath.row]
             manager.requestImage(for: photo, targetSize: imageSelectedWithPagingCollectionView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
                 self.selectedImage = image
@@ -263,6 +275,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         if (textField.text?.isEmpty)! || textField.text == "" {
             textField.underLine(placeHolder: "Title")
         }
+        
+        textField.resignFirstResponder()
         return true
     }
 
@@ -273,7 +287,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     // MARK: - Setup View Hierarchy
     private func setupViewHierarchy() {
-        //self.view.addSubview(navigationBar)
         
         self.view.addSubview(containerView)
         self.view.addSubview(titleAndCatagoryContainerView)
@@ -294,13 +307,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     private func configureConstraints() {
         self.edgesForExtendedLayout = []
         
-        //navigationBar
-//        navigationBar.snp.makeConstraints { (bar) in
-//           // bar.top.equalTo(self.topLayoutGuide.snp.bottom)
-//            bar.leading.trailing.equalToSuperview()
-//            bar.leading.top.trailing.equalToSuperview()
-//        }
-//        
         //containerView
         containerView.snp.makeConstraints { (view) in
             view.top.equalTo(self.topLayoutGuide.snp.bottom)
@@ -352,12 +358,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     //MARK: - lazy vars
     // Navigation Bar and Item
-    lazy var navigationBar: UINavigationBar = {
-        let navBar = UINavigationBar()
-        navBar.backgroundColor = JashColors.primaryColor
-        return navBar
-    }()
-    
     lazy var uploadBarButton: UIBarButtonItem =  {
         let button = UIBarButtonItem(image: #imageLiteral(resourceName: "up_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(uploadPhotoToFireBaseButtonPressed(_:)))
         return button
@@ -442,6 +442,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         cView.collectionViewLayout = layout
         cView.bounces = false
         cView.showsHorizontalScrollIndicator = false
+        cView.isPagingEnabled = true
+        cView.allowsMultipleSelection = false
         cView.delegate = self
         cView.dataSource = self
         return cView
