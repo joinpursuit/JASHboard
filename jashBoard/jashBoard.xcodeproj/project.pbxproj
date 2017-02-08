@@ -68,12 +68,52 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1AB285C61E49278000D9E34B /* Controllers */ = {
+		1AB285C61E49278000D9E34B /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				4B3B72371E493FF700F42041 /* IndividualPhotoViewController.swift */,
+				4B3B722B1E49180A00F42041 /* CategoryPhotosCollectionViewController.swift */,
 				4B3B72291E49180A00F42041 /* CategorySelectionTableViewController.swift */,
+				4B3B722D1E49180A00F42041 /* LogInViewController.swift */,
+				4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */,
+				4B3B722C1E49180A00F42041 /* UploadViewController.swift */,
 			);
-			name = Controllers;
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		1AB285CF1E4AF78C00D9E34B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4B3B72351E49351A00F42041 /* Utilities.swift */,
+				4759A6B41E490D7F00F21794 /* AppDelegate.swift */,
+				4759A6BB1E490D7F00F21794 /* Assets.xcassets */,
+				4759A6BD1E490D7F00F21794 /* LaunchScreen.storyboard */,
+				4759A6C01E490D7F00F21794 /* Info.plist */,
+				A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1AB285D01E4AF7BC00D9E34B /* Controller Cells */ = {
+			isa = PBXGroup;
+			children = (
+				4B3B722A1E49180A00F42041 /* CategoryTableViewCell.swift */,
+				1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */,
+				A751FDE31E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift */,
+				A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */,
+				4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */,
+			);
+			name = "Controller Cells";
+			sourceTree = "<group>";
+		};
+		1AB285D11E4AF7DB00D9E34B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1AB285C91E497E3D00D9E34B /* JashTextField.swift */,
+				1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */,
+				1AB285CD1E4A42EC00D9E34B /* JashButton.swift */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 		3A42AEA7FB18B8D107C0A6FB /* Frameworks */ = {
@@ -105,26 +145,10 @@
 		4759A6B31E490D7F00F21794 /* jashBoard */ = {
 			isa = PBXGroup;
 			children = (
-				4759A6B41E490D7F00F21794 /* AppDelegate.swift */,
-				1AB285C91E497E3D00D9E34B /* JashTextField.swift */,
-				1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */,
-				1AB285CD1E4A42EC00D9E34B /* JashButton.swift */,
-				1AB285C61E49278000D9E34B /* Controllers */,
-				4B3B722A1E49180A00F42041 /* CategoryTableViewCell.swift */,
-				1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */,
-				4B3B72371E493FF700F42041 /* IndividualPhotoViewController.swift */,
-				4B3B722C1E49180A00F42041 /* UploadViewController.swift */,
-				4B3B722B1E49180A00F42041 /* CategoryPhotosCollectionViewController.swift */,
-				A751FDE31E4978C700B53D1A /* CatagoryButtonInUploadCollectionViewCell.swift */,
-				A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */,
-				4B3B722D1E49180A00F42041 /* LogInViewController.swift */,
-				4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */,
-				4B3B72351E49351A00F42041 /* Utilities.swift */,
-				4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */,
-				4759A6BB1E490D7F00F21794 /* Assets.xcassets */,
-				4759A6BD1E490D7F00F21794 /* LaunchScreen.storyboard */,
-				4759A6C01E490D7F00F21794 /* Info.plist */,
-				A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */,
+				1AB285D11E4AF7DB00D9E34B /* Views */,
+				1AB285C61E49278000D9E34B /* View Controllers */,
+				1AB285D01E4AF7BC00D9E34B /* Controller Cells */,
+				1AB285CF1E4AF78C00D9E34B /* Supporting Files */,
 			);
 			path = jashBoard;
 			sourceTree = "<group>";
