@@ -38,6 +38,7 @@ class VoteTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
     // MARK: - Setup
     private func setupViewHierarchy() {
         self.addSubview(photoImageView)
@@ -63,36 +64,7 @@ class VoteTableViewCell: UITableViewCell {
         }
     }
     
-    // MARK: - Views
-    
-    // Left Icon View
-    internal lazy var photoImageView: UIImageView = {
-        let imageView: UIImageView = UIImageView()
-//        imageView.image = self.imageIcon
-        imageView.contentMode = .scaleToFill
-        imageView.layer.borderWidth = 0.5
-        imageView.layer.borderColor = JashColors.primaryTextColor.cgColor
-        imageView.layer.cornerRadius = 20
-        imageView.clipsToBounds = true
-        return imageView
-    }()
-    
-    // Labels
-    internal lazy var voteDescriptionLabel: UILabel = {
-        let label = UILabel()
-        //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
-        label.textColor = JashColors.primaryTextColor
-//        label.text = self.voteDescription
-        return label
-    }()
-    
-    internal lazy var dateLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = JashColors.lightPrimaryColor
-        return label
-    }()
-    
+    // MARK: - Set labels
     func setDateLabel() {
         let formatter = DateFormatter()
         if formatter.calendar.isDateInToday(self.date!) {
@@ -113,4 +85,30 @@ class VoteTableViewCell: UITableViewCell {
     func setImageIcon() {
         photoImageView.image = self.imageIcon
     }
+    
+    // MARK: - Views
+
+    internal lazy var photoImageView: UIImageView = {
+        let imageView: UIImageView = UIImageView()
+        imageView.contentMode = .scaleToFill
+        imageView.layer.borderWidth = 0.5
+        imageView.layer.borderColor = JashColors.primaryTextColor.cgColor
+        imageView.layer.cornerRadius = 20
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    
+    internal lazy var voteDescriptionLabel: UILabel = {
+        let label = UILabel()
+        //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
+        label.textColor = JashColors.primaryTextColor
+        return label
+    }()
+    
+    internal lazy var dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.textColor = JashColors.lightPrimaryColor
+        return label
+    }()
 }
