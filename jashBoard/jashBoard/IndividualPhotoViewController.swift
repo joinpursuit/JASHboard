@@ -8,42 +8,18 @@
 
 import UIKit
 import SnapKit
-import Firebase
 
 class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    //MARK: - Properties
-    var jashImage: JashImage? = nil {
-        didSet {
-            self.upvoteCount = jashImage?.votes.upvotes
-            self.upvoteNumberLabel.text = String(upvoteCount)
-            self.downvoteCount = jashImage?.votes.downvotes
-            self.downvoteNumberLabel.text = String(downvoteCount)
-            
-            guard let category = jashImage?.category else { return }
-            guard let imageId = jashImage?.imageId else { return }
-            let storageReference = FIRStorage.storage().reference().child("\(category)/\(imageId)")
-            
-            //update picture
-            storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
-                DispatchQueue.main.async {
-                    self.photoImageView.image = UIImage(data: data!)
-                }
-            })
-        }
-    }
+    
+    var selectedPhoto: UIImage!
     var upvoteCount: Int!
     var downvoteCount: Int!
-    var selectedPhoto: UIImage!
+    var votes: [String]! // Would probably be type Vote
     
-
-    //MARK: - Methods
-
     private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //registerForNotifications()
         setupPlaceHolderCellInfo()
         
         setupViewHierarchy()
@@ -60,53 +36,12 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     
     // MARK: - Placeholder - TODO: Delete this when we have info
     
-    internal func setupPlaceHolderCellInfo() {                      
-        //self.votes = ["So and So voted up", "So and so voted down"]
+    internal func setupPlaceHolderCellInfo() {
+        self.votes = ["So and So voted up", "So and so voted down"]
         self.selectedPhoto = UIImage(named: "siberian-tiger-profile")
         self.upvoteCount = 0
         self.downvoteCount = 0
     }
-    
-
-    
-//    func updateWithJashImage(sender: Notification) {
-//        guard let jashObject = sender.object as? JashImage else {
-//            print("The Notification Center did not get this!")
-//            return
-//        }
-//        self.jashImage = jashObject
-//        dump(jashObject)
-//        
-//        let storageReference = FIRStorage.storage().reference().child("\(jashObject.category)/\(jashObject.imageId)")
-//
-//        storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
-//            DispatchQueue.main.async {
-//                //self.photoImageView.image = UIImage(data: data!)
-//                //self.selectedPhoto
-//                
-//            }
-//        })
-//
-//    }
-    
-//    func vote(imageId: String, flag: Bool) {
-//        //hard-coded category but that will have to be changed with index path of collection/table view
-//        var databaseReference = FIRDatabase.database().reference()
-//        
-//        flag == true ? (databaseReference = FIRDatabase.database().reference(withPath: "CategoryA/\(imageId)/upvotes")) : (databaseReference = FIRDatabase.database().reference(withPath: "CategoryA/\(imageId)/downvotes"))
-//        
-//        databaseReference.runTransactionBlock { (currentData: FIRMutableData) -> FIRTransactionResult in
-//            var value = currentData.value as? Int
-//            
-//            if value == nil {
-//                value = 0
-//            }
-//            
-//            currentData.value = value! + 1
-//            
-//            return FIRTransactionResult.success(withValue: currentData)
-//        }
-//    }
     
     // MARK: - Setup
     private func setupViewHierarchy() {
@@ -176,8 +111,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //return votes.count
-        return 2
+        return votes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -226,7 +160,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     internal lazy var photoImageView: UIImageView = {
         let image = self.selectedPhoto
         let imageView: UIImageView = UIImageView(image: image)
-        //let imageView: UIImageView = UIImageView(image: nil)
         imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true
         return imageView
@@ -239,8 +172,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         button.tintColor = JashColors.accentColor
         button.backgroundColor = JashColors.darkPrimaryColor(alpha: 0.75)
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
-        
-        //button.addTarget(self, action: #selector(), for: UIControlEvents.touchUpInside)
         return button
     }()
     
@@ -250,8 +181,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         button.tintColor = JashColors.accentColor
         button.backgroundColor = JashColors.darkPrimaryColor(alpha: 0.75)
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
-        
-        //button.addTarget(self, action: #selector(), for: UIControlEvents.touchUpInside)
         return button
     }()
     
