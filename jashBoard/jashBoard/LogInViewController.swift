@@ -127,6 +127,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     internal func didTapRegister(sender: UIButton) {
         guard let userName = usernameTextField.text,
             let password = passwordTextField.text else { return }
+        
         self.registerButton.isEnabled = false
         FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
             self.registerButton.isEnabled = true
@@ -137,6 +138,18 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
                 self.present(errorAlertController, animated: true, completion: nil)
             }
             guard let validUser = user else { return }
+            guard let newUser = FIRAuth.auth()?.currentUser else { return }
+            
+            //creating users for db
+            let uid = newUser.uid
+            let databaseReference = FIRDatabase.database().reference().child("USERS/\(uid)")
+            
+            let info: [String: AnyObject] = [
+                "name" : "Test" as AnyObject,
+                "email" : userName as AnyObject,
+            ]
+            databaseReference.setValue(info)
+            
             self.signInUser = validUser
             self.showUserHomeVC()
         })

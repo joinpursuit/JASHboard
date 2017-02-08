@@ -33,6 +33,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         willSet {
             DispatchQueue.main.async {
                 self.upvoteNumberLabel.text = String(describing: newValue!)
+                self.tableView.reloadData()
             }
         }
     }
@@ -40,11 +41,15 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         willSet {
             DispatchQueue.main.async {
                 self.downvoteNumberLabel.text = String(describing: newValue!)
+                self.tableView.reloadData()
             }
         }
     }
     var selectedPhoto: UIImage!
     private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
+    
+    //tracking votes and users concurrently
+    var votes: [(String, Bool)] = []
     
     //MARK: - Methods
     override func viewDidLoad() {
@@ -54,6 +59,8 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         
         setupViewHierarchy()
         configureConstraints()
+        
+        populateVotesArray()
         
         doubleTap.numberOfTapsRequired = 2
         doubleTap.addTarget(self, action: #selector(self.doubleTapImage))
@@ -66,12 +73,28 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     
     // MARK: - Placeholder - TODO: Delete this when we have info
     
-//    internal func setupPlaceHolderCellInfo() {
-//        //self.votes = ["So and So voted up", "So and so voted down"]
-//        self.selectedPhoto = UIImage(named: "siberian-tiger-profile")
-//        self.upvoteCount = 0
-//        self.downvoteCount = 0
-//    }
+    internal func populateVotesArray() {
+        guard let photoID = jashImage?.imageId else { return }
+        //guard let userEmail = FIRAuth.auth()?.currentUser?.email else { return }
+        
+        let databaseRef = FIRDatabase.database().reference(withPath: "USERS")
+        
+        databaseRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            let enumerator = snapshot.children
+            while let child = enumerator.nextObject() as? FIRDataSnapshot {
+                
+                let dictionary = child.value as! [String: AnyObject]
+                print(dictionary)
+                
+                if let photoVotes = dictionary["photoVotes"],
+                    let email = dictionary["email"],
+                    let voteResult = photoVotes[photoID] {
+                    self.votes.append((email as! String, voteResult as! Bool))
+                }
+            }
+            self.tableView.reloadData()
+        })
+    }
     
     internal func vote(sender: UIButton) {
         guard let category = jashImage?.category,
@@ -90,6 +113,13 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             }
             return FIRTransactionResult.success(withValue: currentData)
         }
+        
+        // Records how individual user voted
+        guard let userId = FIRAuth.auth()?.currentUser?.uid else { return }
+        
+        let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(userId)")
+        
+        sender.tag == 100 ? ( userDBReference.child("photoVotes").updateChildValues(["\(imageId)": true])) : (userDBReference.child("photoVotes").updateChildValues(["\(imageId)": false]))
         
     }
 
@@ -161,17 +191,19 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //return votes.count
-        return 2
+        return self.votes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
         
+        let vote = votes[indexPath.row]
+        
         // TO DO: Refactor to correct data
-        cell.voteDescription = "Ruth Lindsey voted up"
+        vote.1 == true ? (cell.voteDescription = "\(vote.0) voted up.") : (cell.voteDescription = "\(vote.0) voted down.")
         cell.imageIcon = UIImage(named: "siberian-tiger-profile")
         cell.date = Date()
+        
         return cell
     }
 

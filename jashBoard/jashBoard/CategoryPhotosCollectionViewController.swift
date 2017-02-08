@@ -43,7 +43,9 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
         storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
             
             DispatchQueue.main.async {
-                cell.photo.image = UIImage(data: data!)
+                if let data = data {
+                cell.photo.image = UIImage(data: data)
+                }
             }
         })
         
