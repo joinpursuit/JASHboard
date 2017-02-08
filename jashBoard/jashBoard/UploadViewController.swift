@@ -458,11 +458,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
         cView.collectionViewLayout = layout
-<<<<<<< HEAD
         cView.bounces = false
-=======
         cView.showsHorizontalScrollIndicator = false
->>>>>>> 7bc8551f36d5aed772497c52b6cf156c82c2d539
         cView.delegate = self
         cView.dataSource = self
         return cView
