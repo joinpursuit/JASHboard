@@ -26,7 +26,7 @@
 #endif
     
     
-@available(iOS 9.0, OSX 10.11, *)
+@available(iOS 9.0, *)
 public extension ConstraintLayoutGuide {
     
     public var snp: ConstraintLayoutGuideDSL {

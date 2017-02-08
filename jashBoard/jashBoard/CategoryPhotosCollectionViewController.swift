@@ -81,7 +81,14 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
         
         if let navController = self.navigationController{
             let categoryController = IndividualPhotoViewController()
+
             categoryController.jashImage = jashImage
+
+//            categoryController.title = categories[indexPath.row]
+            let backItem = UIBarButtonItem()
+            backItem.title = " "
+            navigationItem.backBarButtonItem = backItem
+
             navController.pushViewController(categoryController, animated: true)
             //notificationCenter.post(name: Notification.Name(rawValue: "message"), object: jashImage)
 //            navController.pushViewController(viewController: categoryController, animated: true, completion: {

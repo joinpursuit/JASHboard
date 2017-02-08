@@ -12,27 +12,30 @@ import SnapKit
 class VoteTableViewCell: UITableViewCell {
     static let cellIdentifier = "VoteCell"
     
-    var voteDescription: String!
-    var date: Date!
-    var imageIcon: UIImage!
+    var voteDescription: String? {
+        didSet{
+            setDescriptionLabel()
+        }
+    }
+    var date: Date? {
+        didSet{
+            setDateLabel()
+        }
+    }
+    var imageIcon: UIImage? {
+        didSet{
+            setImageIcon()
+        }
+    }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
-        setupPlaceHolderCellInfo()
         setupViewHierarchy()
         configureConstraints()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - Placeholder - TODO: Delete this when we have info
-    
-    internal func setupPlaceHolderCellInfo() {
-        self.date = Date()
-        self.voteDescription = "Ruth Lindsey voted up"
-        self.imageIcon = UIImage(named: "siberian-tiger-profile")
     }
     
     // MARK: - Setup
@@ -65,7 +68,7 @@ class VoteTableViewCell: UITableViewCell {
     // Left Icon View
     internal lazy var photoImageView: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        imageView.image = self.imageIcon
+//        imageView.image = self.imageIcon
         imageView.contentMode = .scaleToFill
         imageView.layer.borderWidth = 0.5
         imageView.layer.borderColor = JashColors.primaryTextColor.cgColor
@@ -79,7 +82,7 @@ class VoteTableViewCell: UITableViewCell {
         let label = UILabel()
         //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
         label.textColor = JashColors.primaryTextColor
-        label.text = self.voteDescription
+//        label.text = self.voteDescription
         return label
     }()
     
@@ -87,17 +90,27 @@ class VoteTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 13)
         label.textColor = JashColors.lightPrimaryColor
+        return label
+    }()
+    
+    func setDateLabel() {
         let formatter = DateFormatter()
-        
-        if formatter.calendar.isDateInToday(self.date) {
+        if formatter.calendar.isDateInToday(self.date!) {
             formatter.dateStyle = DateFormatter.Style.none
         } else {
             formatter.dateStyle = DateFormatter.Style.short
         }
-
+        
         formatter.timeStyle = .short
-        let dateString = formatter.string(from: self.date)
-        label.text = dateString
-        return label
-    }()
+        let dateString = formatter.string(from: self.date!)
+        dateLabel.text = dateString
+    }
+    
+    func setDescriptionLabel() {
+        voteDescriptionLabel.text = self.voteDescription!
+    }
+    
+    func setImageIcon() {
+        photoImageView.image = self.imageIcon
+    }
 }
