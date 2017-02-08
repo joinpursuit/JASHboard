@@ -119,7 +119,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     let photo: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        //imageView.image = UIImage(named: "siberian-tiger-profile")              //change this from static image
+        imageView.image = UIImage(named: "siberian-tiger-profile")
         imageView.contentMode = .scaleToFill
         return imageView
     }()
