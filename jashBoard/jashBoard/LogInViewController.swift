@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class LogInViewController: UIViewController{
+class LogInViewController: UIViewController, UITextFieldDelegate {
 
     var signInUser: FIRUser?
 
@@ -22,6 +22,10 @@ class LogInViewController: UIViewController{
         setupViewHierarchy()
         configureConstraints()
         loginAnonymously()
+        
+        // Textfield Delegate
+        usernameTextField.delegate = self
+        passwordTextField.delegate = self
     }
     
     // MARK: - Setup
@@ -75,6 +79,31 @@ class LogInViewController: UIViewController{
             view.width.equalTo(JashButton.defaultSize.width)
         }
     }
+    
+    
+    // MARK: - TextField Delegate Methods
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.placeholder = ""
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        if (textField.text?.isEmpty)! || textField.text == "" {
+            if textField == usernameTextField {
+                textField.underLine(placeHolder: "Username")
+            } else {
+                textField.underLine(placeHolder: "Password")
+            }
+        }
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return true
+    }
+    
+    // MARK: - Actions
     
     internal func didTapLogin(sender: UIButton) {
         guard let userName = usernameTextField.text,
