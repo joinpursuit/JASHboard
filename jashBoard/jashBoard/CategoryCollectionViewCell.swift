@@ -11,13 +11,21 @@ import SnapKit
 
 class CategoryCollectionViewCell: UICollectionViewCell {
     static let cellIdentifier: String = "cellIdentifier"
-    let upCount: Int = 20
+    let pressAndHold :UILongPressGestureRecognizer = UILongPressGestureRecognizer()
+    var upCount: Int = 20
     private let padding: Int = 7
     internal static let arrowAlpha: CGFloat = 0.7
-    var downCount: Int = 20{
-        didSet{
+    var downCount: Int = 20
+    
+    required override init(frame: CGRect) {
+        super.init(frame: frame)
+        pressAndHold.addTarget(self, action: #selector(self.longPress))
+        pressAndHold.minimumPressDuration = 1
          setupCell()
-        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setupCell(){
@@ -27,6 +35,8 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         self.addSubview(downvoteArrow)
         self.addSubview(downCountLabel)
         self.addSubview(upCountLabel)
+        
+       // cellTint.addGestureRecognizer(pressAndHold)
 
         self.photo.snp.makeConstraints { (view) in
           view.bottom.top.leading.trailing.equalToSuperview()
@@ -58,6 +68,19 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         
         self.upCountLabel.text = String(upCount)
         self.downCountLabel.text = String(downCount)
+    }
+    
+    //MARK: - Utilities 
+    
+    internal func longPress(){
+        print("Long Press")
+        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
+        
+        animator.addAnimations{
+            self.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        }
+        
+        animator.startAnimation()
     }
     
     private let upCountLabel: UILabel = {

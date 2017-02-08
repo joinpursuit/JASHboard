@@ -28,6 +28,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "UPLOAD"
+        self.tabBarItem.title = ""
         self.view.backgroundColor = JashColors.darkPrimaryColor
         
         setupViewHierarchy()
@@ -39,13 +40,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.imageSelectedWithPagingCollectionView.register(ImageSelectedInUploadCollectionViewCell.self, forCellWithReuseIdentifier: ImageSelectedInUploadCollectionViewCell.identifier)
         
         //Setup Navigation Bar
-        let navItem = UINavigationItem(title: "UPLOAD")
+        self.navigationItem.rightBarButtonItem = uploadBarButton
 
-        uploadBarButton.isEnabled = false
-
-        navItem.rightBarButtonItem = uploadBarButton
-        self.navigationBar.items = [navItem]
-        
         //Populate array with assets for imagePickerCollectionView
         fetchPhotos()
         
@@ -279,7 +275,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     // MARK: - Setup View Hierarchy
     private func setupViewHierarchy() {
-        self.view.addSubview(navigationBar)
+        //self.view.addSubview(navigationBar)
         
         self.view.addSubview(containerView)
         self.view.addSubview(titleAndCatagoryContainerView)
@@ -302,29 +298,30 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.edgesForExtendedLayout = []
         
         //navigationBar
-        navigationBar.snp.makeConstraints { (bar) in
-            bar.top.equalTo(self.topLayoutGuide.snp.bottom)
-            bar.leading.trailing.equalToSuperview()
-            //bar.leading.top.trailing.equalToSuperview()
-        }
-        
+//        navigationBar.snp.makeConstraints { (bar) in
+//           // bar.top.equalTo(self.topLayoutGuide.snp.bottom)
+//            bar.leading.trailing.equalToSuperview()
+//            bar.leading.top.trailing.equalToSuperview()
+//        }
+//        
         //containerView
         containerView.snp.makeConstraints { (view) in
-            view.top.equalTo(self.navigationBar.snp.bottom)
+            view.top.equalTo(self.topLayoutGuide.snp.bottom)
             view.leading.trailing.bottom.equalToSuperview()
         }
         
         //titleAndCatagoryContainerView's Subviews
-        //titleTextField
+
         titleTextfield.snp.makeConstraints { (textField) in
             textField.top.equalToSuperview().offset(16)
-            textField.leading.equalToSuperview().offset(16)
-            textField.trailing.equalToSuperview().inset(16)
+            textField.centerX.equalToSuperview()
+//            textField.trailing.equalToSuperview().inset(16)
         }
+        titleTextfield.underLine(placeHolder: "Title")
         //catagoryCollectionView
         catagoryContainerView.snp.makeConstraints { (collectionView) in
             collectionView.leading.trailing.equalToSuperview()
-            collectionView.top.equalTo(self.titleTextfield.snp.bottom)
+            collectionView.top.equalTo(self.titleTextfield.snp.bottom).offset(10)
             collectionView.bottom.equalToSuperview().inset(4)
             collectionView.height.equalTo(36.0)
         }
@@ -392,9 +389,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     lazy var titleTextfield: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "title"
-        textField.textColor = JashColors.accentColor
-        textField.backgroundColor = JashColors.primaryColor
         return textField
     }()
     
@@ -464,7 +458,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
         cView.collectionViewLayout = layout
+<<<<<<< HEAD
         cView.bounces = false
+=======
+        cView.showsHorizontalScrollIndicator = false
+>>>>>>> 7bc8551f36d5aed772497c52b6cf156c82c2d539
         cView.delegate = self
         cView.dataSource = self
         return cView
