@@ -106,15 +106,9 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Actions
     
     internal func didTapLogin(sender: UIButton) {
-
         guard let userName = usernameTextField.text,
             let password = passwordTextField.text else { return }
-        
-        // BUG: When it is clicked twice, it presents twice
-        // WHY CAN'T I DISABLE THE LOGIN BUTTON? IS IT BECAUSE IT'S TYPE JASH BUTTON?
         self.loginButton.isEnabled = false
-        self.loginButton.isUserInteractionEnabled = false
-        
         FIRAuth.auth()?.signIn(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
             if error != nil {
                 //print("Error present when login button is pressed")
@@ -125,18 +119,14 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             }
             guard let validUser = user else { return }
             self.signInUser = validUser
-            // Remains true so these lines don't matter... Uncomment when button is disable-able
-//            self.loginButton.isEnabled = true
-//            self.loginButton.isUserInteractionEnabled = true
+            self.loginButton.isEnabled = true
             self.showUserHomeVC()
         })
-
     }
     
     internal func didTapRegister(sender: UIButton) {
         guard let userName = usernameTextField.text,
             let password = passwordTextField.text else { return }
-        // SAME BUG AS ABOVE
         self.registerButton.isEnabled = false
         FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
             if error != nil {
@@ -147,8 +137,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             }
             guard let validUser = user else { return }
             self.signInUser = validUser
-            // Remains true so this line doesn't matter... Uncomment when button is disable-able
-//            self.registerButton.isEnabled = true
+            self.registerButton.isEnabled = true
             self.showUserHomeVC()
         })
     }
