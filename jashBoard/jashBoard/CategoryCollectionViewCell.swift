@@ -12,7 +12,7 @@ import SnapKit
 class CategoryCollectionViewCell: UICollectionViewCell {
     static let cellIdentifier: String = "cellIdentifier"
     let pressAndHold :UILongPressGestureRecognizer = UILongPressGestureRecognizer()
-    let upCount: Int = 20
+    var upCount: Int = 20
     private let padding: Int = 7
     internal static let arrowAlpha: CGFloat = 0.7
     var downCount: Int = 20
