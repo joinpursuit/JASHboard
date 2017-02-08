@@ -110,6 +110,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             let password = passwordTextField.text else { return }
         self.loginButton.isEnabled = false
         FIRAuth.auth()?.signIn(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
+            self.loginButton.isEnabled = true
             if error != nil {
                 //print("Error present when login button is pressed")
                 let errorAlertController = UIAlertController(title: "Login Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
@@ -119,7 +120,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             }
             guard let validUser = user else { return }
             self.signInUser = validUser
-            self.loginButton.isEnabled = true
             self.showUserHomeVC()
         })
     }
@@ -129,6 +129,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             let password = passwordTextField.text else { return }
         self.registerButton.isEnabled = false
         FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
+            self.registerButton.isEnabled = true
             if error != nil {
                 let errorAlertController = UIAlertController(title: "Registering Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
                 let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
@@ -137,7 +138,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             }
             guard let validUser = user else { return }
             self.signInUser = validUser
-            self.registerButton.isEnabled = true
             self.showUserHomeVC()
         })
     }
