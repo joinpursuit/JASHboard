@@ -118,14 +118,15 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             }
             guard let validUser = user else { return }
             self.signInUser = validUser
-            let logginAlertController = UIAlertController(title: "Logged In Successfully", message: nil, preferredStyle: UIAlertControllerStyle.alert)
-            let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
-            logginAlertController.addAction(okay)
-            self.present(logginAlertController, animated: true, completion: nil)
+            self.showUserHomeVC()
+//            let logginAlertController = UIAlertController(title: "Logged In Successfully", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+//            let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
+//            logginAlertController.addAction(okay)
+//            self.present(logginAlertController, animated: true, completion: nil)
             self.loginButton.setTitle("LOGOUT", for: UIControlState.normal)
             self.loginButton.addTarget(self, action: #selector(self.didTapLogout(sender:)), for: UIControlEvents.touchUpInside)
+
         })
-        self.showUserHomeVC()
     }
     
     internal func didTapRegister(sender: UIButton) {
@@ -138,8 +139,8 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             guard let validUser = user else { return }
             self.signInUser = validUser
             print("User is registered and now logged in.")
+            self.showUserHomeVC()
         })
-        self.showUserHomeVC()
     }
     
     private func loginAnonymously() {

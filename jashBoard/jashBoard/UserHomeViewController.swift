@@ -12,6 +12,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     var votes: [String]! // Would probably be type Vote
     var userPhoto: UIImage!
+    var userUploads: [UIImage]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +28,8 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
         
-        self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
+        self.collectionView.register(PhotoInUploadCollectionViewCell.self, forCellWithReuseIdentifier: PhotoInUploadCollectionViewCell.identifier)
+        self.navigationItem.hidesBackButton = true
     }
 
     // MARK: - Placeholder - TODO: Delete this when we have info
@@ -35,6 +37,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     internal func setupPlaceHolderCellInfo() {
         self.votes = ["You voted this photo up", "You voted this photo down"]
         self.userPhoto = UIImage(named: "siberian-tiger-profile")
+        self.userUploads = [self.userPhoto]
     }
     
     // MARK: - Setup
@@ -104,11 +107,13 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return votes.count
+        return userUploads.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoInUploadCollectionViewCell.identifier, for: indexPath) as! PhotoInUploadCollectionViewCell
+        let photo = userUploads[indexPath.row]
+        cell.imageView.image = photo
         return cell
     }
     
