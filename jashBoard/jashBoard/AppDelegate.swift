@@ -36,9 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         logInVC.tabBarItem = userIcon
         
         let rootVCForCategorySelection = UINavigationController(rootViewController: categorySelectionTVC)
-        //let rootVCForUploadVC = UINavigationController(rootViewController: uploadVC)
+        let rootVCForUploadVC = UINavigationController(rootViewController: uploadVC)
         
-        tabController.viewControllers = [rootVCForCategorySelection, uploadVC, logInVC]
+        tabController.viewControllers = [rootVCForCategorySelection, rootVCForUploadVC, logInVC]
         tabController.tabBar.barTintColor = JashColors.lightPrimaryColor
         tabController.tabBar.tintColor = JashColors.accentColor
         

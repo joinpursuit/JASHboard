@@ -16,6 +16,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     var downvoteCount: Int!
     var votes: [String]! // Would probably be type Vote
     
+    private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -24,6 +25,8 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         setupViewHierarchy()
         configureConstraints()
         
+        doubleTap.numberOfTapsRequired = 2
+        doubleTap.addTarget(self, action: #selector(self.doubleTapImage))
         tableView.delegate = self
         tableView.dataSource = self
         self.tableView.register(VoteTableViewCell.self, forCellReuseIdentifier: VoteTableViewCell.cellIdentifier)
@@ -48,6 +51,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         self.view.addSubview(upvoteNumberLabel)
         self.view.addSubview(downvoteNumberLabel)
         self.view.addSubview(tableView)
+        self.photoImageView.addSubview(upArrow)
     }
     
     private func configureConstraints() {
@@ -57,6 +61,8 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             view.top.leading.trailing.equalToSuperview()
             view.bottom.equalTo(self.view.snp.centerY)
         }
+       // photoImageView.isUserInteractionEnabled = true
+        photoImageView.addGestureRecognizer(doubleTap)
         
         // labels
         upvoteNumberLabel.snp.makeConstraints { (view) in
@@ -89,6 +95,13 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             view.bottom.leading.trailing.equalToSuperview()
             view.top.equalTo(self.view.snp.centerY)
         }
+        
+        //upArrow animation
+        
+        upArrow.snp.makeConstraints { (view) in
+            view.centerX.centerY.equalToSuperview()
+            view.size.equalTo(CGSize(width: 50, height: 50))
+        }
     }
     
     // MARK: - TableView Delegates
@@ -109,6 +122,29 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         return cell
     }
 
+    //MARK: Utilities
+    internal func doubleTapImage(){
+        let animator :UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
+        
+        self.photoImageView.isUserInteractionEnabled = false
+        animator.addAnimations {
+            self.upArrow.alpha = 0.7
+            self.upArrow.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        }
+        animator.addAnimations({
+            self.upArrow.transform = CGAffineTransform(translationX: 0, y: -300)
+        }, delayFactor: 0.5)
+        
+        animator.addCompletion { (postion) in
+            if postion == .end{
+                self.upArrow.alpha = 0
+                self.upArrow.transform = CGAffineTransform.identity
+                self.photoImageView.isUserInteractionEnabled = true
+            }
+        }
+        
+        animator.startAnimation()
+    }
 
     // MARK: - Views
     
@@ -123,6 +159,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         let image = self.selectedPhoto
         let imageView: UIImageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
@@ -154,6 +191,15 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         label.text = String(self.upvoteCount)
         label.textAlignment = .center
         return label
+    }()
+    
+    internal let upArrow: UIImageView = {
+        let imageView: UIImageView = UIImageView()
+        imageView.image = UIImage(named: "up_arrow")
+        imageView.image = imageView.image!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+        imageView.tintColor = .white
+        imageView.alpha = 0
+        return imageView
     }()
     
     internal lazy var downvoteNumberLabel: UILabel = {
