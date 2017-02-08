@@ -117,8 +117,10 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
         
-//        cell.categoryTitleLabel.text = categories[indexPath.row]
-        
+        // TO DO: Refactor to correct data
+        cell.voteDescription = "Ruth Lindsey voted up"
+        cell.imageIcon = UIImage(named: "siberian-tiger-profile")
+        cell.date = Date()
         return cell
     }
 
