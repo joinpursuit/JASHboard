@@ -11,7 +11,7 @@ import SnapKit
 
 class CategoryCollectionViewCell: UICollectionViewCell {
     static let cellIdentifier: String = "cellIdentifier"
-    let upCount: Int = 20
+    var upCount: Int = 20
     private let padding: Int = 7
     internal static let arrowAlpha: CGFloat = 0.7
     var downCount: Int = 20{
@@ -96,7 +96,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     let photo: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        imageView.image = UIImage(named: "siberian-tiger-profile")
+        //imageView.image = UIImage(named: "siberian-tiger-profile")              //change this from static image
         imageView.contentMode = .scaleToFill
         return imageView
     }()

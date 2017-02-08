@@ -6,7 +6,7 @@ target 'jashBoard' do
   use_frameworks!
 
   # Pods for jashBoard
-  pod 'SnapKit', '~> 3.1'
+  pod 'SnapKit'
   pod 'Firebase', '~> 3.12'
   pod 'FirebaseAuth', '~> 3.1'
   pod 'FirebaseStorage', '~> 1.0'
