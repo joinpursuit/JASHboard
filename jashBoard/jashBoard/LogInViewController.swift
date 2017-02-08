@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class LogInViewController: UIViewController{
+class LogInViewController: UIViewController, UITextFieldDelegate {
 
     var signInUser: FIRUser?
 
@@ -22,6 +22,10 @@ class LogInViewController: UIViewController{
         setupViewHierarchy()
         configureConstraints()
         loginAnonymously()
+        
+        // Textfield Delegate
+        usernameTextField.delegate = self
+        passwordTextField.delegate = self
     }
     
     // MARK: - Setup
@@ -76,41 +80,77 @@ class LogInViewController: UIViewController{
         }
     }
     
+    
+    // MARK: - TextField Delegate Methods
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.placeholder = ""
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        if (textField.text?.isEmpty)! || textField.text == "" {
+            if textField == usernameTextField {
+                textField.underLine(placeHolder: "Username")
+            } else {
+                textField.underLine(placeHolder: "Password")
+            }
+        }
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return true
+    }
+    
+    // MARK: - Actions
+    
     internal func didTapLogin(sender: UIButton) {
+
         guard let userName = usernameTextField.text,
             let password = passwordTextField.text else { return }
+        
+        // BUG: When it is clicked twice, it presents twice
+        // WHY CAN'T I DISABLE THE LOGIN BUTTON? IS IT BECAUSE IT'S TYPE JASH BUTTON?
+        self.loginButton.isEnabled = false
+        self.loginButton.isUserInteractionEnabled = false
+        
         FIRAuth.auth()?.signIn(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
             if error != nil {
-                print("Error present when login button is pressed")
-                let errorAlertController = UIAlertController(title: "User Not Present", message: "Please register first", preferredStyle: UIAlertControllerStyle.alert)
+                //print("Error present when login button is pressed")
+                let errorAlertController = UIAlertController(title: "Login Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
                 let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
                 errorAlertController.addAction(okay)
                 self.present(errorAlertController, animated: true, completion: nil)
             }
             guard let validUser = user else { return }
             self.signInUser = validUser
-            let logginAlertController = UIAlertController(title: "Logged In Successfully", message: nil, preferredStyle: UIAlertControllerStyle.alert)
-            let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
-            logginAlertController.addAction(okay)
-            self.present(logginAlertController, animated: true, completion: nil)
-            self.loginButton.setTitle("LOGOUT", for: UIControlState.normal)
-            self.loginButton.addTarget(self, action: #selector(self.didTapLogout(sender:)), for: UIControlEvents.touchUpInside)
+            // Remains true so these lines don't matter... Uncomment when button is disable-able
+//            self.loginButton.isEnabled = true
+//            self.loginButton.isUserInteractionEnabled = true
+            self.showUserHomeVC()
         })
-        self.showUserHomeVC()
+
     }
     
     internal func didTapRegister(sender: UIButton) {
         guard let userName = usernameTextField.text,
             let password = passwordTextField.text else { return }
+        // SAME BUG AS ABOVE
+        self.registerButton.isEnabled = false
         FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
             if error != nil {
-                print("Error present when register button is pressed")
+                let errorAlertController = UIAlertController(title: "Registering Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+                let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
+                errorAlertController.addAction(okay)
+                self.present(errorAlertController, animated: true, completion: nil)
             }
             guard let validUser = user else { return }
             self.signInUser = validUser
-            print("User is registered and now logged in.")
+            // Remains true so this line doesn't matter... Uncomment when button is disable-able
+//            self.registerButton.isEnabled = true
+            self.showUserHomeVC()
         })
-        self.showUserHomeVC()
     }
     
     private func loginAnonymously() {
@@ -125,21 +165,6 @@ class LogInViewController: UIViewController{
         })
     }
     
-    func didTapLogout(sender: UIButton) {
-        let firebaseAuth = FIRAuth.auth()
-        do {
-            try firebaseAuth?.signOut()
-            let alertController = UIAlertController(title: "Logged Out Successfully", message: nil, preferredStyle: UIAlertControllerStyle.alert)
-            let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
-            alertController.addAction(okay)
-            present(alertController, animated: true, completion: nil)
-            
-            self.loginButton.setTitle("LOGIN", for: UIControlState.normal)
-            self.loginButton.addTarget(self, action: #selector(didTapLogin(sender:)), for: UIControlEvents.touchUpInside)
-        } catch let signOutError as NSError {
-            print ("Error signing out: %@", signOutError)
-        }
-    }
     
     // MARK: - Navigation
 

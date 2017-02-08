@@ -7,27 +7,31 @@
 //
 
 import UIKit
+import Firebase
 
 class UserHomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var votes: [String]! // Would probably be type Vote
     var userPhoto: UIImage!
+    var userUploads: [UIImage]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupPlaceHolderCellInfo()
-        
+
         setupViewHierarchy()
         configureConstraints()
         
+        // TableView and Collection View Delegates and DataSource
         tableView.delegate = self
         tableView.dataSource = self
         self.tableView.register(VoteTableViewCell.self, forCellReuseIdentifier: VoteTableViewCell.cellIdentifier)
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
-        
-        self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(PhotoInUploadCollectionViewCell.self, forCellWithReuseIdentifier: PhotoInUploadCollectionViewCell.identifier)
     }
 
     // MARK: - Placeholder - TODO: Delete this when we have info
@@ -35,10 +39,13 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     internal func setupPlaceHolderCellInfo() {
         self.votes = ["You voted this photo up", "You voted this photo down"]
         self.userPhoto = UIImage(named: "siberian-tiger-profile")
+        self.userUploads = [self.userPhoto]
     }
     
     // MARK: - Setup
     private func setupViewHierarchy() {
+        self.navigationItem.hidesBackButton = true
+        self.navigationItem.rightBarButtonItem  = logOutButton
         self.view.addSubview(photoImageView)
         self.view.addSubview(tableView)
         self.view.addSubview(collectionContainerView)
@@ -104,15 +111,41 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return votes.count
+        return userUploads.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoInUploadCollectionViewCell.identifier, for: indexPath) as! PhotoInUploadCollectionViewCell
+        let photo = userUploads[indexPath.row]
+        cell.imageView.image = photo
         return cell
     }
     
+    // MARK: - Actions
+    
+    func didTapLogout(sender: UIButton) {
+        
+        let firebaseAuth = FIRAuth.auth()
+        do {
+            try firebaseAuth?.signOut()
+            let alertController = UIAlertController(title: "Logged Out Successfully", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+            let okay = UIAlertAction(title: "Okay", style: .cancel) { _ in
+                self.navigationController?.popViewController(animated: true)
+            }
+            alertController.addAction(okay)
+            present(alertController, animated: true, completion: nil)
+        } catch let signOutError as NSError {
+            print ("Error signing out: %@", signOutError)
+        }
+    }
+    
     // MARK: - Views
+    
+    // logout button
+    internal lazy var logOutButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(self.didTapLogout(sender:)))
+        return button
+    }()
     
     // user image
     internal lazy var photoImageView: UIImageView = {

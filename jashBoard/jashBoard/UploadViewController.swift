@@ -12,7 +12,7 @@ import Photos
 import Firebase
 import FirebaseAuth
 
-class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate {
+class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate, UITextFieldDelegate {
 
     //MARK: - Properties
     
@@ -33,6 +33,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         setupViewHierarchy()
         configureConstraints()
+        
+        // Textfield Delegate
+        titleTextfield.delegate = self
         
         //Register Cells
         self.imagePickerCollectionView.register(PhotoInUploadCollectionViewCell.self, forCellWithReuseIdentifier: PhotoInUploadCollectionViewCell.identifier)
@@ -271,6 +274,24 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 self.selectedImage = image
             })
         }
+    }
+
+    // MARK: - TextField Delegate Methods
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.placeholder = ""
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        if (textField.text?.isEmpty)! || textField.text == "" {
+            textField.underLine(placeHolder: "Title")
+        }
+        return true
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return true
     }
     
     // MARK: - Setup View Hierarchy
