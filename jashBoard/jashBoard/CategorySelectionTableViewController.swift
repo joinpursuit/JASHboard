@@ -9,9 +9,10 @@
 import UIKit
 
 class CategorySelectionTableViewController: UITableViewController {
-
+    //MARK: - Properties
     var categories = ["Animals", "Beach Days", "Flowers & Plants"]
     
+    //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -25,9 +26,7 @@ class CategorySelectionTableViewController: UITableViewController {
         tableView.backgroundColor = JashColors.primaryColor
     }
     
-    
     // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }

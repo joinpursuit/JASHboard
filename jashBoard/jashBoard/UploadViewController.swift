@@ -15,12 +15,9 @@ import FirebaseAuth
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate, UITextFieldDelegate {
 
     //MARK: - Properties
-    
     var catagoryTitlesArr: [String] = ["ANIMALS", "BEACH DAYS" ,"CARS", "FLOWERS & PLANTS"]
-
     var photoAssetsArr: [PHAsset] = []
     let manager = PHImageManager.default()
-    
     var selectedCategory: String!
     var selectedImage: UIImage!
     
@@ -85,10 +82,18 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let newItemReference = databaseReference.childByAutoId()
         let id = newItemReference.key
         
+        guard let userId = FIRAuth.auth()?.currentUser?.uid else { return }
+        
+        let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(userId)")
+        
+        userDBReference.child("uploads").updateChildValues(["\(id)": category])
+        
+
         let newItemDetails: [String : AnyObject] = [
             "upvotes" : 0 as AnyObject,
             "downvotes" : 0 as AnyObject
         ]
+        
         newItemReference.setValue(newItemDetails)
         
         //update storage
@@ -107,12 +112,13 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     print("Upload complete: \(metadata)")
                     print("HERE'S YOUR DOWNLOAD URL: \(metadata?.downloadURL())")
                 }
+                
+                
             }
         }
         //Update the progress bar
 //        uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
 //            guard let progress = snapshot.progress else { return }
-//            
 //            self.progressView.progress = Float(progress.fractionCompleted)
 //        }
     }

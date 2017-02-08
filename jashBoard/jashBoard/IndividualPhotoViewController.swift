@@ -8,22 +8,59 @@
 
 import UIKit
 import SnapKit
+import Firebase
 
 class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+    //MARK: - Properties
+    var jashImage: JashImage? = nil {
+        didSet {
+            self.upvoteCount = jashImage?.votes.upvotes
+            self.downvoteCount = jashImage?.votes.downvotes
+            
+            guard let category = jashImage?.category else { return }
+            guard let imageId = jashImage?.imageId else { return }
+            let storageReference = FIRStorage.storage().reference().child("\(category)/\(imageId)")
+            
+            //update picture
+            storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
+                DispatchQueue.main.async {
+                    self.photoImageView.image = UIImage(data: data!)
+                }
+            })
+        }
+    }
+    var upvoteCount: Int? = nil {
+        willSet {
+            DispatchQueue.main.async {
+                self.upvoteNumberLabel.text = String(describing: newValue!)
+                self.tableView.reloadData()
+            }
+        }
+    }
+    var downvoteCount: Int? = nil {
+        willSet {
+            DispatchQueue.main.async {
+                self.downvoteNumberLabel.text = String(describing: newValue!)
+                self.tableView.reloadData()
+            }
+        }
+    }
     var selectedPhoto: UIImage!
-    var upvoteCount: Int!
-    var downvoteCount: Int!
-    var votes: [String]! // Would probably be type Vote
-    
     private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
+    
+    //tracking votes and users concurrently
+    var votes: [(String, Bool)] = []
+    
+    //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupPlaceHolderCellInfo()
+        //setupPlaceHolderCellInfo()
         
         setupViewHierarchy()
         configureConstraints()
+        
+        populateVotesArray()
         
         doubleTap.numberOfTapsRequired = 2
         doubleTap.addTarget(self, action: #selector(self.doubleTapImage))
@@ -36,13 +73,56 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     
     // MARK: - Placeholder - TODO: Delete this when we have info
     
-    internal func setupPlaceHolderCellInfo() {
-        self.votes = ["So and So voted up", "So and so voted down"]
-        self.selectedPhoto = UIImage(named: "siberian-tiger-profile")
-        self.upvoteCount = 0
-        self.downvoteCount = 0
+    internal func populateVotesArray() {
+        guard let photoID = jashImage?.imageId else { return }
+        //guard let userEmail = FIRAuth.auth()?.currentUser?.email else { return }
+        
+        let databaseRef = FIRDatabase.database().reference(withPath: "USERS")
+        
+        databaseRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            let enumerator = snapshot.children
+            while let child = enumerator.nextObject() as? FIRDataSnapshot {
+                
+                let dictionary = child.value as! [String: AnyObject]
+                print(dictionary)
+                
+                if let photoVotes = dictionary["photoVotes"],
+                    let email = dictionary["email"],
+                    let voteResult = photoVotes[photoID] {
+                    self.votes.append((email as! String, voteResult as! Bool))
+                }
+            }
+            self.tableView.reloadData()
+        })
     }
     
+    internal func vote(sender: UIButton) {
+        guard let category = jashImage?.category,
+            let imageId = jashImage?.imageId else { return }
+        var databaseReference = FIRDatabase.database().reference()
+        
+        sender.tag == 100 ? (databaseReference = FIRDatabase.database().reference(withPath: "\(category)/\(imageId)/upvotes")) : (databaseReference = FIRDatabase.database().reference(withPath: "\(category)/\(imageId)/downvotes"))
+        
+        databaseReference.runTransactionBlock { (currentData: FIRMutableData) -> FIRTransactionResult in
+            if let x = currentData.value as? Int {
+                currentData.value = x + 1
+                
+                sender.tag == 100 ? (self.upvoteCount = currentData.value as? Int) : (self.downvoteCount = currentData.value as? Int)
+                
+                return FIRTransactionResult.success(withValue: currentData)
+            }
+            return FIRTransactionResult.success(withValue: currentData)
+        }
+        
+        // Records how individual user voted
+        guard let userId = FIRAuth.auth()?.currentUser?.uid else { return }
+        
+        let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(userId)")
+        
+        sender.tag == 100 ? ( userDBReference.child("photoVotes").updateChildValues(["\(imageId)": true])) : (userDBReference.child("photoVotes").updateChildValues(["\(imageId)": false]))
+        
+    }
+
     // MARK: - Setup
     private func setupViewHierarchy() {
         self.view.addSubview(photoImageView)
@@ -111,16 +191,19 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return votes.count
+        return self.votes.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
         
+        let vote = votes[indexPath.row]
+        
         // TO DO: Refactor to correct data
-        cell.voteDescription = "Ruth Lindsey voted up"
+        vote.1 == true ? (cell.voteDescription = "\(vote.0) voted up.") : (cell.voteDescription = "\(vote.0) voted down.")
         cell.imageIcon = UIImage(named: "siberian-tiger-profile")
         cell.date = Date()
+        
         return cell
     }
 
@@ -172,6 +255,9 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         button.tintColor = JashColors.accentColor
         button.backgroundColor = JashColors.darkPrimaryColor(alpha: 0.75)
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
+        button.tag = 100
+        button.addTarget(self, action: #selector(vote(sender:)), for: .touchUpInside)
+        
         return button
     }()
     
@@ -181,6 +267,9 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         button.tintColor = JashColors.accentColor
         button.backgroundColor = JashColors.darkPrimaryColor(alpha: 0.75)
         button.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
+        button.tag = 101
+        button.addTarget(self, action: #selector(vote(sender:)), for: .touchUpInside)
+        
         return button
     }()
     
@@ -190,7 +279,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
         label.textColor = JashColors.accentColor
         label.backgroundColor = JashColors.primaryColor
-        label.text = String(self.upvoteCount)
+        label.text = String(describing: self.upvoteCount)
         label.textAlignment = .center
         return label
     }()
@@ -209,7 +298,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
         label.textColor = JashColors.accentColor
         label.backgroundColor = JashColors.primaryColor
-        label.text = String(self.downvoteCount)
+        label.text = String(describing: self.downvoteCount)
         label.textAlignment = .center
         return label
     }()

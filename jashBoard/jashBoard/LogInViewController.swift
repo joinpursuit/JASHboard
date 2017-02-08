@@ -132,16 +132,11 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Actions
     
     internal func didTapLogin(sender: UIButton) {
-
         guard let userName = usernameTextField.text,
             let password = passwordTextField.text else { return }
-        
-        // BUG: When it is clicked twice, it presents twice
-        // WHY CAN'T I DISABLE THE LOGIN BUTTON? IS IT BECAUSE IT'S TYPE JASH BUTTON?
         self.loginButton.isEnabled = false
-        self.loginButton.isUserInteractionEnabled = false
-        
         FIRAuth.auth()?.signIn(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
+            self.loginButton.isEnabled = true
             if error != nil {
                 //print("Error present when login button is pressed")
                 let errorAlertController = UIAlertController(title: "Login Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
@@ -151,15 +146,12 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             }
             guard let validUser = user else { return }
             self.signInUser = validUser
-            // Remains true so these lines don't matter... Uncomment when button is disable-able
-//            self.loginButton.isEnabled = true
-//            self.loginButton.isUserInteractionEnabled = true
             self.showUserHomeVC()
         })
-
     }
     
     internal func didTapRegister(sender: UIButton) {
+
         let registerNewUserViewController = RegisterNewUserViewController()
         self.navigationController?.pushViewController(registerNewUserViewController, animated: true)
         
@@ -180,6 +172,35 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
 ////            self.registerButton.isEnabled = true
 //            self.showUserHomeVC()
 //        })
+        
+        guard let userName = usernameTextField.text,
+            let password = passwordTextField.text else { return }
+        
+        self.registerButton.isEnabled = false
+        FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
+            self.registerButton.isEnabled = true
+            if error != nil {
+                let errorAlertController = UIAlertController(title: "Registering Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+                let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
+                errorAlertController.addAction(okay)
+                self.present(errorAlertController, animated: true, completion: nil)
+            }
+            guard let validUser = user else { return }
+            guard let newUser = FIRAuth.auth()?.currentUser else { return }
+            
+            //creating users for db
+            let uid = newUser.uid
+            let databaseReference = FIRDatabase.database().reference().child("USERS/\(uid)")
+            
+            let info: [String: AnyObject] = [
+                "name" : "Test" as AnyObject,
+                "email" : userName as AnyObject,
+            ]
+            databaseReference.setValue(info)
+            
+            self.signInUser = validUser
+            self.showUserHomeVC()
+        })
     }
     
     private func loginAnonymously() {
