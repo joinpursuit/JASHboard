@@ -26,6 +26,16 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         // Textfield Delegate
         usernameTextField.delegate = self
         passwordTextField.delegate = self
+        
+        // Tap Gesture
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        self.view.addGestureRecognizer(tapGesture)
+    }
+    
+    // MARK: Tab Gesture Selector
+    func dismissKeyboard() {
+        self.usernameTextField.resignFirstResponder()
+        self.passwordTextField.resignFirstResponder()
     }
     
     // MARK: - Setup

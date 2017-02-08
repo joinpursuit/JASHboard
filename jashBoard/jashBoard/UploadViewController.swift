@@ -58,7 +58,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             }
         })
         
-        //TapGesture
+        //Tap Gesture
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         self.imageSelectedWithPagingCollectionView.addGestureRecognizer(tapGesture)
     }
