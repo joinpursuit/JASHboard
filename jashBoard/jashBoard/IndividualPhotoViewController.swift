@@ -8,15 +8,35 @@
 
 import UIKit
 import SnapKit
+import Firebase
 
 class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
-    var selectedPhoto: UIImage!
+    //MARK: - Properties
+    var jashImage: JashImage? = nil {
+        didSet {
+            self.upvoteCount = jashImage?.votes.upvotes
+            self.upvoteNumberLabel.text = String(upvoteCount)
+            self.downvoteCount = jashImage?.votes.downvotes
+            self.downvoteNumberLabel.text = String(downvoteCount)
+            
+            guard let category = jashImage?.category else { return }
+            guard let imageId = jashImage?.imageId else { return }
+            let storageReference = FIRStorage.storage().reference().child("\(category)/\(imageId)")
+            
+            //update picture
+            storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
+                DispatchQueue.main.async {
+                    self.photoImageView.image = UIImage(data: data!)
+                }
+            })
+        }
+    }
     var upvoteCount: Int!
     var downvoteCount: Int!
-    var votes: [String]! // Would probably be type Vote
-    
+    var selectedPhoto: UIImage!
     private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
+    
+    //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -37,11 +57,30 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     // MARK: - Placeholder - TODO: Delete this when we have info
     
     internal func setupPlaceHolderCellInfo() {
-        self.votes = ["So and So voted up", "So and so voted down"]
+        //self.votes = ["So and So voted up", "So and so voted down"]
         self.selectedPhoto = UIImage(named: "siberian-tiger-profile")
         self.upvoteCount = 0
         self.downvoteCount = 0
     }
+    
+    //    func vote(imageId: String, flag: Bool) {
+    //        //hard-coded category but that will have to be changed with index path of collection/table view
+    //        var databaseReference = FIRDatabase.database().reference()
+    //
+    //        flag == true ? (databaseReference = FIRDatabase.database().reference(withPath: "CategoryA/\(imageId)/upvotes")) : (databaseReference = FIRDatabase.database().reference(withPath: "CategoryA/\(imageId)/downvotes"))
+    //
+    //        databaseReference.runTransactionBlock { (currentData: FIRMutableData) -> FIRTransactionResult in
+    //            var value = currentData.value as? Int
+    //
+    //            if value == nil {
+    //                value = 0
+    //            }
+    //
+    //            currentData.value = value! + 1
+    //
+    //            return FIRTransactionResult.success(withValue: currentData)
+    //        }
+    //    }
     
     // MARK: - Setup
     private func setupViewHierarchy() {
@@ -111,7 +150,8 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return votes.count
+        //return votes.count
+        return 2
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
