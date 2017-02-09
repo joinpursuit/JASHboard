@@ -92,6 +92,22 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             }
             self.tableView.reloadData()
         })
+        
+//        databaseRef.observe(.value, with: { (snapshot) in
+//            let enumerator = snapshot.children
+//            while let child = enumerator.nextObject() as? FIRDataSnapshot {
+//                let dictionary = child.value as! [String: AnyObject]
+//                
+//                if let name = dictionary["name"],
+//                    let photoVotes = dictionary["photoVotes"],
+//                    let voteResult = photoVotes[photoID] as? [String: AnyObject],
+//                    let voteBool = voteResult["voteType"] {
+//                    self.votes.append((name as! String, voteBool as! Bool))
+//                }
+//            }
+//            self.tableView.reloadData()
+//        })
+        
     }
     
     internal func vote(sender: UIButton) {
