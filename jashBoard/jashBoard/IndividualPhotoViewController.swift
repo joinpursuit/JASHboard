@@ -96,12 +96,14 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     
     internal func vote(sender: UIButton) {
         guard let category = jashImage?.category,
-            let imageId = jashImage?.imageId else { return }
+            let imageId = jashImage?.imageId,
+            let userId = FIRAuth.auth()?.currentUser?.uid else { return }
+        
+        //reference to the imageID in the respective CATEGORY node
         let databaseReference = FIRDatabase.database().reference(withPath: "\(category)/\(imageId)")
         
-        //update upvote/downvote counter
         databaseReference.runTransactionBlock { (currentData: FIRMutableData) -> FIRTransactionResult in
-            
+            //update upvote/downvote counter
             if var imageInfo = currentData.value as? [String: AnyObject] {
                 var upvotes = imageInfo["upvotes"] as? Int
                 var downvotes = imageInfo["downvotes"] as? Int
@@ -120,18 +122,16 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                 imageInfo["upvotes"] = upvotes as AnyObject?
                 
                 currentData.value = imageInfo
+                
+                //update photoVotes node within USERS node
+                let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes")
+                
+                if let pictureTitle = self.pictureTitle {
+                    sender.tag == 100 ? (userDBReference.child(imageId).setValue(["voteType" : true, "title" : pictureTitle])) : (userDBReference.child(imageId).setValue(["voteType" : false, "title" : pictureTitle]))
+                }
             }
             return FIRTransactionResult.success(withValue: currentData)
         }
-        
-        // update current users photoVotes node
-        guard let userId = FIRAuth.auth()?.currentUser?.uid else { return }
-        
-        let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes/\(imageId)")
-        
-        if let pictureTitle = self.pictureTitle {
-            sender.tag == 100 ? (userDBReference.setValue(["voteType" : true, "title" : pictureTitle])) : (userDBReference.setValue(["voteType" : false, "title" : pictureTitle]))
-        }  
     }
 
     //MARK: - Setup

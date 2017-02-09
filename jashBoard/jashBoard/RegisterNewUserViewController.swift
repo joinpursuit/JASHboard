@@ -257,7 +257,7 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
             
             let info: [String: AnyObject] = [
                 "name" : "\(firstName) \(lastName)" as AnyObject,
-                "email" : userName as AnyObject,
+                "email" : userName as AnyObject
                 ]
             
             // TO DO: ADD IN PROFILE PICTURE
@@ -276,12 +276,12 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
     
     //MARK: - UIImagePickerControllerDelegate
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            self.profilePictureImageView.image = image
-        }
-        dismiss(animated: true)
-    }
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+//        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+//            self.profilePictureImageView.image = image
+//        }
+//        dismiss(animated: true)
+//    }
     
     // MARK: - Lazy Vars
     lazy var profilePictureImageView: UIImageView = {
