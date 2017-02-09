@@ -38,8 +38,8 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        populatePhotoIdsArray()
         populateVotesArray()
+        populatePhotoIdsArray()
     }
 
     internal func populatePhotoIdsArray() {
@@ -60,6 +60,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
                 self.photoIds.append((key, category, title))
             }
             self.collectionView.reloadData()
+            self.tableView.reloadData()
         })
     }
     
@@ -146,33 +147,67 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return votes.count
+        return votes.count + photoIds.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
-        let vote = self.votes[indexPath.row]
+        print("index path . row is ______")
+        print(indexPath.row)
         
-        // Vote Description
-        vote.voteType == true ? (cell.voteDescription = "You voted \(vote.title) up.") : (cell.voteDescription = "You voted \(vote.title) down.")
-        
-        // Image Icon and Date Created
-        
-        let storageReference = FIRStorage.storage().reference(withPath: "\(vote.category)/\(vote.id)")
-        print("Storage reference: \(storageReference)")
-        
-        storageReference.data(withMaxSize: Int64.max) { (data: Data?, error: Error?) in
-            if let data = data {
-                DispatchQueue.main.async {
-                    cell.imageIcon = UIImage(data: data)
+        if indexPath.row < self.votes.count {
+            
+            let vote = self.votes[indexPath.row]
+            
+            // Vote Description
+            vote.voteType == true ? (cell.voteDescription = "You voted \(vote.title) up.") : (cell.voteDescription = "You voted \(vote.title) down.")
+            
+            // Image Icon and Date Created
+            
+            let storageReference = FIRStorage.storage().reference(withPath: "\(vote.category)/\(vote.id)")
+            print("Storage reference: \(storageReference)")
+            
+            storageReference.data(withMaxSize: Int64.max) { (data: Data?, error: Error?) in
+                if let data = data {
+                    DispatchQueue.main.async {
+                        cell.imageIcon = UIImage(data: data)
+                    }
                 }
             }
-        }
-        
-        storageReference.metadata { (metadata, error) in
-            if let metadata = metadata {
-                DispatchQueue.main.async {
-                    cell.date = metadata.timeCreated
+            
+            cell.date = vote.timeStamp
+            
+//            storageReference.metadata { (metadata, error) in
+//                if let metadata = metadata {
+//                    DispatchQueue.main.async {
+//                        cell.date = metadata.timeCreated
+//                    }
+//                }
+//            }
+            
+        } else {
+            let photoUpload = self.photoIds[indexPath.row - self.votes.count]
+            
+            // Cell text
+            cell.voteDescription = "You uploaded \(photoUpload.title)."
+            
+            // Image icon and date created
+            let storageReference = FIRStorage.storage().reference(withPath: "\(photoUpload.category)/\(photoUpload.id)")
+            print("Storage reference: \(storageReference)")
+            
+            storageReference.data(withMaxSize: Int64.max) { (data: Data?, error: Error?) in
+                if let data = data {
+                    DispatchQueue.main.async {
+                        cell.imageIcon = UIImage(data: data)
+                    }
+                }
+            }
+            
+            storageReference.metadata { (metadata, error) in
+                if let metadata = metadata {
+                    DispatchQueue.main.async {
+                        cell.date = metadata.timeCreated
+                    }
                 }
             }
         }

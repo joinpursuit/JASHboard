@@ -95,6 +95,7 @@ class VoteTableViewCell: UITableViewCell {
         imageView.layer.borderColor = JashColors.primaryTextColor.cgColor
         imageView.layer.cornerRadius = 20
         imageView.clipsToBounds = true
+        imageView.image = nil
         return imageView
     }()
     
@@ -102,6 +103,7 @@ class VoteTableViewCell: UITableViewCell {
         let label = UILabel()
         //    label.font = UIFont.systemFont(ofSize: self.subLabelFontSize)
         label.textColor = JashColors.primaryTextColor
+        label.text = nil
         return label
     }()
     
@@ -109,6 +111,7 @@ class VoteTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 13)
         label.textColor = JashColors.lightPrimaryColor
+        label.text = nil
         return label
     }()
 }
