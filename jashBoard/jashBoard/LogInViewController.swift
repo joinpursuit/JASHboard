@@ -10,8 +10,8 @@ import UIKit
 import Firebase
 
 class LogInViewController: UIViewController, UITextFieldDelegate {
-
-    var signInUser: FIRUser?
+    //we are not actually using this property for anything in this file. Re-factor by removing it and all references to it.
+    //var signInUser: FIRUser?
     let testButton: UIButton = UIButton(type: UIButtonType.roundedRect)
 
     override func viewDidLoad() {
@@ -33,6 +33,8 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         self.view.addGestureRecognizer(tapGesture)
         
         //FirAuth
+        
+        //MARK: - TO DO: after logging in and clicking the tab again, we return to the LOGIN/REGISTER screen with these buttons disabled but maybe we should hide them and or add a logout button since there is no way to log out otherwise. Re-factor this function.
         FIRAuth.auth()?.addStateDidChangeListener({ (auth, user) in
             if user?.email == nil {
                 self.loginButton.isEnabled = true
@@ -150,7 +152,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
                 self.present(errorAlertController, animated: true, completion: nil)
             }
             guard let validUser = user else { return }
-            self.signInUser = validUser
+            //self.signInUser = validUser
             self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
         })
     }
@@ -169,7 +171,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             }
             if user != nil {
                 print("Signed in anonymously!")
-                self.signInUser = user
+                //self.signInUser = user
             }
         })
     }

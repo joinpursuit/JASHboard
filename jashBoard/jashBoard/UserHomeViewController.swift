@@ -10,24 +10,19 @@ import UIKit
 import Firebase
 
 class UserHomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
-    var photoIds: [(id: String, category: String)] = [] {
-        didSet {
-            self.collectionView.reloadData()
-        }
-    }
-    var votes: [String] = []
+    //MARK: - Properties
+    var photoIds: [(id: String, category: String)] = []
+    var votes: [(id: String, flag: Bool)] = []
     var userPhoto: UIImage!
     var userUploads: [UIImage]!
     
+    //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupPlaceHolderCellInfo()
-
         setupViewHierarchy()
         configureConstraints()
-        //populateVotesArray()
         
         // TableView and Collection View Delegates and DataSource
         tableView.delegate = self
@@ -44,35 +39,57 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         super.viewDidAppear(animated)
         
         populatePhotoIdsArray()
+        populateVotesArray()
     }
 
-    // MARK: - Placeholder - TODO: Delete this when we have info
-    
-    internal func setupPlaceHolderCellInfo() {
-        //self.votes = ["You voted this photo up", "You voted this photo down"]
-        self.userPhoto = UIImage(named: "siberian-tiger-profile")
-        self.userUploads = [self.userPhoto]
-    }
-    
     internal func populatePhotoIdsArray() {
-        guard let currentUser = FIRAuth.auth()?.currentUser?.uid else { return }
-        let databaseReference = FIRDatabase.database().reference(withPath: "USERS/\(currentUser)/\("uploads")")
-        print(databaseReference)
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
+        
+        let databaseReference = FIRDatabase.database().reference(withPath: "USERS/\(uid)/\("uploads")")
+        print("Database reference: \(databaseReference)")
         
         databaseReference.observeSingleEvent(of: .value, with: { (snapshot) in
             let enumerator = snapshot.children
             
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let key = child.key
-                let category = child.value as! String
+                guard let imageInfo = child.value as? [String: AnyObject],
+                    let category = imageInfo["category"] as? String else { return }
+                
                 self.photoIds.append((key, category))
-//                self.photoIds.append(child as! (String, String))
-//                self.photoIds.append((child.key, child.value as! String))
+            }
+            self.collectionView.reloadData()
+        })
+    }
+    
+    //add name to the votes array and continue re-factoring
+    internal func populateVotesArray() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
+        
+        let databaseReference = FIRDatabase.database().reference(withPath: "USERS/\(uid)/\("photoVotes")")
+        print("Database reference: \(databaseReference)")
+        
+        databaseReference.observeSingleEvent(of: .value, with: { (snapshot) in
+            let enumerator = snapshot.children
+            
+            while let child = enumerator.nextObject() as? FIRDataSnapshot {
+                let key = child.key
+                guard let imageInfo = child.value as? [String: AnyObject],
+                    let bool = imageInfo["voteType"] as? Bool else { return }
+                
+                self.votes.append((key, bool))
             }
             self.tableView.reloadData()
         })
-        print(self.photoIds)
     }
+    
+    //MARK: - Placeholder - TODO: Delete this when we have info
+    internal func setupPlaceHolderCellInfo() {
+        //use image picker controller to set profile picture via this property
+        self.userPhoto = UIImage(named: "siberian-tiger-profile")
+        self.userUploads = [self.userPhoto]
+    }
+    
     
     // MARK: - Setup
     private func setupViewHierarchy() {
@@ -127,8 +144,14 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
+        let vote = self.votes[indexPath.row]
         
         // TO DO: Refactor to correct data
+        //vote.flag == true ? (cell.voteDescription = "You voted \() up.") : (cell.voteDescription = "You voted \() down.")
+        
+        
+        
+        
         cell.voteDescription = "You voted iphone 7s down"
         cell.imageIcon = UIImage(named: "siberian-tiger-profile")
         cell.date = Date()
@@ -152,15 +175,16 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         let imageID = self.photoIds[indexPath.row]
         
         let storageReference = FIRStorage.storage().reference(withPath: "\(imageID.category)/\(imageID.id)")
-        print(storageReference)
+        print("Storage reference: \(storageReference)")
         
         storageReference.data(withMaxSize: Int64.max) { (data: Data?, error: Error?) in
+            
             if let data = data {
-                
-            DispatchQueue.main.async {
-                cell.imageView.image = UIImage(data: data)
+                DispatchQueue.main.async {
+                    cell.imageView.image = UIImage(data: data)
+                }
             }
-            }}
+        }
         return cell
     }
     
@@ -188,7 +212,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     // logout button
     internal lazy var logOutButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(self.didTapLogout(sender:)))
+        let button = UIBarButtonItem(title: "LOG OUT", style: .plain, target: self, action: #selector(self.didTapLogout(sender:)))
         return button
     }()
     
