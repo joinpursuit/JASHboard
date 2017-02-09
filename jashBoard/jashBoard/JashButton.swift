@@ -21,7 +21,5 @@ class JashButton: UIButton {
         self.layer.borderColor = JashColors.textAndIconColor.cgColor
         self.layer.borderWidth = 1.0
         //self.contentEdgeInsets = UIEdgeInsetsMake(8.0, 24.0, 8.0, 24.0)
-        
     }
-
 }
