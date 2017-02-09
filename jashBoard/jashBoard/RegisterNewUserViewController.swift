@@ -9,8 +9,9 @@
 import UIKit
 import SnapKit
 import Firebase
+import AVFoundation
 
-class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
+class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     var signInUser: FIRUser?
     
@@ -148,6 +149,8 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
                 "name" : "\(firstName) \(lastName)" as AnyObject,
                 "email" : userName as AnyObject,
                 ]
+            
+            // TO DO: ADD IN PROFILE PICTURE
             databaseReference.setValue(info)
             self.signInUser = validUser
             self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
@@ -155,7 +158,19 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
     }
     
     func imageTapped(){
-        // TO DO: Add logic to add user photo
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.sourceType = .photoLibrary
+        imagePickerController.delegate = self
+        self.present(imagePickerController, animated: true, completion: nil)
+    }
+    
+    //MARK: - UIImagePickerControllerDelegate
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            self.profilePictureImageView.image = image
+        }
+        dismiss(animated: true)
     }
     
     // MARK: - Lazy Vars
@@ -167,6 +182,7 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
         imageView.frame.size = CGSize(width: 150.0, height: 150.0)
         let tapImageGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
         imageView.addGestureRecognizer(tapImageGesture)
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
