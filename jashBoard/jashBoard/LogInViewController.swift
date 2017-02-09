@@ -21,7 +21,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
 
         setupViewHierarchy()
         configureConstraints()
-        loginAnonymously()
+//        loginAnonymously() // Refactored into App Delegate
         
         // Textfield Delegate
         usernameTextField.delegate = self
@@ -152,18 +152,19 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         registerNewUserViewController.passwordTextField.text = self.passwordTextField.text
         self.navigationController?.pushViewController(registerNewUserViewController, animated: true)
     }
-    
-    private func loginAnonymously() {
-        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
-            if error != nil {
-                print("Error attempting to long in anonymously: \(error!)")
-            }
-            if user != nil {
-                print("Signed in anonymously!")
-                self.signInUser = user
-            }
-        })
-    }
+
+    // Refactored to be in app delegate
+//    static func loginAnonymously() {
+//        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
+//            if error != nil {
+//                print("Error attempting to long in anonymously: \(error!)")
+//            }
+//            if user != nil {
+//                print("Signed in anonymously!")
+//                // self.signInUser = user
+//            }
+//        })
+//    }
     
     // MARK: - Views
     
