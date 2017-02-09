@@ -15,27 +15,35 @@ protocol JashCollectionViewCellDelegate{
 }
 
 class CategoryCollectionViewCell: UICollectionViewCell {
+    //MARK: - Properties
     static let cellIdentifier: String = "cellIdentifier"
-    let cellImage: UIImage = UIImage(named: "siberian-tiger-profile")!
-    let pressAndHold :UILongPressGestureRecognizer = UILongPressGestureRecognizer()
-    let upCount: Int = 20
+    private let pressAndHold :UILongPressGestureRecognizer = UILongPressGestureRecognizer()
+    var cellImage: UIImage?{
+        didSet{
+            setupCell()
+        }
+    }
+    var upCount: Int = 0
+    var downCount: Int = 0
+       
     private let padding: Int = 7
     internal static let arrowAlpha: CGFloat = 0.7
-    var downCount: Int = 20
+    
+    //var downCount: Int = 20
     var delegate: JashCollectionViewCellDelegate?
     
+    //MARK: - Initializers
+//    required override init(frame: CGRect) {
+//        super.init(frame: frame)
+//       
+//        setupCell()
+//    }
+//    
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
     
-    required override init(frame: CGRect) {
-        super.init(frame: frame)
-        pressAndHold.addTarget(self, action: #selector(self.longPress))
-        pressAndHold.minimumPressDuration = 0.5
-        setupCell()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+    //MARK: - Methods
     private func setupCell(){
         self.addSubview(photo)
         self.addSubview(cellTint)
@@ -75,6 +83,9 @@ class CategoryCollectionViewCell: UICollectionViewCell {
             view.bottom.equalTo(upvoteArrow.snp.bottom)
         }
         
+        pressAndHold.addTarget(self, action: #selector(self.longPress))
+        pressAndHold.minimumPressDuration = 0.5
+    
         self.upCountLabel.text = String(upCount)
         self.downCountLabel.text = String(downCount)
     }
@@ -86,7 +97,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         
         switch sender.state{
         case .began:
-            self.delegate?.showPopUpWith(image: cellImage)
+            self.delegate?.showPopUpWith(image: cellImage!)
         default:
             self.delegate?.hidePopUp()
             
@@ -141,5 +152,4 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         view.alpha = 0.2
         return view
     }()
-    
 }

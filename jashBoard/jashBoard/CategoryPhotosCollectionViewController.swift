@@ -7,47 +7,68 @@
 //
 
 import UIKit
+import Firebase
 
 private let reuseIdentifier = "Cell"
 
 class CategoryPhotosCollectionViewController: UICollectionViewController,JashCollectionViewCellDelegate {
-    var categoryTitle: String?
 
+    //MARK: - Properties
+    var categoryTitle: String?
+    var jashImages: [JashImage] = []
+
+    //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setUpCollectionView()
+        loadPhotosArray()
     }
     
-        // MARK: UICollectionViewDataSource
-
+    //MARK: UICollectionViewDataSource
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 10
+        return jashImages.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.cellIdentifier, for: indexPath) as! CategoryCollectionViewCell
-    
+        let jashImage = jashImages[indexPath.row]
+        
         // Configure the cell
-        cell.downCount = 20
+
         cell.delegate = self
     
+
+        let storageReference = FIRStorage.storage().reference().child("\(jashImage.category)/\(jashImage.imageId)")
+        
+        storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
+            
+            DispatchQueue.main.async {
+                if let data = data {
+                cell.cellImage = UIImage(data: data)
+                }
+            }
+        })
+        
+        //replace this?
+        cell.upCount = jashImage.votes.upvotes
+        cell.downCount = jashImage.votes.downvotes
+        
         return cell
     }
     
     // MARK: - Navigation
-    
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let jashImage = self.jashImages[indexPath.row]
+        
         if let navController = self.navigationController{
             let categoryController = IndividualPhotoViewController()
-//            categoryController.title = categories[indexPath.row]
+            categoryController.jashImage = jashImage
+            
             let backItem = UIBarButtonItem()
             backItem.title = " "
             navigationItem.backBarButtonItem = backItem
@@ -56,7 +77,6 @@ class CategoryPhotosCollectionViewController: UICollectionViewController,JashCol
     }
     
     //MARK:- Utilities
-    
     private func setUpCollectionView(){
         self.collectionView!.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.cellIdentifier)
         let layout = UICollectionViewFlowLayout()
@@ -71,6 +91,26 @@ class CategoryPhotosCollectionViewController: UICollectionViewController,JashCol
         collectionView?.collectionViewLayout = layout
        // self.navigationController?.hidesBarsOnSwipe = true
         self.navigationController?.title = categoryTitle
+    }
+
+    private func loadPhotosArray() {
+        guard let category = self.title?.uppercased() else { return }
+        let databaseReference = FIRDatabase.database().reference().child("\(category)")
+        
+        databaseReference.observeSingleEvent(of: .value, with: { (snapshot) in
+            print("Number of pictures: \(snapshot.childrenCount)")
+            
+            let enumerator = snapshot.children
+            while let child = enumerator.nextObject() as? FIRDataSnapshot {
+                
+                let votesDictionary = child.value as! [String: AnyObject]
+                guard let votes = Vote(snapshot: votesDictionary) else { return }
+                let jashImage = JashImage(votes: votes, imageId: child.key, category: category)
+                
+                self.jashImages.append(jashImage)
+            }
+            self.collectionView?.reloadData()
+        })
     }
     
     //MARK: JashCollectionViewCell Delegate
@@ -87,5 +127,6 @@ class CategoryPhotosCollectionViewController: UICollectionViewController,JashCol
     func hidePopUp() {
         dismiss(animated: true, completion: nil)
     }
+
 
 }

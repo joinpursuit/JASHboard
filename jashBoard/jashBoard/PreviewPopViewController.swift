@@ -48,7 +48,7 @@ class PreviewPopViewController: UIViewController {
         
         imageView.snp.makeConstraints { (view) in
             view.top.equalToSuperview().offset(10)
-            view.bottom.equalToSuperview()
+            view.bottom.equalToSuperview().inset(10)
             view.leading.trailing.equalToSuperview()
         }
         
