@@ -119,6 +119,8 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    // MARK: - Actions
+    
     func registerButtonDidTapped(_ sender: UIButton) {
         guard let userName = userEmailTextField.text,
             let password = passwordTextField.text,
@@ -128,6 +130,7 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
             lastName != "" else { return }
         self.registerButton.isEnabled = false
         FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
+            self.registerButton.isEnabled = true
             if error != nil {
                 let errorAlertController = UIAlertController(title: "Registering Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
                 let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
@@ -151,6 +154,10 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
         })
     }
     
+    func imageTapped(){
+        // TO DO: Add logic to add user photo
+    }
+    
     // MARK: - Lazy Vars
     lazy var profilePictureImageView: UIImageView = {
        let imageView = UIImageView()
@@ -158,6 +165,8 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 0.5
         imageView.frame.size = CGSize(width: 150.0, height: 150.0)
+        let tapImageGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+        imageView.addGestureRecognizer(tapImageGesture)
         return imageView
     }()
     
