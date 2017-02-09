@@ -143,6 +143,15 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             }
             return FIRTransactionResult.success(withValue: currentData)
         }
+        // update current users photoVotes node
+        guard let userId = FIRAuth.auth()?.currentUser?.uid else { return }
+        
+        let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes/\(imageId)")
+        
+        if let pictureTitle = self.pictureTitle {
+            sender.tag == 100 ? (userDBReference.setValue(["voteType" : true, "title" : pictureTitle, "category" : category, "timeStamp" : FIRServerValue.timestamp()])) : (userDBReference.setValue(["voteType" : false, "title" : pictureTitle, "category" : category, "timeStamp" : FIRServerValue.timestamp()]))
+        }  
+
     }
 
     //MARK: - Setup
