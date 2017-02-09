@@ -12,6 +12,7 @@ import Firebase
 class LogInViewController: UIViewController, UITextFieldDelegate {
 
     var signInUser: FIRUser?
+    let testButton: UIButton = UIButton(type: UIButtonType.roundedRect)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,8 +61,10 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         self.view.addSubview(passwordTextField)
         self.view.addSubview(loginButton)
         self.view.addSubview(registerButton)
+        self.view.addSubview(testButton)
         loginButton.addTarget(self, action: #selector(didTapLogin(sender:)), for: .touchUpInside)
         registerButton.addTarget(self, action: #selector(didTapRegister(sender:)), for: .touchUpInside)
+        testButton.addTarget(self, action: #selector(showProgress), for: .touchUpInside)
     }
     
     private func configureConstraints() {
@@ -86,6 +89,12 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             textField.top.equalTo(usernameTextField.snp.bottom).offset(16)
             textField.centerX.equalToSuperview()
         }
+
+        testButton.setTitle("PROGRESS!!", for: .normal)
+        testButton.snp.makeConstraints { (view) in
+            view.centerX.centerY.equalToSuperview()
+        }
+
         passwordTextField.underLine(placeHolder: "password")
         
         // register button
@@ -165,6 +174,20 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         })
     }
     
+
+    // MARK: - Navigation
+    
+    func showProgress(){
+        let alert = JashProgressViewController()
+        alert.modalPresentationStyle = .overCurrentContext
+        alert.modalTransitionStyle = .crossDissolve
+        present(alert, animated: true, completion: nil)
+    }
+
+    func showUserHomeVC() {
+        self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
+    }
+
     // MARK: - Views
     
     // logo

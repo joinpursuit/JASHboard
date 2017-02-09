@@ -9,30 +9,39 @@
 import UIKit
 import SnapKit
 
+protocol JashCollectionViewCellDelegate{
+    func showPopUpWith(image: UIImage)
+    func hidePopUp()
+}
+
 class CategoryCollectionViewCell: UICollectionViewCell {
     //MARK: - Properties
     static let cellIdentifier: String = "cellIdentifier"
-    let pressAndHold :UILongPressGestureRecognizer = UILongPressGestureRecognizer()
-    var upCount: Int = 0
-    var downCount: Int = 0{
+    private let pressAndHold :UILongPressGestureRecognizer = UILongPressGestureRecognizer()
+    var cellImage: UIImage?{
         didSet{
             setupCell()
         }
     }
+    var upCount: Int = 0
+    var downCount: Int = 0
+       
     private let padding: Int = 7
     internal static let arrowAlpha: CGFloat = 0.7
     
-    //MARK: - Initializers
-    required override init(frame: CGRect) {
-        super.init(frame: frame)
-        pressAndHold.addTarget(self, action: #selector(self.longPress))
-        pressAndHold.minimumPressDuration = 1
-         setupCell()
-    }
+    //var downCount: Int = 20
+    var delegate: JashCollectionViewCellDelegate?
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    //MARK: - Initializers
+//    required override init(frame: CGRect) {
+//        super.init(frame: frame)
+//       
+//        setupCell()
+//    }
+//    
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
     
     //MARK: - Methods
     private func setupCell(){
@@ -43,10 +52,11 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         self.addSubview(downCountLabel)
         self.addSubview(upCountLabel)
         
-       // cellTint.addGestureRecognizer(pressAndHold)
-
+        cellTint.addGestureRecognizer(pressAndHold)
+        self.photo.image = cellImage
+        
         self.photo.snp.makeConstraints { (view) in
-          view.bottom.top.leading.trailing.equalToSuperview()
+            view.bottom.top.leading.trailing.equalToSuperview()
         }
         self.cellTint.snp.makeConstraints { (view) in
             view.bottom.top.leading.trailing.equalToSuperview()
@@ -73,21 +83,25 @@ class CategoryCollectionViewCell: UICollectionViewCell {
             view.bottom.equalTo(upvoteArrow.snp.bottom)
         }
         
+        pressAndHold.addTarget(self, action: #selector(self.longPress))
+        pressAndHold.minimumPressDuration = 0.5
+    
         self.upCountLabel.text = String(upCount)
         self.downCountLabel.text = String(downCount)
     }
     
-    //MARK: - Utilities 
+    //MARK: - Utilities
     
-    internal func longPress(){
+    internal func longPress(sender: UILongPressGestureRecognizer){
         print("Long Press")
-        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
         
-        animator.addAnimations{
-            self.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        switch sender.state{
+        case .began:
+            self.delegate?.showPopUpWith(image: cellImage!)
+        default:
+            self.delegate?.hidePopUp()
+            
         }
-        
-        animator.startAnimation()
     }
     
     private let upCountLabel: UILabel = {
@@ -126,7 +140,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     let photo: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        //imageView.image = UIImage(named: "siberian-tiger-profile")
+        // imageView.image = UIImage(named: "siberian-tiger-profile")
         imageView.contentMode = .scaleToFill
         return imageView
     }()
@@ -138,5 +152,4 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         view.alpha = 0.2
         return view
     }()
-    
 }
