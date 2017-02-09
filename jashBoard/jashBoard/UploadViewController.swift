@@ -21,6 +21,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     var selectedCategory: String!
     var selectedImage: UIImage!
     
+    let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
+    
     //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -199,6 +201,16 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 //To Do: Need to update some logic
                 self.selectedImage = image
             })
+            if let cell = collectionView.cellForItem(at: indexPath) {
+                cell.superview?.bringSubview(toFront: cell)
+                
+                self.animator.addAnimations({
+                    cell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                    cell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                })
+                
+                animator.startAnimation()
+            }
         case categoryCollectionView:
             print(catagoryTitlesArr[indexPath.row])
             self.selectedCategory = catagoryTitlesArr[indexPath.row]
@@ -217,10 +229,18 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             selectedCell.catagoryLabel.backgroundColor = JashColors.accentColor
             selectedCell.catagoryLabel.textColor = JashColors.textAndIconColor
             self.catagoryContainerView.reloadInputViews()
+            
+                selectedCell.superview?.bringSubview(toFront: selectedCell)
+                
+                self.animator.addAnimations({
+                    selectedCell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                    selectedCell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                })
+                
+                animator.startAnimation()
         
         case imageSelectedWithPagingCollectionView:
             print(photoAssetsArr[indexPath.row])
-            
         default:
             print(catagoryTitlesArr[indexPath.row])
         }
