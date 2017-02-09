@@ -12,7 +12,7 @@ import Firebase
 class UserHomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     //MARK: - Properties
     var photoIds: [(id: String, category: String)] = []
-    var votes: [(id: String, flag: Bool)] = []
+    var votes: [(id: String, imageName: String, flag: Bool)] = []
     var userPhoto: UIImage!
     var userUploads: [UIImage]!
     
@@ -74,10 +74,14 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
             
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let key = child.key
-                guard let imageInfo = child.value as? [String: AnyObject],
-                    let bool = imageInfo["voteType"] as? Bool else { return }
-                
-                self.votes.append((key, bool))
+                guard let imageInfo = child.value as? [String: AnyObject] else { return }
+                print(imageInfo)
+                guard let imageName = imageInfo["name"] as? String else { return }
+                print(imageName)
+                guard let bool = imageInfo["voteType"] as? Bool else { return }
+                print(bool)
+
+                self.votes.append((key, imageName, bool))
             }
             self.tableView.reloadData()
         })
@@ -147,12 +151,12 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         let vote = self.votes[indexPath.row]
         
         // TO DO: Refactor to correct data
-        //vote.flag == true ? (cell.voteDescription = "You voted \() up.") : (cell.voteDescription = "You voted \() down.")
+        vote.flag == true ? (cell.voteDescription = "You voted \(vote.imageName) up.") : (cell.voteDescription = "You voted \(vote.imageName) down.")
         
         
         
         
-        cell.voteDescription = "You voted iphone 7s down"
+//        cell.voteDescription = "You voted iphone 7s down"
         cell.imageIcon = UIImage(named: "siberian-tiger-profile")
         cell.date = Date()
         
