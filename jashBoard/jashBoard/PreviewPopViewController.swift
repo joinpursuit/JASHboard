@@ -42,13 +42,13 @@ class PreviewPopViewController: UIViewController {
         
         containerView.snp.makeConstraints { (view) in
             view.centerX.centerY.equalToSuperview()
-            view.width.equalToSuperview().multipliedBy(0.7)
+            view.width.equalToSuperview().multipliedBy(0.9)
             view.height.equalToSuperview().multipliedBy(0.5)
         }
         
         imageView.snp.makeConstraints { (view) in
             view.top.equalToSuperview().offset(10)
-            view.bottom.equalToSuperview().inset(10)
+            view.bottom.equalToSuperview()
             view.leading.trailing.equalToSuperview()
         }
         
@@ -66,7 +66,7 @@ class PreviewPopViewController: UIViewController {
     
     private let blurView : UIView = {
         let view: UIView = UIView()
-        let blurEffect: UIBlurEffect = UIBlurEffect(style: .light)
+        let blurEffect: UIBlurEffect = UIBlurEffect(style: UIBlurEffectStyle.regular)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.frame = view.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]

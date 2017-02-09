@@ -28,7 +28,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     required override init(frame: CGRect) {
         super.init(frame: frame)
         pressAndHold.addTarget(self, action: #selector(self.longPress))
-        pressAndHold.minimumPressDuration = 1
+        pressAndHold.minimumPressDuration = 0.5
         setupCell()
     }
     
