@@ -46,7 +46,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
                 self.registerButton.isUserInteractionEnabled = false
             }
         })
-
     }
     
     // MARK: Tab Gesture Selector
@@ -83,7 +82,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             textField.top.equalTo(logo.snp.bottom).offset(16)
             textField.centerX.equalToSuperview()
         }
-        
         usernameTextField.underLine(placeHolder: "Username")
    
         // password
@@ -91,11 +89,12 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             textField.top.equalTo(usernameTextField.snp.bottom).offset(16)
             textField.centerX.equalToSuperview()
         }
+
         testButton.setTitle("PROGRESS!!", for: .normal)
         testButton.snp.makeConstraints { (view) in
             view.centerX.centerY.equalToSuperview()
         }
-        
+
         passwordTextField.underLine(placeHolder: "password")
         
         // register button
@@ -112,7 +111,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             view.width.equalTo(JashButton.defaultSize.width)
         }
     }
-    
     
     // MARK: - TextField Delegate Methods
     
@@ -153,61 +151,15 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             }
             guard let validUser = user else { return }
             self.signInUser = validUser
-            self.showUserHomeVC()
+            self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
         })
     }
     
     internal func didTapRegister(sender: UIButton) {
-
         let registerNewUserViewController = RegisterNewUserViewController()
+        registerNewUserViewController.userEmailTextField.text = self.usernameTextField.text
+        registerNewUserViewController.passwordTextField.text = self.passwordTextField.text
         self.navigationController?.pushViewController(registerNewUserViewController, animated: true)
-        
-//        guard let userName = usernameTextField.text,
-//            let password = passwordTextField.text else { return }
-//        // SAME BUG AS ABOVE
-//        self.registerButton.isEnabled = false
-//        FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
-//            if error != nil {
-//                let errorAlertController = UIAlertController(title: "Registering Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
-//                let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
-//                errorAlertController.addAction(okay)
-//                self.present(errorAlertController, animated: true, completion: nil)
-//            }
-//            guard let validUser = user else { return }
-//            self.signInUser = validUser
-//            // Remains true so this line doesn't matter... Uncomment when button is disable-able
-////            self.registerButton.isEnabled = true
-//            self.showUserHomeVC()
-//        })
-        
-        guard let userName = usernameTextField.text,
-            let password = passwordTextField.text else { return }
-        
-        self.registerButton.isEnabled = false
-        FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
-            self.registerButton.isEnabled = true
-            if error != nil {
-                let errorAlertController = UIAlertController(title: "Registering Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
-                let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
-                errorAlertController.addAction(okay)
-                self.present(errorAlertController, animated: true, completion: nil)
-            }
-            guard let validUser = user else { return }
-            guard let newUser = FIRAuth.auth()?.currentUser else { return }
-            
-            //creating users for db
-            let uid = newUser.uid
-            let databaseReference = FIRDatabase.database().reference().child("USERS/\(uid)")
-            
-            let info: [String: AnyObject] = [
-                "name" : "Test" as AnyObject,
-                "email" : userName as AnyObject,
-            ]
-            databaseReference.setValue(info)
-            
-            self.signInUser = validUser
-            self.showUserHomeVC()
-        })
     }
     
     private func loginAnonymously() {
@@ -222,6 +174,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         })
     }
     
+
     // MARK: - Navigation
     
     func showProgress(){
@@ -234,7 +187,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     func showUserHomeVC() {
         self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
     }
-    
+
     // MARK: - Views
     
     // logo
@@ -255,7 +208,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         //our users will have to use email to log in so this is a small little ux change
         textField.keyboardType = .emailAddress
        // textField.underLine(placeHolder: "Username")
-
         return textField
     }()
     
