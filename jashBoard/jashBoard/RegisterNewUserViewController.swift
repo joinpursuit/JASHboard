@@ -88,8 +88,6 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
         imagePickerController.sourceType = sourceType
         imagePickerController.delegate = self
         imagePickerController.modalPresentationStyle = (sourceType == .camera) ? .fullScreen : .popover
-        // See which media type you want to return
-        imagePickerController.mediaTypes = [String(kUTTypeImage)]
         
         self.imagePickerController = imagePickerController
         self.present(imagePickerController, animated: true, completion: nil)
@@ -97,17 +95,9 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
     
     // MARK: - UIImagePickerControllerDelegate
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        switch info[UIImagePickerControllerMediaType] as! String {
-        case String(kUTTypeImage):
-            break
-        default:
-            print("Bad media type")
-        }
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             self.capturedImages.append(image)
         }
-        
-        
         self.finishAndUpdate()
     }
     
@@ -126,7 +116,6 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
         }
         self.capturedImages.removeAll()
     }
-
     
     // MARK: - Tab Gesture Selector
     func dismissKeyboard() {
@@ -163,6 +152,7 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
                 return true
             }
         }
+        textField.shake()
         return true
     }
     
@@ -275,7 +265,6 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
     }
     
     //MARK: - UIImagePickerControllerDelegate
-    
 //    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
 //        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
 //            self.profilePictureImageView.image = image
@@ -287,8 +276,12 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
     lazy var profilePictureImageView: UIImageView = {
        let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "default-placeholder")
+        imageView.layer.borderWidth = 2.0
+        imageView.layer.borderColor = JashColors.accentColor.cgColor
+        imageView.layer.cornerRadius = imageView.frame.height / 2
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 25
+        imageView.layer.masksToBounds = false
+        imageView.clipsToBounds = true
         imageView.frame.size = CGSize(width: 150.0, height: 150.0)
         let tapImageGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
         imageView.addGestureRecognizer(tapImageGesture)

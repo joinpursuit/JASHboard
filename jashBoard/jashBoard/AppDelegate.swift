@@ -25,9 +25,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let uploadVC = UploadViewController()
         let logInVC = LogInViewController()
         
-        let galleryIcon = UITabBarItem(title: "", image: UIImage(named: "gallery_icon")?.withRenderingMode(.alwaysTemplate), tag: 0)
-        let cameraIcon = UITabBarItem(title: "", image: UIImage(named: "camera_icon")?.withRenderingMode(.alwaysTemplate), tag: 1)
-        let userIcon = UITabBarItem(title: "", image: UIImage(named: "user_icon")?.withRenderingMode(.alwaysTemplate), tag: 2)
+        let galleryIcon = UITabBarItem(title: nil, image: UIImage(named: "gallery_icon")?.withRenderingMode(.alwaysTemplate), tag: 0)
+        let cameraIcon = UITabBarItem(title: nil, image: UIImage(named: "camera_icon")?.withRenderingMode(.alwaysTemplate), tag: 1)
+        let userIcon = UITabBarItem(title: nil, image: UIImage(named: "user_icon")?.withRenderingMode(.alwaysTemplate), tag: 2)
 
         categorySelectionTVC.tabBarItem = galleryIcon
         uploadVC.tabBarItem = cameraIcon

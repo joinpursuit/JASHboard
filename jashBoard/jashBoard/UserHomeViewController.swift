@@ -11,8 +11,8 @@ import Firebase
 
 class UserHomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     //MARK: - Properties
-    var photoIds: [(id: String, category: String)] = []
-    var votes: [(id: String, imageName: String, flag: Bool)] = []
+    var photoIds: [(id: String, category: String, title: String)] = []
+    var votes: [(id: String, title: String, voteType: Bool, category: String, timeStamp: Date)] = []
     var userPhoto: UIImage!
     var userUploads: [UIImage]!
     
@@ -54,9 +54,10 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let key = child.key
                 guard let imageInfo = child.value as? [String: AnyObject],
-                    let category = imageInfo["category"] as? String else { return }
+                    let category = imageInfo["category"] as? String,
+                    let title = imageInfo["title"] as? String else { return }
                 
-                self.photoIds.append((key, category))
+                self.photoIds.append((key, category, title))
             }
             self.collectionView.reloadData()
         })
@@ -74,14 +75,16 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
             
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let key = child.key
-                guard let imageInfo = child.value as? [String: AnyObject] else { return }
-                print(imageInfo)
-                guard let imageName = imageInfo["name"] as? String else { return }
-                print(imageName)
-                guard let bool = imageInfo["voteType"] as? Bool else { return }
-                print(bool)
+                guard let imageInfo = child.value as? [String: AnyObject],
+                    let imageName = imageInfo["title"] as? String,
+                    let bool = imageInfo["voteType"] as? Bool,
+                    let category = imageInfo["category"] as? String,
+                    let timeInterval = imageInfo["timeStamp"] as? TimeInterval
+                else { continue }
 
-                self.votes.append((key, imageName, bool))
+                print(Date(timeIntervalSince1970: timeInterval/1000))
+                let timeStamp = Date(timeIntervalSince1970: timeInterval/1000)
+                self.votes.append((key, imageName, bool, category, timeStamp))
             }
             self.tableView.reloadData()
         })
@@ -150,16 +153,32 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
         let vote = self.votes[indexPath.row]
         
-        // TO DO: Refactor to correct data
-        vote.flag == true ? (cell.voteDescription = "You voted \(vote.imageName) up.") : (cell.voteDescription = "You voted \(vote.imageName) down.")
+        // Vote Description
+        vote.voteType == true ? (cell.voteDescription = "You voted \(vote.title) up.") : (cell.voteDescription = "You voted \(vote.title) down.")
         
+        // Image Icon and Date Created
         
+        let storageReference = FIRStorage.storage().reference(withPath: "\(vote.category)/\(vote.id)")
+        print("Storage reference: \(storageReference)")
         
-        
-//        cell.voteDescription = "You voted iphone 7s down"
         cell.imageIcon = UIImage(named: "siberian-tiger-profile")
         cell.dateLabel.text = Date().convertToTimeString()
+
+        storageReference.data(withMaxSize: Int64.max) { (data: Data?, error: Error?) in
+            if let data = data {
+                DispatchQueue.main.async {
+                    cell.imageIcon = UIImage(data: data)
+                }
+            }
+        }
         
+        storageReference.metadata { (metadata, error) in
+            if let metadata = metadata {
+                DispatchQueue.main.async {
+                    cell.date = metadata.timeCreated
+                }
+            }
+        }
         return cell
     }
     
