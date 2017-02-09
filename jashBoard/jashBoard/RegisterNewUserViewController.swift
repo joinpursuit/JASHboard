@@ -88,8 +88,8 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
         
         textFieldContainerView.snp.makeConstraints { (view) in
             view.top.equalTo(self.profilePictureImageView.snp.bottom).offset(16)
-            view.trailing.equalToSuperview().offset(16)
-            view.leading.bottom.equalToSuperview().inset(16)
+            view.leading.equalToSuperview().inset(16)
+            view.trailing.bottom.equalToSuperview().offset(-16)
         }
         
         userFirstNameTextField.snp.makeConstraints { (textField) in
@@ -168,40 +168,36 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
     
     lazy var userFirstNameTextField: UITextField = {
         let textField = UITextField()
-        textField.underLine(placeHolder: "first name")
-        textField.textColor = .white
-        textField.tintColor = .clear
+        textField.tintColor = JashColors.accentColor
         textField.autocorrectionType = .no
+        textField.underLine(placeHolder: "first name")
         return textField
     }()
     
     lazy var userLastNameTextField: UITextField = {
         let textField = UITextField()
-        textField.underLine(placeHolder: "last name")
-        textField.textColor = .white
-        textField.tintColor = .clear
+        textField.tintColor = JashColors.accentColor
         textField.autocorrectionType = .no
+        textField.underLine(placeHolder: "last name")
         return textField
     }()
     
     lazy var userEmailTextField: UITextField = {
        let textField = UITextField()
-        textField.underLine(placeHolder: "email")
         textField.keyboardType = .emailAddress
-        textField.textColor = .white
-        textField.tintColor = .clear
+        textField.tintColor = JashColors.accentColor
         textField.autocorrectionType = .no
         textField.keyboardType = .emailAddress
+        textField.underLine(placeHolder: "email")
        return textField
     }()
     
     lazy var passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.underLine(placeHolder: "password")
-        textField.textColor = .white
-        textField.tintColor = .clear
+        textField.tintColor = JashColors.accentColor
         textField.autocorrectionType = .no
         textField.isSecureTextEntry = true
+        textField.underLine(placeHolder: "password")
         return textField
     }()
     
