@@ -11,7 +11,12 @@ import Firebase
 
 class UserHomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    var votes: [String]! // Would probably be type Vote
+    var photoIds: [(id: String, category: String)] = [] {
+        didSet {
+            self.collectionView.reloadData()
+        }
+    }
+    var votes: [String] = []
     var userPhoto: UIImage!
     var userUploads: [UIImage]!
     
@@ -22,6 +27,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
 
         setupViewHierarchy()
         configureConstraints()
+        //populateVotesArray()
         
         // TableView and Collection View Delegates and DataSource
         tableView.delegate = self
@@ -33,13 +39,39 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         collectionView.dataSource = self
         collectionView.register(PhotoInUploadCollectionViewCell.self, forCellWithReuseIdentifier: PhotoInUploadCollectionViewCell.identifier)
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        populatePhotoIdsArray()
+    }
 
     // MARK: - Placeholder - TODO: Delete this when we have info
     
     internal func setupPlaceHolderCellInfo() {
-        self.votes = ["You voted this photo up", "You voted this photo down"]
+        //self.votes = ["You voted this photo up", "You voted this photo down"]
         self.userPhoto = UIImage(named: "siberian-tiger-profile")
         self.userUploads = [self.userPhoto]
+    }
+    
+    internal func populatePhotoIdsArray() {
+        guard let currentUser = FIRAuth.auth()?.currentUser?.uid else { return }
+        let databaseReference = FIRDatabase.database().reference(withPath: "USERS/\(currentUser)/\("uploads")")
+        print(databaseReference)
+        
+        databaseReference.observeSingleEvent(of: .value, with: { (snapshot) in
+            let enumerator = snapshot.children
+            
+            while let child = enumerator.nextObject() as? FIRDataSnapshot {
+                let key = child.key
+                let category = child.value as! String
+                self.photoIds.append((key, category))
+//                self.photoIds.append(child as! (String, String))
+//                self.photoIds.append((child.key, child.value as! String))
+            }
+            self.tableView.reloadData()
+        })
+        print(self.photoIds)
     }
     
     // MARK: - Setup
@@ -111,13 +143,24 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return userUploads.count
+        return photoIds.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoInUploadCollectionViewCell.identifier, for: indexPath) as! PhotoInUploadCollectionViewCell
-        let photo = userUploads[indexPath.row]
-        cell.imageView.image = photo
+        
+        let imageID = self.photoIds[indexPath.row]
+        
+        let storageReference = FIRStorage.storage().reference(withPath: "\(imageID.category)/\(imageID.id)")
+        print(storageReference)
+        
+        storageReference.data(withMaxSize: Int64.max) { (data: Data?, error: Error?) in
+            if let data = data {
+                
+            DispatchQueue.main.async {
+                cell.imageView.image = UIImage(data: data)
+            }
+            }}
         return cell
     }
     

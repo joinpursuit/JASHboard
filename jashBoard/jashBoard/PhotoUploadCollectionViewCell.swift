@@ -35,7 +35,7 @@ class PhotoInUploadCollectionViewCell: UICollectionViewCell {
     
     lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = #imageLiteral(resourceName: "default-placeholder")
+        //imageView.image = #imageLiteral(resourceName: "default-placeholder")
         return imageView
     }()
 }

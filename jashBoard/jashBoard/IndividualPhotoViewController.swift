@@ -24,7 +24,9 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             //update picture
             storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
                 DispatchQueue.main.async {
-                    self.photoImageView.image = UIImage(data: data!)
+                    if let data = data {
+                        self.photoImageView.image = UIImage(data: data)
+                    }
                 }
             })
         }
@@ -33,7 +35,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         willSet {
             DispatchQueue.main.async {
                 self.upvoteNumberLabel.text = String(describing: newValue!)
-                self.tableView.reloadData()
             }
         }
     }
@@ -41,7 +42,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         willSet {
             DispatchQueue.main.async {
                 self.downvoteNumberLabel.text = String(describing: newValue!)
-                self.tableView.reloadData()
             }
         }
     }
@@ -49,7 +49,11 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
     
     //tracking votes and users concurrently
-    var votes: [(String, Bool)] = []
+    var votes: [(String, Bool)] = [] {
+        willSet {
+            self.tableView.reloadData()
+        }
+    }
     
     //MARK: - Methods
     override func viewDidLoad() {
@@ -88,7 +92,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                 
                 if let photoVotes = dictionary["photoVotes"],
                     let email = dictionary["email"],
-                    let voteResult = photoVotes[photoID] {
+                    let voteResult = photoVotes[photoID]! {
                     self.votes.append((email as! String, voteResult as! Bool))
                 }
             }
@@ -120,7 +124,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(userId)")
         
         sender.tag == 100 ? ( userDBReference.child("photoVotes").updateChildValues(["\(imageId)": true])) : (userDBReference.child("photoVotes").updateChildValues(["\(imageId)": false]))
-        
     }
 
     // MARK: - Setup
