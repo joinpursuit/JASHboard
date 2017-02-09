@@ -25,7 +25,7 @@ class VoteTableViewCell: UITableViewCell {
     var imageIcon: UIImage? {
         didSet{
             setImageIcon()
-        }
+        }/Users/Hari/Projects/AC3.2-U6-jashBoard.zip
     }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
