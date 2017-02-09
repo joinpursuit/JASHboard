@@ -28,8 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let galleryIcon = UITabBarItem(title: "", image: UIImage(named: "gallery_icon")?.withRenderingMode(.alwaysTemplate), tag: 0)
         let cameraIcon = UITabBarItem(title: "", image: UIImage(named: "camera_icon")?.withRenderingMode(.alwaysTemplate), tag: 1)
         let userIcon = UITabBarItem(title: "", image: UIImage(named: "user_icon")?.withRenderingMode(.alwaysTemplate), tag: 2)
-    
-        
+
         categorySelectionTVC.tabBarItem = galleryIcon
         uploadVC.tabBarItem = cameraIcon
         logInVC.tabBarItem = userIcon
@@ -39,16 +38,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rootVCForLogin = UINavigationController(rootViewController: logInVC)
         
         tabController.viewControllers = [rootVCForCategorySelection, rootVCForUploadVC, rootVCForLogin]
-        //let rootVCForUploadVC = UINavigationController(rootViewController: uploadVC)
         
         tabController.tabBar.barTintColor = JashColors.lightPrimaryColor
        // tabController.tabBar.tintColor = JashColors.accentColor
+        tabController.selectedIndex = 2 // Shows login as the first view
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
 
         self.window?.rootViewController = tabController
-
         self.window?.makeKeyAndVisible()
+
+        // Logs in anonymously at start of app
+        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
+            if error != nil {
+                print("Error attempting to long in anonymously: \(error!)")
+            }
+            if user != nil {
+                print("Signed in anonymously!")
+            }
+        })
+
         return true
     }
 

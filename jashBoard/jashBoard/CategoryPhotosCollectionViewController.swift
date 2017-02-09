@@ -11,7 +11,8 @@ import Firebase
 
 private let reuseIdentifier = "Cell"
 
-class CategoryPhotosCollectionViewController: UICollectionViewController {
+class CategoryPhotosCollectionViewController: UICollectionViewController,JashCollectionViewCellDelegate {
+
     //MARK: - Properties
     var categoryTitle: String?
     var jashImages: [JashImage] = []
@@ -38,13 +39,17 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
         let jashImage = jashImages[indexPath.row]
         
         // Configure the cell
+
+        cell.delegate = self
+    
+
         let storageReference = FIRStorage.storage().reference().child("\(jashImage.category)/\(jashImage.imageId)")
         
         storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
             
             DispatchQueue.main.async {
                 if let data = data {
-                cell.photo.image = UIImage(data: data)
+                cell.cellImage = UIImage(data: data)
                 }
             }
         })
@@ -87,7 +92,7 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
        // self.navigationController?.hidesBarsOnSwipe = true
         self.navigationController?.title = categoryTitle
     }
-    
+
     private func loadPhotosArray() {
         guard let category = self.title?.uppercased() else { return }
         let databaseReference = FIRDatabase.database().reference().child("\(category)")
@@ -107,4 +112,21 @@ class CategoryPhotosCollectionViewController: UICollectionViewController {
             self.collectionView?.reloadData()
         })
     }
+    
+    //MARK: JashCollectionViewCell Delegate
+    
+    func showPopUpWith(image: UIImage) {
+        let popUp = PreviewPopViewController()
+        popUp.image = image
+        popUp.modalTransitionStyle = .crossDissolve
+        popUp.modalPresentationStyle = .overCurrentContext
+        
+        present(popUp, animated: true, completion: nil)
+    }
+    
+    func hidePopUp() {
+        dismiss(animated: true, completion: nil)
+    }
+
+
 }
