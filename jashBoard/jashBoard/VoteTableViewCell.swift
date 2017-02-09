@@ -17,11 +17,11 @@ class VoteTableViewCell: UITableViewCell {
             setDescriptionLabel()
         }
     }
-    var date: Date? {
-        didSet{
-            setDateLabel()
-        }
-    }
+//    var date: String? {
+//        didSet{
+//            setDateLabel()
+//        }
+//    }
     var imageIcon: UIImage? {
         didSet{
             setImageIcon()
@@ -65,18 +65,18 @@ class VoteTableViewCell: UITableViewCell {
     }
     
     // MARK: - Set labels
-    func setDateLabel() {
-        let formatter = DateFormatter()
-        if formatter.calendar.isDateInToday(self.date!) {
-            formatter.dateStyle = DateFormatter.Style.none
-        } else {
-            formatter.dateStyle = DateFormatter.Style.short
-        }
-        
-        formatter.timeStyle = .short
-        let dateString = formatter.string(from: self.date!)
-        dateLabel.text = dateString
-    }
+//    func setDateLabel() {
+//        let formatter = DateFormatter()
+//        if formatter.calendar.isDateInToday(self.date!) {
+//            formatter.dateStyle = DateFormatter.Style.none
+//        } else {
+//            formatter.dateStyle = DateFormatter.Style.short
+//        }
+//        
+//        formatter.timeStyle = .short
+//        let dateString = formatter.string(from: self.date!)
+//        dateLabel.text = dateString
+//    }
     
     func setDescriptionLabel() {
         voteDescriptionLabel.text = self.voteDescription!

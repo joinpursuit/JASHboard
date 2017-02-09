@@ -10,11 +10,11 @@ import Foundation
 
 extension Date {
     
-    func convertToTimeString(input: Date) -> String {
+    func convertToTimeString() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = .short
         
-        return dateFormatter.string(from: input)
+        return dateFormatter.string(from: self)
     }
     
 }

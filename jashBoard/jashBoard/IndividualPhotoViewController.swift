@@ -49,7 +49,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
     
     //tracking votes and users concurrently
-    var votes: [(String, Bool)] = []
+    var votes: [(name: String, type: Bool, time: String)] = []
     var pictureTitle: String?
     
     //MARK: - Methods
@@ -77,15 +77,16 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         //in order to update the tableview in real-time we have to constantly observe for a change in value of votes
         databaseRef.observe(.value, with: { (snapshot) in
             let enumerator = snapshot.children
-            var currentVotes: [(String, Bool)] = []
+            var currentVotes: [(String, Bool, String)] = []
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let dictionary = child.value as! [String: AnyObject]
                 
                 if let name = dictionary["name"],
                     let photoVotes = dictionary["photoVotes"],
                     let voteResult = photoVotes[photoID] as? [String: AnyObject],
-                    let voteBool = voteResult["voteType"] {
-                    currentVotes.append((name as! String, voteBool as! Bool))
+                    let voteType = voteResult["voteType"],
+                    let voteTime = voteResult["voteTime"]{
+                    currentVotes.append((name as! String, voteType as! Bool, voteTime as! String))
                 }
             }
             self.votes = currentVotes
@@ -124,9 +125,20 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                 
                 //update photoVotes node within USERS node
                 let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes")
+                let currentDateString = Date().convertToTimeString()
                 
                 if let pictureTitle = self.pictureTitle {
-                    sender.tag == 100 ? (userDBReference.child(imageId).setValue(["voteType" : true, "title" : pictureTitle])) : (userDBReference.child(imageId).setValue(["voteType" : false, "title" : pictureTitle]))
+                    
+                    let upvoteDict = [
+                        "voteType" : true as AnyObject,
+                        "title" : pictureTitle as AnyObject,
+                        "voteTime" : currentDateString as AnyObject
+                    ]
+                    let downvoteDict: [String: AnyObject] = [
+                        "voteType" : false as AnyObject,                                                                                                              "title" : pictureTitle as AnyObject,                                                                                                                      "voteTime" : currentDateString as AnyObject
+                    ]
+                    
+                    sender.tag == 100 ? (userDBReference.child(imageId).setValue(upvoteDict)) : (userDBReference.child(imageId).setValue(downvoteDict))
                 }
             }
             return FIRTransactionResult.success(withValue: currentData)
@@ -210,9 +222,9 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         let vote = votes[indexPath.row]
         
         //TO DO: account for imageIcon and profile picture
-        vote.1 == true ? (cell.voteDescription = "\(vote.0) voted up.") : (cell.voteDescription = "\(vote.0) voted down.")
+        vote.type == true ? (cell.voteDescription = "\(vote.name) voted up.") : (cell.voteDescription = "\(vote.name) voted down.")
         cell.imageIcon = UIImage(named: "siberian-tiger-profile")
-        cell.date = Date()
+        cell.dateLabel.text = vote.time
         
         return cell
     }

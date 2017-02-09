@@ -121,7 +121,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 }
                 else {
                     guard let timestamp = metadata?.timeCreated else { return }
-                    let timeString = timestamp.convertToTimeString(input: timestamp)
+                    let timeString = timestamp.convertToTimeString()
                     
                     let votesDict: [String : AnyObject] = [
                         "upvotes" : 0 as AnyObject,

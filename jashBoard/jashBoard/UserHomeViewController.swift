@@ -158,7 +158,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         
 //        cell.voteDescription = "You voted iphone 7s down"
         cell.imageIcon = UIImage(named: "siberian-tiger-profile")
-        cell.date = Date()
+        cell.dateLabel.text = Date().convertToTimeString()
         
         return cell
     }
