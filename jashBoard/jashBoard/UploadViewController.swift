@@ -12,7 +12,7 @@ import Photos
 import Firebase
 import FirebaseAuth
 
-class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate, UITextFieldDelegate {
+class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate {
 
     //MARK: - Properties
     var catagoryTitlesArr: [String] = ["ANIMALS", "BEACH DAYS" ,"CARS", "FLOWERS & PLANTS"]
@@ -226,6 +226,19 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        switch collectionView {
+        case imagePickerCollectionView:
+            return CGSize(width: self.imagePickerCollectionView.frame.height, height: self.imagePickerCollectionView.frame.height)
+        case categoryCollectionView:
+            return CGSize(width: 150, height: 36)
+        case imageSelectedWithPagingCollectionView:
+            return CGSize(width: self.view.frame.width, height: self.view.frame.width)
+        default:
+            return CGSize(width: self.imagePickerCollectionView.frame.height, height: self.imagePickerCollectionView.frame.height)
+        }
+    }
+    
     // MARK: - Scroll View Delegate Methods
     //http://stackoverflow.com/questions/33855945/uicollectionview-to-snap-onto-a-cell-when-scrolling-horizontally
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
@@ -272,7 +285,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
 
     // MARK: - TextField Delegate Methods
-    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.placeholder = ""
     }
@@ -316,17 +328,17 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         //containerView
         containerView.snp.makeConstraints { (view) in
             view.top.equalTo(self.topLayoutGuide.snp.bottom)
-            view.leading.trailing.bottom.equalToSuperview()
+            view.leading.trailing.equalToSuperview()
+            view.bottom.equalTo(self.bottomLayoutGuide.snp.top)
         }
         
         //titleAndCatagoryContainerView's Subviews
-
         titleTextfield.snp.makeConstraints { (textField) in
             textField.top.equalToSuperview().offset(16)
             textField.centerX.equalToSuperview()
-//            textField.trailing.equalToSuperview().inset(16)
         }
         titleTextfield.underLine(placeHolder: "Title")
+        
         //catagoryCollectionView
         catagoryContainerView.snp.makeConstraints { (collectionView) in
             collectionView.leading.trailing.equalToSuperview()
@@ -385,6 +397,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     lazy var titleTextfield: UITextField = {
         let textField = UITextField()
+        textField.textColor = JashColors.textAndIconColor
+        textField.tintColor = JashColors.accentColor
         return textField
     }()
     
@@ -399,12 +413,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = CGSize(width: 150, height: 36)
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
-        cView.collectionViewLayout = layout
         cView.backgroundColor = JashColors.primaryColor
         cView.allowsMultipleSelection = false
         cView.delegate = self
@@ -417,12 +429,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = CGSize(width: self.view.frame.width, height: self.view.frame.height)
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
-        cView.collectionViewLayout = layout
+        cView.backgroundColor = .clear
         cView.isPagingEnabled = true
         cView.delegate = self
         cView.dataSource = self
@@ -440,15 +451,13 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = CGSize(width: 130, height: 130)
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 1
+        layout.minimumLineSpacing = 1
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
-        cView.collectionViewLayout = layout
+        cView.backgroundColor = .clear
         cView.bounces = false
         cView.showsHorizontalScrollIndicator = false
-        cView.isPagingEnabled = true
         cView.allowsMultipleSelection = false
         cView.delegate = self
         cView.dataSource = self
