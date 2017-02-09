@@ -22,7 +22,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
 
         setupViewHierarchy()
         configureConstraints()
-        loginAnonymously()
+//        loginAnonymously() // Refactored into App Delegate
         
         // Textfield Delegate
         usernameTextField.delegate = self
@@ -84,7 +84,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             textField.top.equalTo(logo.snp.bottom).offset(16)
             textField.centerX.equalToSuperview()
         }
-        usernameTextField.underLine(placeHolder: "Username")
+        usernameTextField.underLine(placeHolder: "username")
    
         // password
         passwordTextField.snp.makeConstraints { (textField) in
@@ -163,20 +163,20 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         registerNewUserViewController.passwordTextField.text = self.passwordTextField.text
         self.navigationController?.pushViewController(registerNewUserViewController, animated: true)
     }
+  
+    // Refactored to be in app delegate
+//    static func loginAnonymously() {
+//        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
+//            if error != nil {
+//                print("Error attempting to long in anonymously: \(error!)")
+//            }
+//            if user != nil {
+//                print("Signed in anonymously!")
+//                // self.signInUser = user
+//            }
+//        })
+//    }
     
-    private func loginAnonymously() {
-        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
-            if error != nil {
-                print("Error attempting to long in anonymously: \(error!)")
-            }
-            if user != nil {
-                print("Signed in anonymously!")
-                //self.signInUser = user
-            }
-        })
-    }
-    
-
     // MARK: - Navigation
     
     func showProgress(){

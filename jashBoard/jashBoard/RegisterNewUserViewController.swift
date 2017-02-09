@@ -9,10 +9,16 @@
 import UIKit
 import SnapKit
 import Firebase
+import AVFoundation
+import AVKit
+import MobileCoreServices
 
-class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
+class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     var signInUser: FIRUser?
+    
+    var capturedImages: [UIImage]! = []
+    var imagePickerController: UIImagePickerController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,9 +28,107 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
         setTextFieldDelegates()
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         self.view.addGestureRecognizer(tapGesture)
+        
+        //Set placeholder for textField
+        self.userFirstNameTextField.underLine(placeHolder: "first name")
+        self.userLastNameTextField.underLine(placeHolder: "last name")
+        self.userEmailTextField.underLine(placeHolder: "email")
+        self.passwordTextField.underLine(placeHolder: "password")
     }
     
-    // MARK: Tab Gesture Selector
+    // MARK: - PhotoPicker Methods
+    func editButtonTapped(_ sender: UIButton) {
+        print("Edit Button Tapped")
+        let editProfileAlertController = UIAlertController(title: "Edit Profile Image", message: nil, preferredStyle: .alert)
+
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            let oneAction = UIAlertAction(title: "Take a New Profile Picture", style: .default) { _ in
+                print("Action One Tapped")
+                self.showImagePickerForCamera(sender)
+            }
+            editProfileAlertController.addAction(oneAction)
+        }
+
+        let twoAction = UIAlertAction(title: "Select Profile Picture", style: .default) { _ in
+            print("Action Two Tapped")
+            self.showImagePickerForSourceType(sourceType: .photoLibrary, fromButton: sender)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            print("Cancel Tapped")
+        }
+        
+        editProfileAlertController.addAction(twoAction)
+        editProfileAlertController.addAction(cancelAction)
+        self.present(editProfileAlertController, animated: true, completion: nil)
+    }
+    
+    func showImagePickerForCamera(_ sender: UIButton) {
+        let authStatus = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
+        if authStatus == .denied {
+            
+        }
+        else if authStatus == .notDetermined {
+            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo) { (granted: Bool) in
+                if (granted) {
+                    self.showImagePickerForSourceType(sourceType: .camera, fromButton: sender)
+                }
+            }
+        }
+        else {
+            self.showImagePickerForSourceType(sourceType: .camera, fromButton: sender)
+        }
+    }
+
+    
+    private func showImagePickerForSourceType(sourceType: UIImagePickerControllerSourceType, fromButton button: UIButton) {
+        
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.modalPresentationStyle = .currentContext
+        imagePickerController.sourceType = sourceType
+        imagePickerController.delegate = self
+        imagePickerController.modalPresentationStyle = (sourceType == .camera) ? .fullScreen : .popover
+        // See which media type you want to return
+        imagePickerController.mediaTypes = [String(kUTTypeImage)]
+        
+        self.imagePickerController = imagePickerController
+        self.present(imagePickerController, animated: true, completion: nil)
+    }
+    
+    // MARK: - UIImagePickerControllerDelegate
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        switch info[UIImagePickerControllerMediaType] as! String {
+        case String(kUTTypeImage):
+            break
+        default:
+            print("Bad media type")
+        }
+        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            self.capturedImages.append(image)
+        }
+        
+        
+        self.finishAndUpdate()
+    }
+    
+    private func finishAndUpdate() {
+        self.dismiss(animated: true, completion: nil)
+        if self.capturedImages.count > 0 {
+            if self.capturedImages.count == 1 {
+                self.profilePictureImageView.image = self.capturedImages[0]
+            }
+            else {
+                self.profilePictureImageView.animationImages = self.capturedImages
+                self.profilePictureImageView.animationDuration = 5.0
+                self.profilePictureImageView.animationRepeatCount = 0
+                self.profilePictureImageView.startAnimating()
+            }
+        }
+        self.capturedImages.removeAll()
+    }
+
+    
+    // MARK: - Tab Gesture Selector
     func dismissKeyboard() {
         self.userFirstNameTextField.resignFirstResponder()
         self.userLastNameTextField.resignFirstResponder()
@@ -69,6 +173,7 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
 
     private func setupViewHierarchy() {
         self.view.addSubview(profilePictureImageView)
+        self.view.addSubview(editProfilePictureButton)
         self.view.addSubview(textFieldContainerView)
         self.textFieldContainerView.addSubview(userFirstNameTextField)
         self.textFieldContainerView.addSubview(userLastNameTextField)
@@ -86,10 +191,16 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
             view.size.equalTo(profileSize)
         }
         
+        editProfilePictureButton.snp.makeConstraints{ (button) in
+            button.centerX.equalToSuperview()
+            button.top.equalTo(self.profilePictureImageView.snp.bottom).offset(8)
+            button.width.equalTo(JashButton.defaultSize.width)
+        }
+        
         textFieldContainerView.snp.makeConstraints { (view) in
-            view.top.equalTo(self.profilePictureImageView.snp.bottom).offset(16)
-            view.trailing.equalToSuperview().offset(16)
-            view.leading.bottom.equalToSuperview().inset(16)
+            view.top.equalTo(self.editProfilePictureButton.snp.bottom).offset(16)
+            view.leading.equalToSuperview().inset(16)
+            view.trailing.bottom.equalToSuperview().offset(-16)
         }
         
         userFirstNameTextField.snp.makeConstraints { (textField) in
@@ -148,6 +259,8 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
                 "name" : "\(firstName) \(lastName)" as AnyObject,
                 "email" : userName as AnyObject,
                 ]
+            
+            // TO DO: ADD IN PROFILE PICTURE
             databaseReference.setValue(info)
             self.signInUser = validUser
             self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
@@ -155,7 +268,19 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
     }
     
     func imageTapped(){
-        // TO DO: Add logic to add user photo
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.sourceType = .photoLibrary
+        imagePickerController.delegate = self
+        self.present(imagePickerController, animated: true, completion: nil)
+    }
+    
+    //MARK: - UIImagePickerControllerDelegate
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            self.profilePictureImageView.image = image
+        }
+        dismiss(animated: true)
     }
     
     // MARK: - Lazy Vars
@@ -163,10 +288,11 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
        let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "default-placeholder")
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 0.5
+        imageView.layer.cornerRadius = 25
         imageView.frame.size = CGSize(width: 150.0, height: 150.0)
         let tapImageGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
         imageView.addGestureRecognizer(tapImageGesture)
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
@@ -177,49 +303,60 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate {
     
     lazy var userFirstNameTextField: UITextField = {
         let textField = UITextField()
-        textField.underLine(placeHolder: "first name")
-        textField.textColor = .white
-        textField.tintColor = .clear
+        textField.tintColor = JashColors.accentColor
+        textField.textColor = JashColors.textAndIconColor
         textField.autocorrectionType = .no
+        textField.underLine(placeHolder: "first name")
         return textField
     }()
     
     lazy var userLastNameTextField: UITextField = {
         let textField = UITextField()
-        textField.underLine(placeHolder: "last name")
-        textField.textColor = .white
-        textField.tintColor = .clear
+        textField.tintColor = JashColors.accentColor
+        textField.textColor = JashColors.textAndIconColor
         textField.autocorrectionType = .no
+        textField.underLine(placeHolder: "last name")
         return textField
     }()
     
     lazy var userEmailTextField: UITextField = {
        let textField = UITextField()
-        textField.underLine(placeHolder: "email")
         textField.keyboardType = .emailAddress
-        textField.textColor = .white
-        textField.tintColor = .clear
+        textField.tintColor = JashColors.accentColor
+        textField.textColor = JashColors.textAndIconColor
         textField.autocorrectionType = .no
         textField.keyboardType = .emailAddress
+        textField.underLine(placeHolder: "email")
        return textField
     }()
     
     lazy var passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.underLine(placeHolder: "password")
-        textField.textColor = .white
-        textField.tintColor = .clear
+        textField.tintColor = JashColors.accentColor
+        textField.textColor = JashColors.textAndIconColor
         textField.autocorrectionType = .no
         textField.isSecureTextEntry = true
+        textField.underLine(placeHolder: "password")
         return textField
     }()
     
-//    lazy var registerButton: JashButton = {
-//        let button = JashButton()
-//        button.setTitle("REGISTER", for: UIControlState.normal)
-//        button.addTarget(self, action: #selector(registerButtonDidTapped), for: UIControlEvents.touchUpInside)
-//        return button
-//    }()
+    lazy var selectProfilePictureFromLibraryButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Select Profile Picture", for: .normal)
+        return button
+    }()
+    
+    lazy var takeProfilePictureFromCameraButton: UIButton = {
+       let button = UIButton()
+        button.setTitle("Take New Profile Picture", for: .normal)
+        return button
+    }()
+    
+    lazy var editProfilePictureButton: UIButton = {
+        let button = JashButton(title: "Edit Profile Picture")
+        button.addTarget(self, action: #selector(editButtonTapped), for: UIControlEvents.touchUpInside)
+        return button
+    }()
     
     internal lazy var registerButton: UIButton = {
         let button = JashButton(title: "Register")

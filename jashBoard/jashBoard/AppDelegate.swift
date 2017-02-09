@@ -41,12 +41,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         tabController.tabBar.barTintColor = JashColors.lightPrimaryColor
        // tabController.tabBar.tintColor = JashColors.accentColor
+        tabController.selectedIndex = 2 // Shows login as the first view
         
         self.window = UIWindow(frame: UIScreen.main.bounds)
 
         self.window?.rootViewController = tabController
-
         self.window?.makeKeyAndVisible()
+
+        // Logs in anonymously at start of app
+        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
+            if error != nil {
+                print("Error attempting to long in anonymously: \(error!)")
+            }
+            if user != nil {
+                print("Signed in anonymously!")
+            }
+        })
+
         return true
     }
 
