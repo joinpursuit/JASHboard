@@ -26,6 +26,7 @@
 		4B44F2E21E4A2E7E00D7782A /* VoteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */; };
 		4B44F2E41E4A5C9600D7782A /* UserHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */; };
 		A73778AD1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73778AC1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift */; };
+		A73778AF1E4BC358003C3641 /* RegisterNewUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73778AE1E4BC358003C3641 /* RegisterNewUserViewController.swift */; };
 		A751FDE01E49415400B53D1A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */; };
 		A751FDE21E49708700B53D1A /* PhotoUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */; };
 		A751FDE41E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A751FDE31E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift */; };
@@ -56,6 +57,7 @@
 		4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserHomeViewController.swift; sourceTree = "<group>"; };
 		A4928526CB9318AFD7A23769 /* Pods_jashBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_jashBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A73778AC1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSelectedInUploadCollectionViewCell.swift; sourceTree = "<group>"; };
+		A73778AE1E4BC358003C3641 /* RegisterNewUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterNewUserViewController.swift; sourceTree = "<group>"; };
 		A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoUploadCollectionViewCell.swift; sourceTree = "<group>"; };
 		A751FDE31E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatagoryTapInUploadCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				A751FDE31E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift */,
 				A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */,
 				4B3B722D1E49180A00F42041 /* LogInViewController.swift */,
+				A73778AE1E4BC358003C3641 /* RegisterNewUserViewController.swift */,
 				4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */,
 				4B3B72351E49351A00F42041 /* Utilities.swift */,
 				4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */,
@@ -305,6 +308,7 @@
 				4B3B72381E493FF700F42041 /* IndividualPhotoViewController.swift in Sources */,
 				4B3B722E1E49180A00F42041 /* CategorySelectionTableViewController.swift in Sources */,
 				1AB285CE1E4A42EC00D9E34B /* JashButton.swift in Sources */,
+				A73778AF1E4BC358003C3641 /* RegisterNewUserViewController.swift in Sources */,
 				1AB285CA1E497E3D00D9E34B /* JashTextField.swift in Sources */,
 				A751FDE41E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift in Sources */,
 				4B44F2E21E4A2E7E00D7782A /* VoteTableViewCell.swift in Sources */,

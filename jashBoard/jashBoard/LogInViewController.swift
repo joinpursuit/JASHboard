@@ -26,6 +26,32 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         // Textfield Delegate
         usernameTextField.delegate = self
         passwordTextField.delegate = self
+        
+        // Tap Gesture
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        self.view.addGestureRecognizer(tapGesture)
+        
+        //FirAuth
+        FIRAuth.auth()?.addStateDidChangeListener({ (auth, user) in
+            if user?.email == nil {
+                self.loginButton.isEnabled = true
+                self.loginButton.isUserInteractionEnabled = true
+                self.registerButton.isEnabled = true
+                self.registerButton.isUserInteractionEnabled = true
+            } else {
+                self.loginButton.isEnabled = false
+                self.loginButton.isUserInteractionEnabled = false
+                self.registerButton.isEnabled = false
+                self.registerButton.isUserInteractionEnabled = false
+            }
+        })
+
+    }
+    
+    // MARK: Tab Gesture Selector
+    func dismissKeyboard() {
+        self.usernameTextField.resignFirstResponder()
+        self.passwordTextField.resignFirstResponder()
     }
     
     // MARK: - Setup
@@ -125,6 +151,28 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     }
     
     internal func didTapRegister(sender: UIButton) {
+
+        let registerNewUserViewController = RegisterNewUserViewController()
+        self.navigationController?.pushViewController(registerNewUserViewController, animated: true)
+        
+//        guard let userName = usernameTextField.text,
+//            let password = passwordTextField.text else { return }
+//        // SAME BUG AS ABOVE
+//        self.registerButton.isEnabled = false
+//        FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
+//            if error != nil {
+//                let errorAlertController = UIAlertController(title: "Registering Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+//                let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
+//                errorAlertController.addAction(okay)
+//                self.present(errorAlertController, animated: true, completion: nil)
+//            }
+//            guard let validUser = user else { return }
+//            self.signInUser = validUser
+//            // Remains true so this line doesn't matter... Uncomment when button is disable-able
+////            self.registerButton.isEnabled = true
+//            self.showUserHomeVC()
+//        })
+        
         guard let userName = usernameTextField.text,
             let password = passwordTextField.text else { return }
         
@@ -167,7 +215,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         })
     }
     
-    
     // MARK: - Navigation
 
     func showUserHomeVC() {
@@ -175,14 +222,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: - Views
-    
-    // containerView 
-    
-    internal lazy var containerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.lightGray
-        return view
-    }()
     
     // logo
     internal lazy var logo: UIImageView = {
@@ -215,7 +254,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         textField.isSecureTextEntry = true
         return textField
     }()
-    
 
     // buttons
     internal let loginButton: JashButton = {

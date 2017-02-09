@@ -173,7 +173,9 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
             try firebaseAuth?.signOut()
             let alertController = UIAlertController(title: "Logged Out Successfully", message: nil, preferredStyle: UIAlertControllerStyle.alert)
             let okay = UIAlertAction(title: "Okay", style: .cancel) { _ in
-                self.navigationController?.popViewController(animated: true)
+                //self.navigationController?.dismiss(animated: true, completion: nil)
+                //self.navigationController?.popViewController(animated: true)
+                let _ = self.navigationController?.popToRootViewController(animated: true)
             }
             alertController.addAction(okay)
             present(alertController, animated: true, completion: nil)

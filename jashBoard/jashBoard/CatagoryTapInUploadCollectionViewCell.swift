@@ -38,7 +38,7 @@ class CatagoryTapInUploadCollectionViewCell: UICollectionViewCell {
         label.textColor = JashColors.textAndIconColor
         label.font = UIFont.boldSystemFont(ofSize: 18)
         label.backgroundColor = JashColors.primaryColor
-        label.layer.borderColor = JashColors.primaryTextColor.cgColor
+        label.layer.borderColor = JashColors.textAndIconColor.cgColor
         label.layer.borderWidth = 2
         label.textAlignment = .center
         return label
