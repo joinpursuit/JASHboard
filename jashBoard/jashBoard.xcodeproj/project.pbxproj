@@ -7,20 +7,64 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1AB285C81E492D9F00D9E34B /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */; };
+		1AB285CA1E497E3D00D9E34B /* JashTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285C91E497E3D00D9E34B /* JashTextField.swift */; };
+		1AB285CC1E4A2C3F00D9E34B /* JashTextFieldExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */; };
+		1AB285CE1E4A42EC00D9E34B /* JashButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285CD1E4A42EC00D9E34B /* JashButton.swift */; };
+		1AB285D51E4B80BA00D9E34B /* JashProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285D41E4B80BA00D9E34B /* JashProgressViewController.swift */; };
+		1AB285D71E4BC57800D9E34B /* PreviewPopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285D61E4BC57800D9E34B /* PreviewPopViewController.swift */; };
+		474DA2201E4B9AA0003D66FC /* Vote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474DA21F1E4B9AA0003D66FC /* Vote.swift */; };
+		474DA2221E4B9AB9003D66FC /* JashImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474DA2211E4B9AB9003D66FC /* JashImage.swift */; };
 		4759A6B51E490D7F00F21794 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4759A6B41E490D7F00F21794 /* AppDelegate.swift */; };
 		4759A6BC1E490D7F00F21794 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4759A6BB1E490D7F00F21794 /* Assets.xcassets */; };
 		4759A6BF1E490D7F00F21794 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4759A6BD1E490D7F00F21794 /* LaunchScreen.storyboard */; };
+		4B3B722E1E49180A00F42041 /* CategorySelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3B72291E49180A00F42041 /* CategorySelectionTableViewController.swift */; };
+		4B3B722F1E49180A00F42041 /* CategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3B722A1E49180A00F42041 /* CategoryTableViewCell.swift */; };
+		4B3B72301E49180A00F42041 /* CategoryPhotosCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3B722B1E49180A00F42041 /* CategoryPhotosCollectionViewController.swift */; };
+		4B3B72311E49180A00F42041 /* UploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3B722C1E49180A00F42041 /* UploadViewController.swift */; };
+		4B3B72321E49180A00F42041 /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3B722D1E49180A00F42041 /* LogInViewController.swift */; };
+		4B3B72361E49351A00F42041 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3B72351E49351A00F42041 /* Utilities.swift */; };
+		4B3B72381E493FF700F42041 /* IndividualPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3B72371E493FF700F42041 /* IndividualPhotoViewController.swift */; };
+		4B44F2E21E4A2E7E00D7782A /* VoteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */; };
+		4B44F2E41E4A5C9600D7782A /* UserHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */; };
+		A73778AD1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73778AC1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift */; };
+		A73778AF1E4BC358003C3641 /* RegisterNewUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73778AE1E4BC358003C3641 /* RegisterNewUserViewController.swift */; };
+		A751FDE01E49415400B53D1A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */; };
+		A751FDE21E49708700B53D1A /* PhotoUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */; };
+		A751FDE41E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A751FDE31E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift */; };
 		E1270E7221A399C7EF7A5B20 /* Pods_jashBoard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4928526CB9318AFD7A23769 /* Pods_jashBoard.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0841D9FD5BE52B7E49871A7F /* Pods-jashBoard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jashBoard.release.xcconfig"; path = "Pods/Target Support Files/Pods-jashBoard/Pods-jashBoard.release.xcconfig"; sourceTree = "<group>"; };
+		1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
+		1AB285C91E497E3D00D9E34B /* JashTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashTextField.swift; sourceTree = "<group>"; };
+		1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashTextFieldExtension.swift; sourceTree = "<group>"; };
+		1AB285CD1E4A42EC00D9E34B /* JashButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashButton.swift; sourceTree = "<group>"; };
+		1AB285D41E4B80BA00D9E34B /* JashProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashProgressViewController.swift; sourceTree = "<group>"; };
+		1AB285D61E4BC57800D9E34B /* PreviewPopViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewPopViewController.swift; sourceTree = "<group>"; };
+		474DA21F1E4B9AA0003D66FC /* Vote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vote.swift; sourceTree = "<group>"; };
+		474DA2211E4B9AB9003D66FC /* JashImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashImage.swift; sourceTree = "<group>"; };
 		4759A6B11E490D7F00F21794 /* jashBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jashBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4759A6B41E490D7F00F21794 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4759A6BB1E490D7F00F21794 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4759A6BE1E490D7F00F21794 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4759A6C01E490D7F00F21794 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B3B72291E49180A00F42041 /* CategorySelectionTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategorySelectionTableViewController.swift; sourceTree = "<group>"; };
+		4B3B722A1E49180A00F42041 /* CategoryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryTableViewCell.swift; sourceTree = "<group>"; };
+		4B3B722B1E49180A00F42041 /* CategoryPhotosCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryPhotosCollectionViewController.swift; sourceTree = "<group>"; };
+		4B3B722C1E49180A00F42041 /* UploadViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadViewController.swift; sourceTree = "<group>"; };
+		4B3B722D1E49180A00F42041 /* LogInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
+		4B3B72351E49351A00F42041 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		4B3B72371E493FF700F42041 /* IndividualPhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndividualPhotoViewController.swift; sourceTree = "<group>"; };
+		4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoteTableViewCell.swift; sourceTree = "<group>"; };
+		4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserHomeViewController.swift; sourceTree = "<group>"; };
 		A4928526CB9318AFD7A23769 /* Pods_jashBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_jashBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A73778AC1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSelectedInUploadCollectionViewCell.swift; sourceTree = "<group>"; };
+		A73778AE1E4BC358003C3641 /* RegisterNewUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterNewUserViewController.swift; sourceTree = "<group>"; };
+		A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoUploadCollectionViewCell.swift; sourceTree = "<group>"; };
+		A751FDE31E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatagoryTapInUploadCollectionViewCell.swift; sourceTree = "<group>"; };
 		F792D325396F289052B4E114 /* Pods-jashBoard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jashBoard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-jashBoard/Pods-jashBoard.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -36,12 +80,73 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1AB285C61E49278000D9E34B /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				4B3B72371E493FF700F42041 /* IndividualPhotoViewController.swift */,
+				4B3B722C1E49180A00F42041 /* UploadViewController.swift */,
+				4B3B722B1E49180A00F42041 /* CategoryPhotosCollectionViewController.swift */,
+				4B3B722D1E49180A00F42041 /* LogInViewController.swift */,
+				A73778AE1E4BC358003C3641 /* RegisterNewUserViewController.swift */,
+				4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */,
+				1AB285D61E4BC57800D9E34B /* PreviewPopViewController.swift */,
+				1AB285D41E4B80BA00D9E34B /* JashProgressViewController.swift */,
+				4B3B72291E49180A00F42041 /* CategorySelectionTableViewController.swift */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		1AB285CF1E4AF78C00D9E34B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4B3B72351E49351A00F42041 /* Utilities.swift */,
+				4759A6B41E490D7F00F21794 /* AppDelegate.swift */,
+				4759A6BB1E490D7F00F21794 /* Assets.xcassets */,
+				4759A6BD1E490D7F00F21794 /* LaunchScreen.storyboard */,
+				4759A6C01E490D7F00F21794 /* Info.plist */,
+				A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1AB285D01E4AF7BC00D9E34B /* Controller Cells */ = {
+			isa = PBXGroup;
+			children = (
+				4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */,
+				4B3B722A1E49180A00F42041 /* CategoryTableViewCell.swift */,
+				1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */,
+				A73778AC1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift */,
+				A751FDE31E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift */,
+				A751FDE11E49708600B53D1A /* PhotoUploadCollectionViewCell.swift */,
+			);
+			name = "Controller Cells";
+			sourceTree = "<group>";
+		};
+		1AB285D11E4AF7DB00D9E34B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1AB285C91E497E3D00D9E34B /* JashTextField.swift */,
+				1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */,
+				1AB285CD1E4A42EC00D9E34B /* JashButton.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		3A42AEA7FB18B8D107C0A6FB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				A4928526CB9318AFD7A23769 /* Pods_jashBoard.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		474DA21E1E4B9A6C003D66FC /* Model Objects */ = {
+			isa = PBXGroup;
+			children = (
+				474DA21F1E4B9AA0003D66FC /* Vote.swift */,
+				474DA2211E4B9AB9003D66FC /* JashImage.swift */,
+			);
+			name = "Model Objects";
 			sourceTree = "<group>";
 		};
 		4759A6A81E490D7F00F21794 = {
@@ -65,10 +170,11 @@
 		4759A6B31E490D7F00F21794 /* jashBoard */ = {
 			isa = PBXGroup;
 			children = (
-				4759A6B41E490D7F00F21794 /* AppDelegate.swift */,
-				4759A6BB1E490D7F00F21794 /* Assets.xcassets */,
-				4759A6BD1E490D7F00F21794 /* LaunchScreen.storyboard */,
-				4759A6C01E490D7F00F21794 /* Info.plist */,
+				474DA21E1E4B9A6C003D66FC /* Model Objects */,
+				1AB285D11E4AF7DB00D9E34B /* Views */,
+				1AB285C61E49278000D9E34B /* View Controllers */,
+				1AB285D01E4AF7BC00D9E34B /* Controller Cells */,
+				1AB285CF1E4AF78C00D9E34B /* Supporting Files */,
 			);
 			path = jashBoard;
 			sourceTree = "<group>";
@@ -146,6 +252,7 @@
 			files = (
 				4759A6BF1E490D7F00F21794 /* LaunchScreen.storyboard in Resources */,
 				4759A6BC1E490D7F00F21794 /* Assets.xcassets in Resources */,
+				A751FDE01E49415400B53D1A /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,7 +311,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B3B72381E493FF700F42041 /* IndividualPhotoViewController.swift in Sources */,
+				4B3B722E1E49180A00F42041 /* CategorySelectionTableViewController.swift in Sources */,
+				1AB285CE1E4A42EC00D9E34B /* JashButton.swift in Sources */,
+				A73778AF1E4BC358003C3641 /* RegisterNewUserViewController.swift in Sources */,
+				1AB285CA1E497E3D00D9E34B /* JashTextField.swift in Sources */,
+				A751FDE41E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift in Sources */,
+				4B44F2E21E4A2E7E00D7782A /* VoteTableViewCell.swift in Sources */,
+				4B3B72311E49180A00F42041 /* UploadViewController.swift in Sources */,
+				4B3B72361E49351A00F42041 /* Utilities.swift in Sources */,
+				4B3B72321E49180A00F42041 /* LogInViewController.swift in Sources */,
+				474DA2221E4B9AB9003D66FC /* JashImage.swift in Sources */,
+				A751FDE21E49708700B53D1A /* PhotoUploadCollectionViewCell.swift in Sources */,
+				A73778AD1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift in Sources */,
+				1AB285CC1E4A2C3F00D9E34B /* JashTextFieldExtension.swift in Sources */,
+				1AB285D51E4B80BA00D9E34B /* JashProgressViewController.swift in Sources */,
+				474DA2201E4B9AA0003D66FC /* Vote.swift in Sources */,
+				4B3B72301E49180A00F42041 /* CategoryPhotosCollectionViewController.swift in Sources */,
 				4759A6B51E490D7F00F21794 /* AppDelegate.swift in Sources */,
+				1AB285C81E492D9F00D9E34B /* CategoryCollectionViewCell.swift in Sources */,
+				1AB285D71E4BC57800D9E34B /* PreviewPopViewController.swift in Sources */,
+				4B44F2E41E4A5C9600D7782A /* UserHomeViewController.swift in Sources */,
+				4B3B722F1E49180A00F42041 /* CategoryTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,6 +492,7 @@
 				4759A6C51E490D7F00F21794 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
