@@ -247,7 +247,7 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
             
             let info: [String: AnyObject] = [
                 "name" : "\(firstName) \(lastName)" as AnyObject,
-                "email" : userName as AnyObject,
+                "email" : userName as AnyObject
                 ]
             
             // TO DO: ADD IN PROFILE PICTURE

@@ -13,6 +13,7 @@
 		1AB285CE1E4A42EC00D9E34B /* JashButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285CD1E4A42EC00D9E34B /* JashButton.swift */; };
 		1AB285D51E4B80BA00D9E34B /* JashProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285D41E4B80BA00D9E34B /* JashProgressViewController.swift */; };
 		1AB285D71E4BC57800D9E34B /* PreviewPopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285D61E4BC57800D9E34B /* PreviewPopViewController.swift */; };
+		474B017E1E4D1809007E9D91 /* DateConverterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474B017D1E4D1809007E9D91 /* DateConverterExtension.swift */; };
 		474DA2201E4B9AA0003D66FC /* Vote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474DA21F1E4B9AA0003D66FC /* Vote.swift */; };
 		474DA2221E4B9AB9003D66FC /* JashImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474DA2211E4B9AB9003D66FC /* JashImage.swift */; };
 		4759A6B51E490D7F00F21794 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4759A6B41E490D7F00F21794 /* AppDelegate.swift */; };
@@ -43,6 +44,7 @@
 		1AB285CD1E4A42EC00D9E34B /* JashButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashButton.swift; sourceTree = "<group>"; };
 		1AB285D41E4B80BA00D9E34B /* JashProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashProgressViewController.swift; sourceTree = "<group>"; };
 		1AB285D61E4BC57800D9E34B /* PreviewPopViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewPopViewController.swift; sourceTree = "<group>"; };
+		474B017D1E4D1809007E9D91 /* DateConverterExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateConverterExtension.swift; sourceTree = "<group>"; };
 		474DA21F1E4B9AA0003D66FC /* Vote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vote.swift; sourceTree = "<group>"; };
 		474DA2211E4B9AB9003D66FC /* JashImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashImage.swift; sourceTree = "<group>"; };
 		4759A6B11E490D7F00F21794 /* jashBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jashBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,6 +130,7 @@
 				1AB285C91E497E3D00D9E34B /* JashTextField.swift */,
 				1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */,
 				1AB285CD1E4A42EC00D9E34B /* JashButton.swift */,
+				474B017D1E4D1809007E9D91 /* DateConverterExtension.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 				TargetAttributes = {
 					4759A6B01E490D7F00F21794 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = R7DWEPXN5Y;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -318,6 +322,7 @@
 				1AB285CA1E497E3D00D9E34B /* JashTextField.swift in Sources */,
 				A751FDE41E4978C700B53D1A /* CatagoryTapInUploadCollectionViewCell.swift in Sources */,
 				4B44F2E21E4A2E7E00D7782A /* VoteTableViewCell.swift in Sources */,
+				474B017E1E4D1809007E9D91 /* DateConverterExtension.swift in Sources */,
 				4B3B72311E49180A00F42041 /* UploadViewController.swift in Sources */,
 				4B3B72361E49351A00F42041 /* Utilities.swift in Sources */,
 				4B3B72321E49180A00F42041 /* LogInViewController.swift in Sources */,
@@ -448,7 +453,7 @@
 			baseConfigurationReference = F792D325396F289052B4E114 /* Pods-jashBoard.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = R7DWEPXN5Y;
 				INFOPLIST_FILE = jashBoard/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -463,7 +468,7 @@
 			baseConfigurationReference = 0841D9FD5BE52B7E49871A7F /* Pods-jashBoard.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = R7DWEPXN5Y;
 				INFOPLIST_FILE = jashBoard/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
