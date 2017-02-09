@@ -11,7 +11,7 @@ import Firebase
 
 class UserHomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     //MARK: - Properties
-    var photoIds: [(id: String, category: String)] = []
+    var photoIds: [(id: String, category: String, title: String)] = []
     var votes: [(id: String, imageName: String, flag: Bool)] = []
     var userPhoto: UIImage!
     var userUploads: [UIImage]!
@@ -54,9 +54,10 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let key = child.key
                 guard let imageInfo = child.value as? [String: AnyObject],
-                    let category = imageInfo["category"] as? String else { return }
+                    let category = imageInfo["category"] as? String,
+                let title = imageInfo["title"] as? String else { return }
                 
-                self.photoIds.append((key, category))
+                self.photoIds.append((key, category, title))
             }
             self.collectionView.reloadData()
         })

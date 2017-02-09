@@ -83,11 +83,11 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let dictionary = child.value as! [String: AnyObject]
                 
-                if let name = dictionary["name"],
+                if let name = dictionary["name"] as? String,
                 let photoVotes = dictionary["photoVotes"],
-                let voteResult = photoVotes[photoID] as? [String: AnyObject],
+                let voteResult = photoVotes[photoID] as? [String: Bool],
                 let voteBool = voteResult["voteType"] {
-                    self.votes.append((name as! String, voteBool as! Bool))
+                    self.votes.append((name, voteBool))
                 }
             }
             self.tableView.reloadData()
@@ -130,7 +130,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes/\(imageId)")
         
         if let pictureTitle = self.pictureTitle {
-            sender.tag == 100 ? (userDBReference.setValue(["voteType" : true, "title" : pictureTitle])) : (userDBReference.setValue(["voteType" : false, "title" : pictureTitle]))
+            sender.tag == 100 ? (userDBReference.setValue(["voteType" : true, "title" : pictureTitle, "categroy" : category])) : (userDBReference.setValue(["voteType" : false, "title" : pictureTitle, "categroy" : category]))
         }  
     }
 
