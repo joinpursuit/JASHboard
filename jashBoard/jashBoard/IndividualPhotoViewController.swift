@@ -89,7 +89,8 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                     currentVotes.append((name as! String, voteType as! Bool, voteTime as! String))
                 }
             }
-            self.votes = currentVotes
+            //sorting results by time of vote
+            self.votes = currentVotes.sorted { $0.2 > $1.2 }
             self.tableView.reloadData()
         })
     }
@@ -257,7 +258,8 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                 self.photoImageView.isUserInteractionEnabled = true
             }
         }
-        
+        //perform upvote business logic and animate
+        vote(sender: self.upvoteButton)
         animator.startAnimation()
     }
 
