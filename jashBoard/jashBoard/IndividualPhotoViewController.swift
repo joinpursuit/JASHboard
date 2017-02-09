@@ -144,7 +144,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             return FIRTransactionResult.success(withValue: currentData)
         }
         // update current users photoVotes node
-        guard let userId = FIRAuth.auth()?.currentUser?.uid else { return }
         
         let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes/\(imageId)")
         
