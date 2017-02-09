@@ -130,7 +130,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes/\(imageId)")
         
         if let pictureTitle = self.pictureTitle {
-            sender.tag == 100 ? (userDBReference.setValue(["voteType" : true, "title" : pictureTitle, "categroy" : category])) : (userDBReference.setValue(["voteType" : false, "title" : pictureTitle, "categroy" : category]))
+            sender.tag == 100 ? (userDBReference.setValue(["voteType" : true, "title" : pictureTitle, "categroy" : category])) : (userDBReference.setValue(["voteType" : false, "title" : pictureTitle, "category" : category]))
         }  
     }
 
