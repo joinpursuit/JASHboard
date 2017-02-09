@@ -82,7 +82,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             textField.top.equalTo(logo.snp.bottom).offset(16)
             textField.centerX.equalToSuperview()
         }
-        usernameTextField.underLine(placeHolder: "Username")
+        usernameTextField.underLine(placeHolder: "username")
    
         // password
         passwordTextField.snp.makeConstraints { (textField) in
