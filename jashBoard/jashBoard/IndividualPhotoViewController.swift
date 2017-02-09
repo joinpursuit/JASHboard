@@ -49,11 +49,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
     
     //tracking votes and users concurrently
-    var votes: [(String, Bool)] = [] {
-        willSet {
-            self.tableView.reloadData()
-        }
-    }
+    var votes: [(String, Bool)] = []
     var pictureTitle: String?
     
     //MARK: - Methods
@@ -78,36 +74,23 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         
         let databaseRef = FIRDatabase.database().reference(withPath: "USERS")
         
-        databaseRef.observeSingleEvent(of: .value, with: { (snapshot) in
+        //in order to update the tableview in real-time we have to constantly observe for a change in value of votes
+        databaseRef.observe(.value, with: { (snapshot) in
             let enumerator = snapshot.children
+            var currentVotes: [(String, Bool)] = []
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let dictionary = child.value as! [String: AnyObject]
                 
                 if let name = dictionary["name"],
-                let photoVotes = dictionary["photoVotes"],
-                let voteResult = photoVotes[photoID] as? [String: AnyObject],
-                let voteBool = voteResult["voteType"] {
-                    self.votes.append((name as! String, voteBool as! Bool))
+                    let photoVotes = dictionary["photoVotes"],
+                    let voteResult = photoVotes[photoID] as? [String: AnyObject],
+                    let voteBool = voteResult["voteType"] {
+                    currentVotes.append((name as! String, voteBool as! Bool))
                 }
             }
+            self.votes = currentVotes
             self.tableView.reloadData()
         })
-        
-//        databaseRef.observe(.value, with: { (snapshot) in
-//            let enumerator = snapshot.children
-//            while let child = enumerator.nextObject() as? FIRDataSnapshot {
-//                let dictionary = child.value as! [String: AnyObject]
-//                
-//                if let name = dictionary["name"],
-//                    let photoVotes = dictionary["photoVotes"],
-//                    let voteResult = photoVotes[photoID] as? [String: AnyObject],
-//                    let voteBool = voteResult["voteType"] {
-//                    self.votes.append((name as! String, voteBool as! Bool))
-//                }
-//            }
-//            self.tableView.reloadData()
-//        })
-        
     }
     
     internal func vote(sender: UIButton) {
@@ -226,7 +209,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         
         let vote = votes[indexPath.row]
         
-        //TO DO: Refactor to correct data
+        //TO DO: account for imageIcon and profile picture
         vote.1 == true ? (cell.voteDescription = "\(vote.0) voted up.") : (cell.voteDescription = "\(vote.0) voted down.")
         cell.imageIcon = UIImage(named: "siberian-tiger-profile")
         cell.date = Date()
