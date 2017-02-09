@@ -152,6 +152,7 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
                 return true
             }
         }
+        textField.shake()
         return true
     }
     

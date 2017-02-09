@@ -315,6 +315,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         
         textField.resignFirstResponder()
+        textField.shake()
         return true
     }
 

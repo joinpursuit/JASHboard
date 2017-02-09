@@ -128,6 +128,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
                 textField.underLine(placeHolder: "Password")
             }
         }
+        textField.shake()
         return true
     }
     
