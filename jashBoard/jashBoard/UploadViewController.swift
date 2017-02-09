@@ -68,36 +68,43 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     // MARK: - Functions
     func uploadPhotoToFireBaseButtonPressed(_ sender: UIBarButtonItem) {
         print("uploadPhotoToFireBaseButtonPressed")
-        //need to create a unique picture ID for for DB and storage each time we upload an image.
-        guard let category = self.selectedCategory else {
-            let alertController = UIAlertController(title: "Wait a minute!", message: "Select a category before uploading.", preferredStyle: UIAlertControllerStyle.alert)
-            let okay = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-            alertController.addAction(okay)
-            self.present(alertController, animated: true, completion: nil)
-            return
+        
+        guard let category = self.selectedCategory,
+            let titleText = self.titleTextfield.text,
+            titleText.characters.count > 0
+            else {
+                let alertController = UIAlertController(title: "Wait a minute!", message: "Select a category and title before uploading.", preferredStyle: UIAlertControllerStyle.alert)
+                let okay = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                alertController.addAction(okay)
+                self.present(alertController, animated: true, completion: nil)
+                return
         }
         
-        //update real time database
+        //update references in database
         let databaseReference = FIRDatabase.database().reference().child("\(category)")
         let newItemReference = databaseReference.childByAutoId()
-        let id = newItemReference.key
+        let imageID = newItemReference.key
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
-        guard let userId = FIRAuth.auth()?.currentUser?.uid else { return }
+        let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(uid)/uploads/\(imageID)")
+        print(userDBReference)
         
-        let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(userId)")
-        
-        userDBReference.child("uploads").updateChildValues(["\(id)": category])
-        
-
-        let newItemDetails: [String : AnyObject] = [
+        let votesDict: [String : AnyObject] = [
             "upvotes" : 0 as AnyObject,
-            "downvotes" : 0 as AnyObject
+            "downvotes" : 0 as AnyObject,
+            "title" : titleText as AnyObject
         ]
         
-        newItemReference.setValue(newItemDetails)
+        let userInfo: [String: AnyObject] = [
+            "category" : category as AnyObject,
+            "title" : titleText as AnyObject
+            
+        ]
+        newItemReference.setValue(votesDict)
+        userDBReference.setValue(userInfo)
         
         //update storage
-        let storageReference = FIRStorage.storage().reference().child("\(category)").child("\(id)")
+        let storageReference = FIRStorage.storage().reference().child("\(category)").child("\(imageID)")
         let uploadMetadata = FIRStorageMetadata()
         uploadMetadata.contentType = "image/jpeg"
         
@@ -112,15 +119,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     print("Upload complete: \(metadata)")
                     print("HERE'S YOUR DOWNLOAD URL: \(metadata?.downloadURL())")
                 }
-                
-                
             }
         }
-        //Update the progress bar
-//        uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
-//            guard let progress = snapshot.progress else { return }
-//            self.progressView.progress = Float(progress.fractionCompleted)
-//        }
     }
 
     func fetchPhotos() {
