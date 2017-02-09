@@ -385,6 +385,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     lazy var titleTextfield: UITextField = {
         let textField = UITextField()
+        textField.textColor = JashColors.textAndIconColor
+        textField.tintColor = JashColors.accentColor
         return textField
     }()
     

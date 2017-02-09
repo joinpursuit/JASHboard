@@ -204,7 +204,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     internal lazy var usernameTextField: UITextField = {
         let textField = UITextField()
         textField.textColor = .white
-        textField.tintColor = .clear
+        textField.tintColor = JashColors.accentColor
         textField.autocorrectionType = .no
         //our users will have to use email to log in so this is a small little ux change
         textField.keyboardType = .emailAddress
@@ -215,7 +215,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     internal lazy var passwordTextField: UITextField = {
         let textField = UITextField()
         textField.textColor = .white
-        textField.tintColor = .clear
+        textField.tintColor = JashColors.accentColor
         //textField.underLine(placeHolder: "Password")
         textField.autocorrectionType = .no
         textField.isSecureTextEntry = true
