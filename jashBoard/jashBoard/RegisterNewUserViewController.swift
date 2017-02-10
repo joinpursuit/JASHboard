@@ -191,7 +191,7 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
         
         profilePictureImageView.snp.makeConstraints { (view) in
             view.centerX.equalToSuperview()
-            view.top.equalTo(self.topLayoutGuide.snp.bottom).offset(70)
+            view.top.equalTo(self.topLayoutGuide.snp.bottom).offset(50)
             view.size.equalTo(profileSize)
         }
         
@@ -212,17 +212,17 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
         }
         
         userLastNameTextField.snp.makeConstraints { (textField) in
-            textField.top.equalTo(userFirstNameTextField.snp.bottom).offset(16)
+            textField.top.equalTo(userFirstNameTextField.snp.bottom).offset(12)
             textField.leading.trailing.equalToSuperview()
         }
         
         userEmailTextField.snp.makeConstraints { (textField) in
-            textField.top.equalTo(userLastNameTextField.snp.bottom).offset(16)
+            textField.top.equalTo(userLastNameTextField.snp.bottom).offset(12)
             textField.leading.trailing.equalToSuperview()
         }
         
         passwordTextField.snp.makeConstraints { (textField) in
-            textField.top.equalTo(userEmailTextField.snp.bottom).offset(16)
+            textField.top.equalTo(userEmailTextField.snp.bottom).offset(12)
             textField.leading.trailing.equalToSuperview()
         }
         
