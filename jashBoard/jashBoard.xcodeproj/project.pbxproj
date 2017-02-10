@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1AA5978F1E4E21C6008282D7 /* JashLoadingScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA5978E1E4E21C6008282D7 /* JashLoadingScreenViewController.swift */; };
 		1AB285C81E492D9F00D9E34B /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */; };
 		1AB285CA1E497E3D00D9E34B /* JashTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285C91E497E3D00D9E34B /* JashTextField.swift */; };
 		1AB285CC1E4A2C3F00D9E34B /* JashTextFieldExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */; };
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		0841D9FD5BE52B7E49871A7F /* Pods-jashBoard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jashBoard.release.xcconfig"; path = "Pods/Target Support Files/Pods-jashBoard/Pods-jashBoard.release.xcconfig"; sourceTree = "<group>"; };
+		1AA5978E1E4E21C6008282D7 /* JashLoadingScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashLoadingScreenViewController.swift; sourceTree = "<group>"; };
 		1AB285C71E492D9F00D9E34B /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
 		1AB285C91E497E3D00D9E34B /* JashTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashTextField.swift; sourceTree = "<group>"; };
 		1AB285CB1E4A2C3F00D9E34B /* JashTextFieldExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JashTextFieldExtension.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 				4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */,
 				1AB285D61E4BC57800D9E34B /* PreviewPopViewController.swift */,
 				1AB285D41E4B80BA00D9E34B /* JashProgressViewController.swift */,
+				1AA5978E1E4E21C6008282D7 /* JashLoadingScreenViewController.swift */,
 				4B3B72291E49180A00F42041 /* CategorySelectionTableViewController.swift */,
 			);
 			name = "View Controllers";
@@ -320,6 +323,7 @@
 			files = (
 				4B3B72381E493FF700F42041 /* IndividualPhotoViewController.swift in Sources */,
 				4B3B722E1E49180A00F42041 /* CategorySelectionTableViewController.swift in Sources */,
+				1AA5978F1E4E21C6008282D7 /* JashLoadingScreenViewController.swift in Sources */,
 				1AB285CE1E4A42EC00D9E34B /* JashButton.swift in Sources */,
 				A73778AF1E4BC358003C3641 /* RegisterNewUserViewController.swift in Sources */,
 				1AB285CA1E497E3D00D9E34B /* JashTextField.swift in Sources */,
