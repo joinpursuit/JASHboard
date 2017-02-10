@@ -169,6 +169,8 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         self.navigationController?.pushViewController(registerNewUserViewController, animated: true)
         
         //clear password text field but keep username
+        self.usernameTextField.text = nil
+        self.usernameTextField.underLine(placeHolder: "Password")
         self.passwordTextField.text = nil
         self.passwordTextField.underLine(placeHolder: "Password")
     }
