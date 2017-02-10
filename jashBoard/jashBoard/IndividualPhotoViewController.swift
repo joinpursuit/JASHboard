@@ -84,13 +84,13 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                     print("Vote Result: \(voteResult)")
                     
                     //handling
-                    print("CURRENT USER: \(FIRAuth.auth()?.currentUser?.uid)")
+                    guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
                     if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
-                        if voteResult != nil && voteType == true {
+                        if voter == uid && voteType == true {
                             self.upvoteButton.isEnabled = false
                             self.downvoteButton.isEnabled = true
                         }
-                        else if voteResult != nil && voteType == false {
+                        else if voter == uid && voteType == false {
                             self.downvoteButton.isEnabled = false
                             self.upvoteButton.isEnabled = true
                         }
