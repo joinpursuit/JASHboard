@@ -20,18 +20,20 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             self.title = jashImage?.title
         }
     }
+    
+    //Calling dispatch queue here bogged UI down
     var upvoteCount: Int? = nil {
         willSet {
-            DispatchQueue.main.async {
+        //    DispatchQueue.main.async {
                 self.upvoteNumberLabel.text = String(describing: newValue!)
-            }
+         //   }
         }
     }
     var downvoteCount: Int? = nil {
         willSet {
-            DispatchQueue.main.async {
+        //    DispatchQueue.main.async {
                 self.downvoteNumberLabel.text = String(describing: newValue!)
-            }
+         //   }
         }
     }
     var selectedPhoto: UIImage!
@@ -340,7 +342,9 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     
     //logo
     internal lazy var photoImageView: UIImageView = {
-        let image = self.selectedPhoto
+        //selected photo is always nil replaced with default photo
+        let image = #imageLiteral(resourceName: "default-placeholder")
+       // let image = self.selectedPhoto
         let imageView: UIImageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true

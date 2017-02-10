@@ -15,6 +15,7 @@ protocol JashProgressBarDelegate{
 class JashProgressViewController: UIViewController,JashProgressBarDelegate {
     
     let dismissButton: UIButton = UIButton(type: UIButtonType.roundedRect)
+     private let tapGuesture = UITapGestureRecognizer()
 
     private var dismissAnimate = true
     
@@ -25,6 +26,9 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
         self.view.backgroundColor = .clear
         self.dismissButton.addTarget(self, action: #selector(uploadSucess), for: .touchUpInside)
         setUpViews()
+        
+        
+        tapGuesture.addTarget(self, action: #selector(dismissView))
     }
     
     
@@ -40,6 +44,9 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
             view.top.bottom.trailing.leading.equalToSuperview()
         }
         
+        viewControllerTint.addGestureRecognizer(tapGuesture)
+        
+        dismissButton.isHidden = true
         container.snp.makeConstraints { (view) in
             view.centerX.centerY.equalToSuperview()
             view.width.equalTo(self.view.snp.width).multipliedBy(0.7)
@@ -83,7 +90,7 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
     
     //MARK: - Animations
     func uploadSucess(){
-        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 0.5, curve: .linear)
+        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .linear)
         
         self.titleLabel.snp.makeConstraints { (view) in
             view.centerX.centerY.equalToSuperview()
@@ -107,7 +114,7 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
     
     private func animateContainer(){
         
-        let containerAnimator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 2, curve: .easeIn)
+        let containerAnimator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 0.7, curve: .easeIn)
         //Allows animating the corner radius
         let cornerRadius = CABasicAnimation()
         cornerRadius.keyPath = "cornerRadius"
@@ -120,12 +127,12 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
             view.size.equalTo(CGSize(width: 70, height: 70))
         }
         
-        containerAnimator.addAnimations {
+        containerAnimator.addAnimations ({
             self.titleLabel.alpha = 0
             self.dismissButton.alpha = 0
             self.container.layer.cornerRadius = 35
             self.view.layoutIfNeeded()
-        }
+        }, delayFactor: 0.2)
         
         containerAnimator.addCompletion { (position) in
             if position == .end{
@@ -137,7 +144,7 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
     }
     
     private func animateArrow(){
-        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 2, dampingRatio: 0.5)
+        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 2, dampingRatio: 0.3)
         
         animator.addAnimations{
             self.upArrow.alpha = 0.7
@@ -151,6 +158,10 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
         }
         
         animator.startAnimation()
+    }
+    
+    func dismissView(){
+        dismiss(animated: true, completion: nil)
     }
     
     private let viewControllerTint: UIView = {
