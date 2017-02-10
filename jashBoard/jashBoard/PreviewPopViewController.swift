@@ -82,7 +82,7 @@ class PreviewPopViewController: UIViewController {
     
     private let containerView: UIView = {
         let view: UIView = UIView()
-        view.backgroundColor = JashColors.textAndIconColor
+        view.backgroundColor = JashColors.lightPrimaryColor
         view.layer.cornerRadius = 10
         view.transform = CGAffineTransform(scaleX: 0, y: 0)
         //view.alpha = 0
