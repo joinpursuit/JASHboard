@@ -51,8 +51,11 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 
                 let votesDictionary = child.value as! [String: AnyObject]
-                guard let votes = Vote(snapshot: votesDictionary) else { return }
-                let jashImage = JashImage(votes: votes, imageId: child.key, category: category)
+                guard let votes = Vote(snapshot: votesDictionary),
+                    let imageTitle = votesDictionary["title"] as? String
+                    else { return }
+                
+                let jashImage = JashImage(votes: votes, imageId: child.key, category: category, title: imageTitle)
                 
                 currentImages.append(jashImage)
             }

@@ -13,11 +13,13 @@ class JashImage {
     var votes: Vote
     let imageId: String
     let category: String
+    let title: String
     
     //MARK: - Initializer
-    init(votes: Vote, imageId: String, category: String) {
+    init(votes: Vote, imageId: String, category: String, title: String) {
         self.votes = votes
         self.imageId = imageId
         self.category = category
+        self.title = title
     }
 }

@@ -17,6 +17,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             self.photoID = jashImage?.imageId
             self.upvoteCount = jashImage?.votes.upvotes
             self.downvoteCount = jashImage?.votes.downvotes
+            self.title = jashImage?.title
         }
     }
     var upvoteCount: Int? = nil {
@@ -48,7 +49,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeFirebaseReferences()
-        
         loadImage()
         
         setupViewHierarchy()
@@ -281,7 +281,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
         let vote = votes[indexPath.row]
-        if let uid = FIRAuth.auth()?.currentUser?.uid {
             
             vote.type == true ? (cell.voteDescription = "\(vote.name) voted up.") : (cell.voteDescription = "\(vote.name) voted down.")
             cell.dateLabel.text = vote.time
@@ -295,7 +294,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                     }
                 }
             })
-        }
         return cell
     }
     
