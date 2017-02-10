@@ -140,7 +140,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     let photo: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        // imageView.image = UIImage(named: "siberian-tiger-profile")
+        imageView.image = #imageLiteral(resourceName: "default-placeholder")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView

@@ -37,7 +37,7 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
     
     override func viewDidLayoutSubviews() {
         //Add animation to profilePictureImageView
-        let pulse = Pulsing(numberOfPalses: 100, radius: 150, position: self.profilePictureImageView.center)
+        let pulse = Pulsing(numberOfPalses: 500, radius: 130, position: self.profilePictureImageView.center)
         pulse.animationDuration = 1
         
         self.view.layer.insertSublayer(pulse, below: profilePictureImageView.layer)
@@ -191,7 +191,7 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
         
         profilePictureImageView.snp.makeConstraints { (view) in
             view.centerX.equalToSuperview()
-            view.top.equalTo(self.topLayoutGuide.snp.bottom).offset(16)
+            view.top.equalTo(self.topLayoutGuide.snp.bottom).offset(50)
             view.size.equalTo(profileSize)
         }
         
@@ -212,17 +212,17 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
         }
         
         userLastNameTextField.snp.makeConstraints { (textField) in
-            textField.top.equalTo(userFirstNameTextField.snp.bottom).offset(8)
+            textField.top.equalTo(userFirstNameTextField.snp.bottom).offset(12)
             textField.leading.trailing.equalToSuperview()
         }
         
         userEmailTextField.snp.makeConstraints { (textField) in
-            textField.top.equalTo(userLastNameTextField.snp.bottom).offset(8)
+            textField.top.equalTo(userLastNameTextField.snp.bottom).offset(12)
             textField.leading.trailing.equalToSuperview()
         }
         
         passwordTextField.snp.makeConstraints { (textField) in
-            textField.top.equalTo(userEmailTextField.snp.bottom).offset(8)
+            textField.top.equalTo(userEmailTextField.snp.bottom).offset(12)
             textField.leading.trailing.equalToSuperview()
         }
         
@@ -314,14 +314,14 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
         imageView.image = #imageLiteral(resourceName: "default-placeholder")
         imageView.layer.borderWidth = 2.0
         imageView.layer.borderColor = JashColors.accentColor.cgColor
-        imageView.layer.cornerRadius = imageView.frame.height / 2
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.masksToBounds = false
-        imageView.clipsToBounds = true
         imageView.frame.size = CGSize(width: 150.0, height: 150.0)
         let tapImageGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
         imageView.addGestureRecognizer(tapImageGesture)
         imageView.isUserInteractionEnabled = true
+        imageView.layer.masksToBounds = true
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = imageView.frame.height / 2
         return imageView
     }()
     

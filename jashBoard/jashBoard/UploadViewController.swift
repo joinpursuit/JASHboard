@@ -22,7 +22,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     let manager = PHImageManager.default()
     var selectedCategory: String!
     var selectedImage: UIImage!
-    
+    var selectedIndex: Int!
+
     var progressDegelate: JashProgressBarDelegate?
     
     let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
@@ -85,6 +86,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     func uploadPhotoToFireBaseButtonPressed(_ sender: UIBarButtonItem) {
         print("UPLOADING.")
+        self.titleTextfield.resignFirstResponder()
         
         guard let category = self.selectedCategory,
             let titleText = self.titleTextfield.text,
@@ -115,7 +117,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             "upvotes" : 0 as AnyObject,
             "downvotes" : 0 as AnyObject,
             "title" : titleText as AnyObject,
-            "creationDate" : timeString as AnyObject
+            "creationDate" : timeString as AnyObject,
+            "timeStamp" : FIRServerValue.timestamp() as AnyObject
         ]
         
         self.dbReference.setValue(votesDict)
@@ -133,7 +136,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     let userInfo: [String: AnyObject] = [
                         "category" : category as AnyObject,
                         "title" : titleText as AnyObject,
-                        "creationDate" : timeString as AnyObject
+                        "creationDate" : timeString as AnyObject,
+                        "timeStamp" : FIRServerValue.timestamp() as AnyObject
                     ]
                     
                     self.dbReference = FIRDatabase.database().reference().child("USERS").child("\(uid)/uploads/\(imageID)")
@@ -236,6 +240,13 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CatagoryTapInUploadCollectionViewCell.identifier, for: indexPath) as! CatagoryTapInUploadCollectionViewCell
             let catagoryTitle = catagoryTitlesArr[indexPath.row]
             cell.catagoryLabel.text = catagoryTitle
+            if let validSelectedIndex = self.selectedIndex, validSelectedIndex == indexPath.row {
+                cell.catagoryLabel.backgroundColor = JashColors.accentColor
+                cell.catagoryLabel.textColor = JashColors.textAndIconColor
+            } else {
+                cell.catagoryLabel.backgroundColor = JashColors.primaryColor
+                cell.catagoryLabel.textColor = JashColors.textAndIconColor
+            }
             return cell
             
         case imageSelectedWithPagingCollectionView:
@@ -278,7 +289,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         case categoryCollectionView:
             print(catagoryTitlesArr[indexPath.row])
             self.selectedCategory = catagoryTitlesArr[indexPath.row]
-            
+            self.selectedIndex = indexPath.row
             let selectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryTapInUploadCollectionViewCell
             
             // Reset not selected cells
