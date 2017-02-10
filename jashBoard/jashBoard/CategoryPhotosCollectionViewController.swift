@@ -18,10 +18,13 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
     var jashImages: [JashImage] = [] {
         didSet {
             DispatchQueue.main.async {
+                //self.loadingDelegate?.showLoadingView()
                 self.collectionView?.reloadData()
             }
         }
     }
+    var imageSetCounter = 0
+    var imagesTotal = 0
     var dbReference: FIRDatabaseReference!
     var storageReference: FIRStorageReference!
     var dbHandle: UInt!
@@ -39,12 +42,14 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
         super.viewWillAppear(animated)
         
         guard let category = self.title?.uppercased() else { return }
+        self.loadingDelegate?.showLoadingView()
         
         self.dbReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)")
         
         self.dbHandle = self.dbReference.observe(.value, with: { (snapshot) in
             print("Number of pictures: \(snapshot.childrenCount)")
-            
+            self.imagesTotal = Int(snapshot.childrenCount)
+            self.loadingDelegate?.dismissLoadingView()
             //Because this is constantly observing for changes in votes we cant directly append into self.jashImages or we will see redundancies every time the view is loaded.
             var currentImages: [JashImage] = []
             
@@ -59,8 +64,7 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
             }
             self.jashImages = currentImages
         })
-        
-       // self.loadingDelegate?.showLoadingView()
+     
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -102,6 +106,8 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
                     cell.cellImage = UIImage(data: data)
                     UIView.animate(withDuration: 0.5, animations: {
                         cell.alpha = 1
+                        self.imageSetCounter += 1
+                        self.loadingDelegate?.dismissLoadingView()
                     })
                 }
             }
@@ -172,7 +178,9 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
     }
     
     func dismissLoadingView() {
-        
+        if imageSetCounter == imagesTotal || imagesTotal == 0{
+            dismiss(animated: true, completion: nil)
+        }
     }
     
 }

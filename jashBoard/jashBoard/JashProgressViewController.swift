@@ -40,6 +40,7 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
             view.top.bottom.trailing.leading.equalToSuperview()
         }
         
+        dismissButton.isHidden = true
         container.snp.makeConstraints { (view) in
             view.centerX.centerY.equalToSuperview()
             view.width.equalTo(self.view.snp.width).multipliedBy(0.7)

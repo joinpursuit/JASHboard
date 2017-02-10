@@ -28,7 +28,7 @@ class JashLoadingScreenViewController: UIViewController {
         
         barrier.snp.makeConstraints { (view) in
             view.centerY.leading.trailing.equalToSuperview()
-            view.size.height.equalTo(10)
+            view.height.equalTo(10)
         }
         viewTint.snp.makeConstraints { (view) in
             view.leading.trailing.top.bottom.equalToSuperview()

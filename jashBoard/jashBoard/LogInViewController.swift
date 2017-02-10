@@ -203,7 +203,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Navigation
     
     func showProgress(){
-        let alert = JashLoadingScreenViewController()
+        let alert = JashProgressViewController()
         alert.modalPresentationStyle = .overCurrentContext
         alert.modalTransitionStyle = .crossDissolve
         present(alert, animated: true, completion: nil)
@@ -252,7 +252,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             
             animator.startAnimation()
             
-            //shouldAnimateLogo = !shouldAnimateLogo
+            shouldAnimateLogo = !shouldAnimateLogo
             
         }else{
             
@@ -333,7 +333,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         
         animator.addCompletion { (position) in
             if position == .end{
-                //self.logoUpAnimate()
+                self.logoUpAnimate()
             }
         }
         
