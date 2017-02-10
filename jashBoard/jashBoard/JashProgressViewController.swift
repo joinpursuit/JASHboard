@@ -15,7 +15,8 @@ protocol JashProgressBarDelegate{
 class JashProgressViewController: UIViewController,JashProgressBarDelegate {
     
     let dismissButton: UIButton = UIButton(type: UIButtonType.roundedRect)
-    var i = 0.0
+
+    private var dismissAnimate = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,16 +68,15 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
        // Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(upDateProgressbar), userInfo: nil, repeats: true)
     }
     
-    func upDateProgressbar(){
-        print("Update \(i)")
-        i += 0.1
-        progressBar.progress = Float(i)
-    }
-    
-    
     //MARK: - Progress bar delegate method
     func upDateProgressbar(value: Float) {
         progressBar.progress = value
+        print(value)
+        
+        if Int(value) == 1 && dismissAnimate{
+            self.uploadSucess()
+            dismissAnimate = !dismissAnimate
+        }
     }
     
     //MARK: - Animations
@@ -105,7 +105,7 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
     
     private func animateContainer(){
         
-        let containerAnimator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 0.5, curve: .easeIn)
+        let containerAnimator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 2, curve: .easeIn)
         //Allows animating the corner radius
         let cornerRadius = CABasicAnimation()
         cornerRadius.keyPath = "cornerRadius"
@@ -135,7 +135,7 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
     }
     
     private func animateArrow(){
-        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
+        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 2, dampingRatio: 0.5)
         
         animator.addAnimations{
             self.upArrow.alpha = 0.7

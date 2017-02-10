@@ -98,7 +98,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             textField.centerX.equalToSuperview()
         }
         
-        testButton.setTitle("PROGRESS!!", for: .normal)
+        testButton.setTitle("PROGRESS Test", for: .normal)
         testButton.snp.makeConstraints { (view) in
             view.centerX.centerY.equalToSuperview()
         }

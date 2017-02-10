@@ -12,14 +12,15 @@ import Photos
 import Firebase
 import FirebaseAuth
 
-class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate {
-
+class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate{
+    
     //MARK: - Properties
     var catagoryTitlesArr: [String] = ["ANIMALS", "BEACH DAYS" ,"CARS", "FLOWERS & PLANTS"]
     var photoAssetsArr: [PHAsset] = []
     let manager = PHImageManager.default()
     var selectedCategory: String!
     var selectedImage: UIImage!
+    var progressDegelate: JashProgressBarDelegate?
     
     let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
     
@@ -43,7 +44,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         //Setup Navigation Bar
         self.navigationItem.rightBarButtonItem = uploadBarButton
-
+        
         //Populate array with assets for imagePickerCollectionView
         fetchPhotos()
         
@@ -81,6 +82,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 self.present(alertController, animated: true, completion: nil)
                 return
         }
+        
         
         //update reference in respective CATEGORY node
         let databaseReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)")
@@ -131,14 +133,20 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     print("HERE'S YOUR DOWNLOAD URL: \(metadata?.downloadURL())")
                 }
             }
+            //MARK: - the progressView is named uploadProgressView in this case and does not exist yet.
+            self.showUploadProgress()
+            
+            uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
+                guard let progress = snapshot.progress else { return }
+                
+                self.progressDegelate?.upDateProgressbar(value: Float(progress.fractionCompleted))
+            
+                
+                //self.uploadProgressView.progress = Float(progress.fractionCompleted)
+                
+            }
+            
         }
-        
-        //MARK: - the progressView is named uploadProgressView in this case and does not exist yet.
-//        uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
-//            guard let progress = snapshot.progress else { return }
-//            
-//            self.uploadProgressView.progress = Float(progress.fractionCompleted)
-//        }
         
         
         //removes text from titleTextField and replaces placeholder attributed text.
@@ -153,7 +161,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             }
         }
     }
-
+    
     func fetchPhotos() {
         //sorting results by creation date
         let allPhotosOptions = PHFetchOptions()
@@ -165,6 +173,14 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         allPhotosResult.enumerateObjects({ self.photoAssetsArr.append($0.0) })
     }
     
+    private func showUploadProgress(){
+        let uploadProgressAlert = JashProgressViewController()
+        uploadProgressAlert.modalPresentationStyle = .overCurrentContext
+        uploadProgressAlert.modalTransitionStyle = .crossDissolve
+        self.progressDegelate = uploadProgressAlert
+        present(uploadProgressAlert, animated: true, completion: nil)
+    }
+    
     // MARK: - CollectionViewDelegate & CollectionViewDataSource Methods
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -174,7 +190,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         switch collectionView{
         case imagePickerCollectionView:
             return self.photoAssetsArr.count
-
+            
         case categoryCollectionView:
             return self.catagoryTitlesArr.count
             
@@ -245,7 +261,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             self.selectedCategory = catagoryTitlesArr[indexPath.row]
             
             let selectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryTapInUploadCollectionViewCell
-
+            
             // Reset not selected cells
             for cell in collectionView.visibleCells {
                 if let categoryCell = cell as?  CatagoryTapInUploadCollectionViewCell, categoryCell != selectedCell {
@@ -259,15 +275,15 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             selectedCell.catagoryLabel.textColor = JashColors.textAndIconColor
             self.catagoryContainerView.reloadInputViews()
             
-                selectedCell.superview?.bringSubview(toFront: selectedCell)
-                
-                self.animator.addAnimations({
-                    selectedCell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
-                    selectedCell.transform = CGAffineTransform(scaleX: 1, y: 1)
-                })
-                
-                animator.startAnimation()
-        
+            selectedCell.superview?.bringSubview(toFront: selectedCell)
+            
+            self.animator.addAnimations({
+                selectedCell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                selectedCell.transform = CGAffineTransform(scaleX: 1, y: 1)
+            })
+            
+            animator.startAnimation()
+            
         case imageSelectedWithPagingCollectionView:
             print(photoAssetsArr[indexPath.row])
         default:
@@ -325,14 +341,14 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             let indexPath = IndexPath(item: closestCellIndex!, section: 0)
             print(photoAssetsArr[indexPath.row])
             self.imagePickerCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-
+            
             let photo = photoAssetsArr[indexPath.row]
             manager.requestImage(for: photo, targetSize: imageSelectedWithPagingCollectionView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
                 self.selectedImage = image
             })
         }
     }
-
+    
     // MARK: - TextField Delegate Methods
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.placeholder = ""
@@ -347,7 +363,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         textField.shake()
         return true
     }
-
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return true
@@ -366,7 +382,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.containerView.addSubview(self.imageSelectedWithPagingCollectionView)
         self.containerView.addSubview(self.imagePickerContainerView)
         
-
+        
         self.imagePickerContainerView.addSubview(self.imagePickerCollectionView)
         self.catagoryContainerView.addSubview(self.categoryCollectionView)
     }
