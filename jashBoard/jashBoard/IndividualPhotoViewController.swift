@@ -81,18 +81,19 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                     let voteType = voteResult["voteType"] as? Bool,
                     let voteTime = voteResult["voteTime"] as? String {
                     print("Vote Result: \(voteResult)")
-                    //handling
-//                    if self.photoID == photoVotes.key && voteType == true {
-                    if voteResult != nil && voteType == true {
-                        self.upvoteButton.isEnabled = false
-                        self.downvoteButton.isEnabled = true
-                    }
-//                    else if self.photoID == photoVotes.key && voteType == false {
-                    else if voteResult != nil && voteType == false {
-                        self.downvoteButton.isEnabled = false
-                        self.upvoteButton.isEnabled = true
-                    }
                     
+                    //handling
+                    print("CURRENT USER: \(FIRAuth.auth()?.currentUser?.uid)")
+                    if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
+                        if voteResult != nil && voteType == true {
+                            self.upvoteButton.isEnabled = false
+                            self.downvoteButton.isEnabled = true
+                        }
+                        else if voteResult != nil && voteType == false {
+                            self.downvoteButton.isEnabled = false
+                            self.upvoteButton.isEnabled = true
+                        }
+                    }
                     currentVotes.append((name, voteType, voteTime))
                 }
             }
@@ -192,8 +193,8 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             }
             return FIRTransactionResult.success(withValue: currentData)
         })
-            // update current users photoVotes node
-            self.dbReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes/\(imageId)")
+        // update current users photoVotes node
+        self.dbReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes/\(imageId)")
         
         if let pictureTitle = self.pictureTitle {
             sender.tag == 100 ? (self.dbReference.setValue(["voteType" : true, "title" : pictureTitle, "category" : category, "timeStamp" : FIRServerValue.timestamp()])) : (self.dbReference.setValue(["voteType" : false, "title" : pictureTitle, "category" : category, "timeStamp" : FIRServerValue.timestamp()]))
@@ -313,9 +314,17 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                 self.photoImageView.isUserInteractionEnabled = true
             }
         }
-        //perform upvote business logic and animate
-        vote(sender: self.upvoteButton)
-        animator.startAnimation()
+        
+        //if user is anonymous the vote will not occur or animate
+        if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
+            vote(sender: self.upvoteButton)
+            animator.startAnimation()
+        }
+        else {
+            //will hit guard statement at the top of this function and throw "Stranger Danger" alert.
+            vote(sender: self.upvoteButton)
+        }
+    
     }
     
     //MARK: - Views
