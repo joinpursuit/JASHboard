@@ -65,6 +65,8 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         let databaseReference = FIRDatabase.database().reference(withPath: "USERS/\(uid)/\("uploads")")
         print("Database reference: \(databaseReference)")
         
+        var currentIds: [(String, String, String)] = []
+        
         databaseReference.observeSingleEvent(of: .value, with: { (snapshot) in
             let enumerator = snapshot.children
             
@@ -74,8 +76,9 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
                     let category = imageInfo["category"] as? String,
                     let title = imageInfo["title"] as? String else { return }
                 
-                self.photoIds.append((key, category, title))
+                currentIds.append((key, category, title))
             }
+            self.photoIds = currentIds
             self.collectionView.reloadData()
             self.tableView.reloadData()
         })
