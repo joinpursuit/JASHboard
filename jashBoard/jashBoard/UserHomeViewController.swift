@@ -63,15 +63,11 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
 
     internal func populatePhotoIdsArray() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
-        
         let databaseReference = FIRDatabase.database().reference(withPath: "USERS/\(uid)/\("uploads")")
         print("Database reference: \(databaseReference)")
-        
         var currentIds: [(String, String, String, Date)] = []
-        
         databaseReference.observeSingleEvent(of: .value, with: { (snapshot) in
             let enumerator = snapshot.children
-            
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let key = child.key
                 guard let imageInfo = child.value as? [String: AnyObject],
@@ -91,13 +87,11 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     internal func populateVotesArray() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
-        
         let databaseReference = FIRDatabase.database().reference(withPath: "USERS/\(uid)/\("photoVotes")")
         print("Database reference: \(databaseReference)")
-        
+        var currentVotes: [(id: String, title: String, voteType: Bool, category: String, timeStamp: Date)] = []
         databaseReference.observeSingleEvent(of: .value, with: { (snapshot) in
             let enumerator = snapshot.children
-            
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let key = child.key
                 guard let imageInfo = child.value as? [String: AnyObject],
@@ -107,14 +101,16 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
                     let timeInterval = imageInfo["timeStamp"] as? TimeInterval
                 else { continue }
                 let timeStamp = Date(timeIntervalSince1970: timeInterval/1000)
-                self.votes.append((key, imageName, bool, category, timeStamp))
+                currentVotes.append((key, imageName, bool, category, timeStamp))
             }
+            self.votes = currentVotes
             self.loadTableViewData()
             self.tableView.reloadData()
         })
     }
     
     internal func loadTableViewData() {
+        tableViewData = []
         for upload in photoIds {
             self.tableViewData.append((dataType: "photoId", title: upload.title, category: upload.category, id: upload.id, voteType: nil,timeStamp: upload.timeStamp))
         }
