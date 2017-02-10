@@ -13,19 +13,23 @@ import Firebase
 import FirebaseAuth
 
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate {
-
+    
     //MARK: - Properties
     var catagoryTitlesArr: [String] = ["ANIMALS", "BEACH DAYS" ,"CARS", "FLOWERS & PLANTS"]
     var photoAssetsArr: [PHAsset] = []
     let manager = PHImageManager.default()
     var selectedCategory: String!
     var selectedImage: UIImage!
-    
     let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
+    
+    var dbReference: FIRDatabaseReference!
+    var storageReference: FIRStorageReference!
     
     //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        initializeFirebaseReferences()
         self.title = "UPLOAD"
         self.tabBarItem.title = ""
         self.view.backgroundColor = JashColors.darkPrimaryColor
@@ -43,7 +47,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         //Setup Navigation Bar
         self.navigationItem.rightBarButtonItem = uploadBarButton
-
+        
         //Populate array with assets for imagePickerCollectionView
         fetchPhotos()
         
@@ -68,6 +72,12 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     // MARK: - Functions
+    internal func initializeFirebaseReferences() {
+        //Initializing reference to Firebase
+        self.dbReference = FIRDatabase.database().reference()
+        self.storageReference = FIRStorage.storage().reference()
+    }
+    
     func uploadPhotoToFireBaseButtonPressed(_ sender: UIBarButtonItem) {
         print("UPLOADING.")
         
@@ -82,41 +92,36 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 return
         }
         
-        //update reference in respective CATEGORY node
-        let databaseReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)")
-        let newItemReference = databaseReference.childByAutoId()
-        let imageID = newItemReference.key
+        self.dbReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)").childByAutoId()
+        let imageID = self.dbReference.key
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
-        //update reference in USER node
-        let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(uid)/uploads/\(imageID)")
-        print("User DB Reference: \(userDBReference)")
-        
-        //update storage
-        let storageReference = FIRStorage.storage().reference().child("\(category)").child("\(imageID)")
-        print("Storage Reference: \(storageReference)")
+        self.storageReference = FIRStorage.storage().reference().child("\(category)").child("\(imageID)")
+        print("Storage Reference: \(self.storageReference)")
         
         let uploadMetadata = FIRStorageMetadata()
         uploadMetadata.contentType = "image/jpeg"
         
+        let timeString = Date().convertToTimeString()
+        
+        let votesDict: [String : AnyObject] = [
+            "upvotes" : 0 as AnyObject,
+            "downvotes" : 0 as AnyObject,
+            "title" : titleText as AnyObject,
+            "creationDate" : timeString as AnyObject
+        ]
+        
+        self.dbReference.setValue(votesDict)
+        
+        //upload this image
         if let image = self.selectedImage,
             let imageData = UIImageJPEGRepresentation(image, 0.8) {
             
-            //upload image data to Storage reference
             let uploadTask = storageReference.put(imageData, metadata: uploadMetadata) { (metadata: FIRStorageMetadata?, error: Error?) in
                 if error != nil {
                     print("Encountered an error: \(error?.localizedDescription)")
                 }
                 else {
-                    guard let timestamp = metadata?.timeCreated else { return }
-                    let timeString = timestamp.convertToTimeString()
-                    
-                    let votesDict: [String : AnyObject] = [
-                        "upvotes" : 0 as AnyObject,
-                        "downvotes" : 0 as AnyObject,
-                        "title" : titleText as AnyObject,
-                        "creationDate" : timeString as AnyObject
-                    ]
                     
                     let userInfo: [String: AnyObject] = [
                         "category" : category as AnyObject,
@@ -124,8 +129,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                         "creationDate" : timeString as AnyObject
                     ]
                     
-                    newItemReference.setValue(votesDict)
-                    userDBReference.setValue(userInfo)
+                    self.dbReference = FIRDatabase.database().reference().child("USERS").child("\(uid)/uploads/\(imageID)")
+                    print("User DB Reference: \(self.dbReference)")
+                    self.dbReference.setValue(userInfo)
                     
                     print("Upload complete: \(metadata)")
                     print("HERE'S YOUR DOWNLOAD URL: \(metadata?.downloadURL())")
@@ -134,11 +140,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         
         //MARK: - the progressView is named uploadProgressView in this case and does not exist yet.
-//        uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
-//            guard let progress = snapshot.progress else { return }
-//            
-//            self.uploadProgressView.progress = Float(progress.fractionCompleted)
-//        }
+        //        uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
+        //            guard let progress = snapshot.progress else { return }
+        //
+        //            self.uploadProgressView.progress = Float(progress.fractionCompleted)
+        //        }
         
         
         //removes text from titleTextField and replaces placeholder attributed text.
@@ -153,7 +159,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             }
         }
     }
-
+    
     func fetchPhotos() {
         //sorting results by creation date
         let allPhotosOptions = PHFetchOptions()
@@ -174,7 +180,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         switch collectionView{
         case imagePickerCollectionView:
             return self.photoAssetsArr.count
-
+            
         case categoryCollectionView:
             return self.catagoryTitlesArr.count
             
@@ -245,7 +251,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             self.selectedCategory = catagoryTitlesArr[indexPath.row]
             
             let selectedCell = collectionView.cellForItem(at: indexPath) as! CatagoryTapInUploadCollectionViewCell
-
+            
             // Reset not selected cells
             for cell in collectionView.visibleCells {
                 if let categoryCell = cell as?  CatagoryTapInUploadCollectionViewCell, categoryCell != selectedCell {
@@ -259,15 +265,15 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             selectedCell.catagoryLabel.textColor = JashColors.textAndIconColor
             self.catagoryContainerView.reloadInputViews()
             
-                selectedCell.superview?.bringSubview(toFront: selectedCell)
-                
-                self.animator.addAnimations({
-                    selectedCell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
-                    selectedCell.transform = CGAffineTransform(scaleX: 1, y: 1)
-                })
-                
-                animator.startAnimation()
-        
+            selectedCell.superview?.bringSubview(toFront: selectedCell)
+            
+            self.animator.addAnimations({
+                selectedCell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                selectedCell.transform = CGAffineTransform(scaleX: 1, y: 1)
+            })
+            
+            animator.startAnimation()
+            
         case imageSelectedWithPagingCollectionView:
             print(photoAssetsArr[indexPath.row])
         default:
@@ -325,14 +331,14 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             let indexPath = IndexPath(item: closestCellIndex!, section: 0)
             print(photoAssetsArr[indexPath.row])
             self.imagePickerCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-
+            
             let photo = photoAssetsArr[indexPath.row]
             manager.requestImage(for: photo, targetSize: imageSelectedWithPagingCollectionView.frame.size, contentMode: .aspectFit, options: nil, resultHandler: { (image:  UIImage?, _) in
                 self.selectedImage = image
             })
         }
     }
-
+    
     // MARK: - TextField Delegate Methods
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.placeholder = ""
@@ -347,7 +353,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         textField.shake()
         return true
     }
-
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return true
@@ -366,7 +372,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.containerView.addSubview(self.imageSelectedWithPagingCollectionView)
         self.containerView.addSubview(self.imagePickerContainerView)
         
-
+        
         self.imagePickerContainerView.addSubview(self.imagePickerCollectionView)
         self.catagoryContainerView.addSubview(self.categoryCollectionView)
     }

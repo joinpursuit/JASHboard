@@ -10,10 +10,10 @@ import UIKit
 import Firebase
 
 class LogInViewController: UIViewController, UITextFieldDelegate {
-    //we are not actually using this property for anything in this file. Re-factor by removing it and all references to it.
-    //var signInUser: FIRUser?
+    //MARK: - Properties
     let testButton: UIButton = UIButton(type: UIButtonType.roundedRect)
-
+    
+    //MARK: - Functions
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "LOGIN/REGISTER"
@@ -22,7 +22,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
 
         setupViewHierarchy()
         configureConstraints()
-//        loginAnonymously() // Refactored into App Delegate
         
         // Textfield Delegate
         usernameTextField.delegate = self
