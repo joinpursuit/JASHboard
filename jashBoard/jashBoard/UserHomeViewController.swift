@@ -13,7 +13,6 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     //MARK: - Properties
     var photoIds: [(id: String, category: String, title: String)] = []
     var votes: [(id: String, title: String, voteType: Bool, category: String, timeStamp: Date)] = []
-    var userPhoto: UIImage!
     var userUploads: [UIImage]!
     
     //MARK: - Methods
@@ -37,9 +36,27 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        setProfilePictureView()
         populateVotesArray()
         populatePhotoIdsArray()
+    }
+    
+    internal func setProfilePictureView(){
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
+        
+        let storageReference = FIRStorage.storage().reference(withPath: "ProfilePictures/\(uid)")
+        print("Storage reference: \(storageReference)")
+        
+        storageReference.data(withMaxSize: Int64.max) { (data: Data?, error: Error?) in
+            if let error = error {
+                print(error.localizedDescription)
+            }
+            if let data = data {
+                DispatchQueue.main.async {
+                    self.photoImageView.image = UIImage(data: data)
+                }
+            }
+        }
     }
 
     internal func populatePhotoIdsArray() {
@@ -94,8 +111,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     //MARK: - Placeholder - TODO: Delete this when we have info
     internal func setupPlaceHolderCellInfo() {
         //use image picker controller to set profile picture via this property
-        self.userPhoto = UIImage(named: "siberian-tiger-profile")
-        self.userUploads = [self.userPhoto]
+        self.userUploads = [UIImage(named: "siberian-tiger-profile")!]
     }
     
     
@@ -152,8 +168,6 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
-        print("index path . row is ______")
-        print(indexPath.row)
         
         if indexPath.row < self.votes.count {
             
@@ -283,8 +297,8 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     // user image
     internal lazy var photoImageView: UIImageView = {
-        let image = self.userPhoto
-        let imageView: UIImageView = UIImageView(image: image)
+        let imageView: UIImageView = UIImageView()
+        imageView.image = #imageLiteral(resourceName: "default-placeholder")
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
