@@ -354,6 +354,8 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .yellow
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = JashColors.lightPrimaryColor
         return collectionView
     }()
     
