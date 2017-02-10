@@ -20,18 +20,20 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             self.title = jashImage?.title
         }
     }
+    
+    //Calling dispatch queue here bogged UI down
     var upvoteCount: Int? = nil {
         willSet {
-            DispatchQueue.main.async {
+        //    DispatchQueue.main.async {
                 self.upvoteNumberLabel.text = String(describing: newValue!)
-            }
+         //   }
         }
     }
     var downvoteCount: Int? = nil {
         willSet {
-            DispatchQueue.main.async {
+        //    DispatchQueue.main.async {
                 self.downvoteNumberLabel.text = String(describing: newValue!)
-            }
+         //   }
         }
     }
     var selectedPhoto: UIImage!
@@ -84,13 +86,13 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                     print("Vote Result: \(voteResult)")
                     
                     //handling
-                    print("CURRENT USER: \(FIRAuth.auth()?.currentUser?.uid)")
+                    guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
                     if !(FIRAuth.auth()?.currentUser?.isAnonymous)! {
-                        if voteResult != nil && voteType == true {
+                        if voter == uid && voteType == true {
                             self.upvoteButton.isEnabled = false
                             self.downvoteButton.isEnabled = true
                         }
-                        else if voteResult != nil && voteType == false {
+                        else if voter == uid && voteType == false {
                             self.downvoteButton.isEnabled = false
                             self.upvoteButton.isEnabled = true
                         }
@@ -340,7 +342,9 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     
     //logo
     internal lazy var photoImageView: UIImageView = {
-        let image = self.selectedPhoto
+        //selected photo is always nil replaced with default photo
+        let image = #imageLiteral(resourceName: "default-placeholder")
+       // let image = self.selectedPhoto
         let imageView: UIImageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true

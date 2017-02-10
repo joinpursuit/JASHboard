@@ -183,6 +183,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 categoryCell.catagoryLabel.textColor = JashColors.textAndIconColor
             }
         }
+        //removes selected category string
+        self.selectedCategory = nil
     }
     
     func fetchPhotos() {

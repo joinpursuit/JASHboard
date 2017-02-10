@@ -97,9 +97,10 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         switch sender.state{
         case .began:
             self.delegate?.showPopUpWith(image: cellImage!)
-        default:
+        case .ended:
             self.delegate?.hidePopUp()
-            
+        default:
+            break
         }
     }
     
