@@ -114,7 +114,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             "upvotes" : 0 as AnyObject,
             "downvotes" : 0 as AnyObject,
             "title" : titleText as AnyObject,
-            "creationDate" : timeString as AnyObject
+            "creationDate" : timeString as AnyObject,
+            "timeStamp" : FIRServerValue.timestamp() as AnyObject
         ]
         
         self.dbReference.setValue(votesDict)
@@ -132,7 +133,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     let userInfo: [String: AnyObject] = [
                         "category" : category as AnyObject,
                         "title" : titleText as AnyObject,
-                        "creationDate" : timeString as AnyObject
+                        "creationDate" : timeString as AnyObject,
+                        "timeStamp" : FIRServerValue.timestamp() as AnyObject
                     ]
                     
                     self.dbReference = FIRDatabase.database().reference().child("USERS").child("\(uid)/uploads/\(imageID)")

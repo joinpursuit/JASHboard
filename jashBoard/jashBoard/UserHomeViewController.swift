@@ -11,9 +11,10 @@ import Firebase
 
 class UserHomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     //MARK: - Properties
-    var photoIds: [(id: String, category: String, title: String)] = []
+    var photoIds: [(id: String, category: String, title: String, timeStamp: Date)] = []
     var votes: [(id: String, title: String, voteType: Bool, category: String, timeStamp: Date)] = []
     var userUploads: [UIImage]? = []
+    var tableViewData: [(dataType: String, title: String, category: String, id: String, voteType: Bool?, timeStamp: Date)] = []
     
     //MARK: - Methods
     override func viewDidLoad() {
@@ -66,7 +67,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         let databaseReference = FIRDatabase.database().reference(withPath: "USERS/\(uid)/\("uploads")")
         print("Database reference: \(databaseReference)")
         
-        var currentIds: [(String, String, String)] = []
+        var currentIds: [(String, String, String, Date)] = []
         
         databaseReference.observeSingleEvent(of: .value, with: { (snapshot) in
             let enumerator = snapshot.children
@@ -75,17 +76,19 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
                 let key = child.key
                 guard let imageInfo = child.value as? [String: AnyObject],
                     let category = imageInfo["category"] as? String,
-                    let title = imageInfo["title"] as? String else { return }
-                
-                currentIds.append((key, category, title))
+                    let title = imageInfo["title"] as? String,
+                    let timeInterval = imageInfo["timeStamp"] as? TimeInterval
+                else { continue }
+                let timeStamp = Date(timeIntervalSince1970: timeInterval/1000)
+                currentIds.append((key, category, title, timeStamp))
             }
             self.photoIds = currentIds
             self.collectionView.reloadData()
+            self.loadTableViewData()
             self.tableView.reloadData()
         })
     }
     
-    //add name to the votes array and continue re-factoring
     internal func populateVotesArray() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
@@ -103,13 +106,22 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
                     let category = imageInfo["category"] as? String,
                     let timeInterval = imageInfo["timeStamp"] as? TimeInterval
                 else { continue }
-
-                print(Date(timeIntervalSince1970: timeInterval/1000))
                 let timeStamp = Date(timeIntervalSince1970: timeInterval/1000)
                 self.votes.append((key, imageName, bool, category, timeStamp))
             }
+            self.loadTableViewData()
             self.tableView.reloadData()
         })
+    }
+    
+    internal func loadTableViewData() {
+        for upload in photoIds {
+            self.tableViewData.append((dataType: "photoId", title: upload.title, category: upload.category, id: upload.id, voteType: nil,timeStamp: upload.timeStamp))
+        }
+        for vote in votes {
+            tableViewData.append((dataType: "vote", title: vote.title, category: vote.category, id: vote.id, voteType: vote.voteType,timeStamp: vote.timeStamp))
+        }
+        tableViewData.sort { $0.timeStamp > $1.timeStamp }
     }
     
     //MARK: - Placeholder - TODO: Delete this when we have info
@@ -117,7 +129,6 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         //use image picker controller to set profile picture via this property
         self.userUploads = [UIImage(named: "siberian-tiger-profile")!]
     }
-    
     
     // MARK: - Setup
     private func setupViewHierarchy() {
@@ -176,22 +187,19 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return votes.count + photoIds.count
+        return tableViewData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
         cell.alpha = 0
         
-        if indexPath.row < self.votes.count {
-            
-            let vote = self.votes[indexPath.row]
-            
-            // Vote Description
+        let voteAndUpload = tableViewData[indexPath.row]
+
+        if voteAndUpload.dataType == "vote" {
+            let vote = voteAndUpload
             vote.voteType == true ? (cell.voteDescription = "You voted \(vote.title) up.") : (cell.voteDescription = "You voted \(vote.title) down.")
-            
-            // Image Icon and Date Created
-            
+            // Image Icon
             let storageReference = FIRStorage.storage().reference(withPath: "\(vote.category)/\(vote.id)")
             print("Storage reference: \(storageReference)")
             
@@ -205,24 +213,14 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
                     }
                 }
             }
-            
+            // Date Created
             cell.date = vote.timeStamp
-            
-//            storageReference.metadata { (metadata, error) in
-//                if let metadata = metadata {
-//                    DispatchQueue.main.async {
-//                        cell.date = metadata.timeCreated
-//                    }
-//                }
-//            }
-            
         } else {
-            let photoUpload = self.photoIds[indexPath.row - self.votes.count]
+            let photoUpload = voteAndUpload
             
             // Cell text
             cell.voteDescription = "You uploaded \(photoUpload.title)."
-            
-            // Image icon and date created
+            // Image icon
             let storageReference = FIRStorage.storage().reference(withPath: "\(photoUpload.category)/\(photoUpload.id)")
             print("Storage reference: \(storageReference)")
             
@@ -236,14 +234,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
                     }
                 }
             }
-            
-            storageReference.metadata { (metadata, error) in
-                if let metadata = metadata {
-                    DispatchQueue.main.async {
-                        cell.date = metadata.timeCreated
-                    }
-                }
-            }
+            cell.date = photoUpload.timeStamp
         }
         return cell
     }
