@@ -181,12 +181,16 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                     let upvoteDict = [
                         "voteType" : true as AnyObject,
                         "title" : pictureTitle as AnyObject,
-                        "voteTime" : currentDateString as AnyObject
+                        "voteTime" : currentDateString as AnyObject,
+                        "timeStamp" : FIRServerValue.timestamp() as AnyObject,
+                        "category" : category as AnyObject
                     ]
                     let downvoteDict: [String: AnyObject] = [
                         "voteType" : false as AnyObject,
                         "title" : pictureTitle as AnyObject,
-                        "voteTime" : currentDateString as AnyObject
+                        "voteTime" : currentDateString as AnyObject,
+                        "timeStamp" : FIRServerValue.timestamp() as AnyObject,
+                        "category" : category as AnyObject
                     ]
                     
                     sender.tag == 100 ? (self.dbReference.child(imageId).setValue(upvoteDict)) : (self.dbReference.child(imageId).setValue(downvoteDict))
