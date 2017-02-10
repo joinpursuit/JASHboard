@@ -73,7 +73,7 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
         progressBar.progress = value
         print(value)
         
-        if Int(value) == 1 && dismissAnimate{
+        if value == 1.0 && dismissAnimate{
             self.uploadSucess()
             dismissAnimate = !dismissAnimate
         }
