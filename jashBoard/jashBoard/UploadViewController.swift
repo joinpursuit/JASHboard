@@ -145,7 +145,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 }
             }
             //MARK: - the progressView is named uploadProgressView in this case and does not exist yet.
-            self.showUploadProgress()
+            DispatchQueue.main.async {
+                self.showUploadProgress()
+            }
             
             uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
                 guard let progress = snapshot.progress else { return }
