@@ -92,20 +92,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(uid)/uploads/\(imageID)")
         print("User DB Reference: \(userDBReference)")
         
-//        let votesDict: [String : AnyObject] = [
-//            "upvotes" : 0 as AnyObject,
-//            "downvotes" : 0 as AnyObject,
-//            "title" : titleText as AnyObject
-//        ]
-//        
-//        let userInfo: [String: AnyObject] = [
-//            "category" : category as AnyObject,
-//            "title" : titleText as AnyObject
-//            
-//        ]
-//        newItemReference.setValue(votesDict)
-//        userDBReference.setValue(userInfo)
-        
         //update storage
         let storageReference = FIRStorage.storage().reference().child("\(category)").child("\(imageID)")
         print("Storage Reference: \(storageReference)")
@@ -144,6 +130,17 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     print("Upload complete: \(metadata)")
                     print("HERE'S YOUR DOWNLOAD URL: \(metadata?.downloadURL())")
                 }
+            }
+        }
+        //removes text from titleTextField and replaces placeholder attributed text.
+        self.titleTextfield.text = nil
+        titleTextfield.underLine(placeHolder: "Title")
+        
+        //removes selected category background color
+        for cell in categoryCollectionView.visibleCells {
+            if let categoryCell = cell as?  CatagoryTapInUploadCollectionViewCell {
+                categoryCell.catagoryLabel.backgroundColor = JashColors.primaryColor
+                categoryCell.catagoryLabel.textColor = JashColors.textAndIconColor
             }
         }
     }
