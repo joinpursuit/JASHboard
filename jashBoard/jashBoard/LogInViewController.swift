@@ -48,6 +48,10 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         })
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        self.animateLogin()
+    }
+    
     // MARK: Tab Gesture Selector
     func dismissKeyboard() {
         self.usernameTextField.resignFirstResponder()
@@ -72,21 +76,21 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         
         // logo
         logo.snp.makeConstraints { (view) in
-            view.top.equalToSuperview().offset(16.0)
-            view.centerX.equalToSuperview()
-            view.size.equalTo(CGSize(width: 150, height: 150))
+           // view.top.equalToSuperview().offset(16.0)
+            view.centerY.centerX.equalToSuperview()
+            view.size.equalTo(CGSize(width: 200, height: 200))
         }
         
         // username
         usernameTextField.snp.makeConstraints { (textField) in
-            textField.top.equalTo(logo.snp.bottom).offset(16)
+            textField.top.equalTo(logo.snp.bottom).offset(20)
             textField.centerX.equalToSuperview()
         }
         usernameTextField.underLine(placeHolder: "Username")
    
         // password
         passwordTextField.snp.makeConstraints { (textField) in
-            textField.top.equalTo(usernameTextField.snp.bottom).offset(16)
+            textField.top.equalTo(usernameTextField.snp.bottom).offset(20)
             textField.centerX.equalToSuperview()
         }
 
@@ -106,7 +110,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         
         // login button
         loginButton.snp.makeConstraints { (view) in
-            view.bottom.equalTo(registerButton.snp.top).offset(-8.0)
+            view.bottom.equalTo(registerButton.snp.top).offset(-16.0)
             view.centerX.equalTo(self.view.snp.centerX)
             view.width.equalTo(JashButton.defaultSize.width)
         }
@@ -187,7 +191,59 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     func showUserHomeVC() {
         self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
     }
+    
+    //MARK:- Animations
+    
+    private func animateLogin(){
+        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1.5, dampingRatio: 0.5)
+        
+        logo.snp.remakeConstraints { (view) in
+            view.top.equalToSuperview().offset(16.0)
+            view.centerX.equalToSuperview()
+            view.size.equalTo(CGSize(width: 150, height: 150))
+        }
+       animator.addAnimations({ 
+        self.view.layoutIfNeeded()
+       }, delayFactor: 0.5)
+        
+        animator.startAnimation()
+        
+    }
 
+    private func animateButtons(){
+        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 2, dampingRatio: 0.5)
+        
+        let shadowAnim = CABasicAnimation()
+        shadowAnim.keyPath = "shadowOpacity"
+        shadowAnim.fromValue = NSNumber(value: 0.8)
+        shadowAnim.toValue = NSNumber(value: 0.0)
+        // shadowAnim.duration =
+        self.loginButton.layer.add(shadowAnim, forKey: "shadowOpacity")
+        self.registerButton.layer.add(shadowAnim, forKey: "shadowOpacity")
+        
+
+        animator.addAnimations {
+            self.loginButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+            self.registerButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+           
+            self.loginButton.layer.shadowColor = UIColor.black.cgColor
+            self.loginButton.layer.shadowOffset = CGSize(width: 5, height: 5)
+            self.loginButton.layer.shadowRadius = 5
+            self.loginButton.layer.shadowOpacity = 0.8
+        }
+        
+        animator.addAnimations({ 
+            self.loginButton.layer.shadowOpacity = 0
+            self.loginButton.transform = CGAffineTransform.identity
+            
+        }, delayFactor: 0.3)
+        
+        animator.addAnimations({ 
+            self.registerButton.transform = CGAffineTransform.identity
+        }, delayFactor: 0.5)
+        
+        animator.startAnimation()
+    }
     // MARK: - Views
     
     // logo
@@ -196,6 +252,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         let imageView: UIImageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
+       // imageView.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
         return imageView
     }()
 

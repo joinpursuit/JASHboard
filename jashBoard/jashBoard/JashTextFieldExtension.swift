@@ -18,7 +18,7 @@ extension UITextField{
         self.attributedPlaceholder = str
         
         let border = CALayer()
-        let width = CGFloat(2.0)
+        let width = CGFloat(0.5)
         
         self.snp.makeConstraints { (view) in
             view.width.equalTo(350)
