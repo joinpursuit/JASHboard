@@ -35,6 +35,16 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
         self.userEmailTextField.underLine(placeHolder: "email")
         self.passwordTextField.underLine(placeHolder: "password")
         
+        FIRAuth.auth()?.addStateDidChangeListener({ (auth, user) in
+            if user?.email == nil {
+                self.registerButton.isEnabled = true
+                self.registerButton.isUserInteractionEnabled = true
+            } else {
+                self.registerButton.isEnabled = false
+                self.registerButton.isUserInteractionEnabled = false
+            }
+        })
+        
     }
     
     override func viewDidLayoutSubviews() {

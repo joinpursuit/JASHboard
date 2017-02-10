@@ -29,6 +29,7 @@
 		4B44F2E21E4A2E7E00D7782A /* VoteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B44F2E11E4A2E7E00D7782A /* VoteTableViewCell.swift */; };
 		4B44F2E41E4A5C9600D7782A /* UserHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */; };
 		A70451A31E4D230C00E414FD /* Pulsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70451A21E4D230C00E414FD /* Pulsing.swift */; };
+		A70451A51E4E17EA00E414FD /* CatagoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70451A41E4E17EA00E414FD /* CatagoryManager.swift */; };
 		A73778AD1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73778AC1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift */; };
 		A73778AF1E4BC358003C3641 /* RegisterNewUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73778AE1E4BC358003C3641 /* RegisterNewUserViewController.swift */; };
 		A751FDE01E49415400B53D1A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */; };
@@ -64,6 +65,7 @@
 		4B44F2E31E4A5C9600D7782A /* UserHomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserHomeViewController.swift; sourceTree = "<group>"; };
 		A4928526CB9318AFD7A23769 /* Pods_jashBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_jashBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A70451A21E4D230C00E414FD /* Pulsing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pulsing.swift; sourceTree = "<group>"; };
+		A70451A41E4E17EA00E414FD /* CatagoryManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatagoryManager.swift; sourceTree = "<group>"; };
 		A73778AC1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSelectedInUploadCollectionViewCell.swift; sourceTree = "<group>"; };
 		A73778AE1E4BC358003C3641 /* RegisterNewUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterNewUserViewController.swift; sourceTree = "<group>"; };
 		A751FDDF1E49415400B53D1A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 			children = (
 				474DA21F1E4B9AA0003D66FC /* Vote.swift */,
 				474DA2211E4B9AB9003D66FC /* JashImage.swift */,
+				A70451A41E4E17EA00E414FD /* CatagoryManager.swift */,
 			);
 			name = "Model Objects";
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				474DA2221E4B9AB9003D66FC /* JashImage.swift in Sources */,
 				A751FDE21E49708700B53D1A /* PhotoUploadCollectionViewCell.swift in Sources */,
 				A73778AD1E4AE975003C3641 /* ImageSelectedInUploadCollectionViewCell.swift in Sources */,
+				A70451A51E4E17EA00E414FD /* CatagoryManager.swift in Sources */,
 				1AB285CC1E4A2C3F00D9E34B /* JashTextFieldExtension.swift in Sources */,
 				1AB285D51E4B80BA00D9E34B /* JashProgressViewController.swift in Sources */,
 				474DA2201E4B9AA0003D66FC /* Vote.swift in Sources */,

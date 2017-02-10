@@ -38,19 +38,19 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         //FirAuth
         
         //MARK: - TO DO: after logging in and clicking the tab again, we return to the LOGIN/REGISTER screen with these buttons disabled but maybe we should hide them and or add a logout button since there is no way to log out otherwise. Re-factor this function.
-        FIRAuth.auth()?.addStateDidChangeListener({ (auth, user) in
-            if user?.email == nil {
-                self.loginButton.isEnabled = true
-                self.loginButton.isUserInteractionEnabled = true
-                self.registerButton.isEnabled = true
-                self.registerButton.isUserInteractionEnabled = true
-            } else {
-                self.loginButton.isEnabled = false
-                self.loginButton.isUserInteractionEnabled = false
-                self.registerButton.isEnabled = false
-                self.registerButton.isUserInteractionEnabled = false
-            }
-        })
+//        FIRAuth.auth()?.addStateDidChangeListener({ (auth, user) in
+//            if user?.email == nil {
+//                self.loginButton.isEnabled = true
+//                self.loginButton.isUserInteractionEnabled = true
+//                self.registerButton.isEnabled = true
+//                self.registerButton.isUserInteractionEnabled = true
+//            } else {
+//                self.loginButton.isEnabled = false
+//                self.loginButton.isUserInteractionEnabled = false
+//                self.registerButton.isEnabled = false
+//                self.registerButton.isUserInteractionEnabled = false
+//            }
+//        })
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -248,7 +248,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             
             animator.startAnimation()
             
-            shouldAnimateLogo = !shouldAnimateLogo
+            //shouldAnimateLogo = !shouldAnimateLogo
             
         }else{
             
@@ -330,7 +330,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         
         animator.addCompletion { (position) in
             if position == .end{
-                self.logoUpAnimate()
+                //self.logoUpAnimate()
             }
         }
         
