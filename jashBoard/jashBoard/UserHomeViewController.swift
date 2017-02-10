@@ -13,7 +13,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     //MARK: - Properties
     var photoIds: [(id: String, category: String, title: String)] = []
     var votes: [(id: String, title: String, voteType: Bool, category: String, timeStamp: Date)] = []
-    var userUploads: [UIImage]!
+    var userUploads: [UIImage]? = []
     
     //MARK: - Methods
     override func viewDidLoad() {
@@ -39,8 +39,9 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         setProfilePictureView()
         populateVotesArray()
         populatePhotoIdsArray()
+        //self.animateUploads()
     }
-    
+
     internal func setProfilePictureView(){
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
@@ -159,6 +160,15 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
+    func animateUploads(){
+        
+        if photoIds.count == userUploads?.count{
+            photoImageView.animationImages = userUploads
+            photoImageView.animationDuration = 1
+            photoImageView.startAnimating()
+        }
+    }
+    
     // MARK: - TableView Delegates
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -171,6 +181,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
+        cell.alpha = 0
         
         if indexPath.row < self.votes.count {
             
@@ -188,6 +199,9 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
                 if let data = data {
                     DispatchQueue.main.async {
                         cell.imageIcon = UIImage(data: data)
+                        UIView.animate(withDuration: 0.5, animations: {
+                            cell.alpha = 1
+                        })
                     }
                 }
             }
@@ -216,6 +230,9 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
                 if let data = data {
                     DispatchQueue.main.async {
                         cell.imageIcon = UIImage(data: data)
+                        UIView.animate(withDuration: 0.5, animations: {
+                            cell.alpha = 1
+                        })
                     }
                 }
             }
@@ -243,7 +260,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoInUploadCollectionViewCell.identifier, for: indexPath) as! PhotoInUploadCollectionViewCell
-        
+        cell.alpha = 0
         let imageID = self.photoIds[indexPath.row]
         
         let storageReference = FIRStorage.storage().reference(withPath: "\(imageID.category)/\(imageID.id)")
@@ -253,7 +270,12 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
             
             if let data = data {
                 DispatchQueue.main.async {
-                    cell.imageView.image = UIImage(data: data)
+                    let image = UIImage(data: data)
+                    cell.imageView.image = image
+                    self.userUploads?.append(image!)
+                    UIView.animate(withDuration: 0.5, animations: {
+                        cell.alpha = 1
+                    })
                 }
             }
         }
@@ -309,7 +331,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     // tableView
     internal lazy var tableView: UITableView = {
         let tableview = UITableView()
-        tableview.backgroundColor = .blue
+        tableview.backgroundColor = JashColors.lightPrimaryColor
         return tableview
     }()
     

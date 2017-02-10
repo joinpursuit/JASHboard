@@ -43,6 +43,7 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.cellIdentifier, for: indexPath) as! CategoryCollectionViewCell
         let jashImage = jashImages[indexPath.row]
+        cell.alpha = 0
         
         // Configure the cell
 
@@ -55,6 +56,9 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
             DispatchQueue.main.async {
                 if let data = data {
                     cell.cellImage = UIImage(data: data)
+                    UIView.animate(withDuration: 0.5, animations: {
+                        cell.alpha = 1
+                    })
                 }
             }
         })
@@ -62,7 +66,7 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
         //this needs to occur after the asynchronous block completes or the votes appear as 0
         cell.upCount = jashImage.votes.upvotes
         cell.downCount = jashImage.votes.downvotes
-        
+
         return cell
     }
     
