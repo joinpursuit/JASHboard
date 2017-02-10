@@ -75,7 +75,14 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
     func showImagePickerForCamera(_ sender: UIButton) {
         let authStatus = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
         if authStatus == .denied {
-            
+            guard let settingsUrl = URL(string: UIApplicationOpenSettingsURLString) else {
+                return
+            }
+            if UIApplication.shared.canOpenURL(settingsUrl) {
+                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                    print("Settings opened: \(success)") // Prints true
+                })
+            }
         }
         else if authStatus == .notDetermined {
             AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo) { (granted: Bool) in
@@ -237,12 +244,18 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
             let firstName = userFirstNameTextField.text,
             firstName != "",
             let lastName = userLastNameTextField.text,
-            lastName != "" else { return }
+            lastName != "" else {
+                let errorAlertController = UIAlertController(title: " Registration Error", message: "Missing information in First Name/ Last Name/ Username/ Password", preferredStyle: UIAlertControllerStyle.alert)
+                let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
+                errorAlertController.addAction(okay)
+                self.present(errorAlertController, animated: true, completion: nil)
+                return
+        }
         self.registerButton.isEnabled = false
         FIRAuth.auth()?.createUser(withEmail: userName, password: password, completion: { (user: FIRUser?, error: Error?) in
             self.registerButton.isEnabled = true
             if error != nil {
-                let errorAlertController = UIAlertController(title: "Registering Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+                let errorAlertController = UIAlertController(title: "Registration Error", message: error?.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
                 let okay = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
                 errorAlertController.addAction(okay)
                 self.present(errorAlertController, animated: true, completion: nil)
