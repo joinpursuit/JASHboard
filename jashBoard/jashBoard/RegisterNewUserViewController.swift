@@ -259,8 +259,28 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
                 "email" : userName as AnyObject
                 ]
             
-            // TO DO: ADD IN PROFILE PICTURE
             databaseReference.setValue(info)
+            // TO DO: ADD IN PROFILE PICTURE
+            let storageReference = FIRStorage.storage().reference().child("ProfilePictures").child("\(uid)")
+            
+            let uploadMetadata = FIRStorageMetadata()
+            uploadMetadata.contentType = "image/jpeg"
+            
+            if let image = self.profilePictureImageView.image,
+                let imageData = UIImageJPEGRepresentation(image, 0.8) {
+                
+                //upload image data to Storage reference
+                let uploadTask = storageReference.put(imageData, metadata: uploadMetadata) { (metadata: FIRStorageMetadata?, error: Error?) in
+                    
+                    DispatchQueue.main.async {
+                        print("Encountered an error: \(error?.localizedDescription)")
+                        self.signInUser = validUser
+                        self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
+                    }
+                    
+                }
+            }
+            
             self.signInUser = validUser
             self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
         })
