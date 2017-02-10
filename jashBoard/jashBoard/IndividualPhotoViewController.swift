@@ -59,6 +59,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         setupViewHierarchy()
         configureConstraints()
         populateVotesArray()
+        handleButtonsAndVotes()
         
         doubleTap.numberOfTapsRequired = 2
         doubleTap.addTarget(self, action: #selector(self.doubleTapImage))
@@ -92,6 +93,33 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             //sorting results by time of vote
             self.votes = currentVotes.sorted { $0.2 > $1.2 }
             self.tableView.reloadData()
+        })
+    }
+    
+    internal func handleButtonsAndVotes() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid,
+            let photoID = jashImage?.imageId else { return }
+        
+        let databaseReference = FIRDatabase.database().reference().child("USERS/\(uid)/photoVotes")
+        
+        databaseReference.observe(.value, with: { (snapshot) in
+            let enumerator = snapshot.children
+            
+            while let child = enumerator.nextObject() as? FIRDataSnapshot {
+                let key = child.key
+                let dictionary = child.value as! [String: AnyObject]
+                
+                guard let voteType = dictionary["voteType"] as? Bool else { return }
+                
+                if photoID == key && voteType == true {
+                    self.upvoteButton.isEnabled = false
+                    self.downvoteButton.isEnabled = true
+                }
+                else if photoID == key && voteType == false {
+                    self.downvoteButton.isEnabled = false
+                    self.upvoteButton.isEnabled = true
+                }
+            }
         })
     }
     
@@ -136,7 +164,9 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                         "voteTime" : currentDateString as AnyObject
                     ]
                     let downvoteDict: [String: AnyObject] = [
-                        "voteType" : false as AnyObject,                                                                                                              "title" : pictureTitle as AnyObject,                                                                                                                      "voteTime" : currentDateString as AnyObject
+                        "voteType" : false as AnyObject,
+                        "title" : pictureTitle as AnyObject,
+                        "voteTime" : currentDateString as AnyObject
                     ]
                     
                     sender.tag == 100 ? (userDBReference.child(imageId).setValue(upvoteDict)) : (userDBReference.child(imageId).setValue(downvoteDict))
