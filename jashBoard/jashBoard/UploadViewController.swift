@@ -98,10 +98,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 return
         }
         
-
+        
         self.dbReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)").childByAutoId()
         let imageID = self.dbReference.key
-
+        
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
         self.storageReference = FIRStorage.storage().reference().child("\(category)").child("\(imageID)")
@@ -154,7 +154,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 guard let progress = snapshot.progress else { return }
                 
                 self.progressDegelate?.upDateProgressbar(value: Float(progress.fractionCompleted))
-            
+                
                 
                 //self.uploadProgressView.progress = Float(progress.fractionCompleted)
                 
