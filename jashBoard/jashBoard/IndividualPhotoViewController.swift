@@ -140,7 +140,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             let userId = FIRAuth.auth()?.currentUser?.uid else { return }
         
         //reference to the imageID in the respective CATEGORY node
-        let databaseReference = FIRDatabase.database().reference(withPath: "\(category)/\(imageId)")
+        let databaseReference = FIRDatabase.database().reference(withPath: "CATEGORIES/\(category)/\(imageId)")
         
         databaseReference.runTransactionBlock { (currentData: FIRMutableData) -> FIRTransactionResult in
             //update upvote/downvote counter

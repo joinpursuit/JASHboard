@@ -83,7 +83,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         
         //update reference in respective CATEGORY node
-        let databaseReference = FIRDatabase.database().reference().child("\(category)")
+        let databaseReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)")
         let newItemReference = databaseReference.childByAutoId()
         let imageID = newItemReference.key
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
