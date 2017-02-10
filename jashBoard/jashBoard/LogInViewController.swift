@@ -167,6 +167,10 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         registerNewUserViewController.userEmailTextField.text = self.usernameTextField.text
         registerNewUserViewController.passwordTextField.text = self.passwordTextField.text
         self.navigationController?.pushViewController(registerNewUserViewController, animated: true)
+        
+        //clear password text field but keep username
+        self.passwordTextField.text = nil
+        self.passwordTextField.underLine(placeHolder: "Password")
     }
   
     // Refactored to be in app delegate
