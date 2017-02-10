@@ -321,9 +321,8 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     }()
     
     // user image
-    internal lazy var photoImageView: UIImageView = {
+    lazy var photoImageView: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        imageView.image = #imageLiteral(resourceName: "default-placeholder")
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
