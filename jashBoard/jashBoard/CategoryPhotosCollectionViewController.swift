@@ -100,7 +100,7 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
 
     private func loadPhotosArray() {
         guard let category = self.title?.uppercased() else { return }
-        let databaseReference = FIRDatabase.database().reference().child("\(category)")
+        let databaseReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)")
         
         databaseReference.observe(.value, with: { (snapshot) in
             print("Number of pictures: \(snapshot.childrenCount)")
