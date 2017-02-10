@@ -29,7 +29,6 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     private let padding: Int = 7
     internal static let arrowAlpha: CGFloat = 0.7
     
-    //var downCount: Int = 20
     var delegate: JashCollectionViewCellDelegate?
     
     //MARK: - Initializers

@@ -36,9 +36,10 @@ class PhotoInUploadCollectionViewCell: UICollectionViewCell {
     lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.image = #imageLiteral(resourceName: "default-placeholder")
+//        imageView.image = #imageLiteral(resourceName: "default-placeholder")
         imageView.layer.masksToBounds = false
         imageView.clipsToBounds = true
+        imageView.image = nil
         return imageView
     }()
 }

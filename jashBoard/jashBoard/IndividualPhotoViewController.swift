@@ -49,11 +49,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
     
     //tracking votes and users concurrently
-    var votes: [(String, Bool)] = [] {
-        willSet {
-            self.tableView.reloadData()
-        }
-    }
+    var votes: [(name: String, type: Bool, time: String)] = []
     var pictureTitle: String?
     
     //MARK: - Methods
@@ -63,6 +59,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         setupViewHierarchy()
         configureConstraints()
         populateVotesArray()
+        handleButtonsAndVotes()
         
         doubleTap.numberOfTapsRequired = 2
         doubleTap.addTarget(self, action: #selector(self.doubleTapImage))
@@ -78,30 +75,75 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         
         let databaseRef = FIRDatabase.database().reference(withPath: "USERS")
         
-        databaseRef.observeSingleEvent(of: .value, with: { (snapshot) in
+        //in order to update the tableview in real-time we have to constantly observe for a change in value of votes
+        databaseRef.observe(.value, with: { (snapshot) in
             let enumerator = snapshot.children
+            var currentVotes: [(String, Bool, String)] = []
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let dictionary = child.value as! [String: AnyObject]
                 
-                if let name = dictionary["name"] as? String,
-                let photoVotes = dictionary["photoVotes"],
-                let voteResult = photoVotes[photoID] as? [String: Bool],
-                let voteBool = voteResult["voteType"] {
-                    self.votes.append((name, voteBool))
+                if let name = dictionary["name"],
+                    let photoVotes = dictionary["photoVotes"],
+                    let voteResult = photoVotes[photoID] as? [String: AnyObject],
+                    let voteType = voteResult["voteType"],
+                    let voteTime = voteResult["voteTime"]{
+                    currentVotes.append((name as! String, voteType as! Bool, voteTime as! String))
                 }
             }
+            //sorting results by time of vote
+            self.votes = currentVotes.sorted { $0.2 > $1.2 }
             self.tableView.reloadData()
         })
     }
     
+    internal func handleButtonsAndVotes() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid,
+            let photoID = jashImage?.imageId else { return }
+        
+        let databaseReference = FIRDatabase.database().reference().child("USERS/\(uid)/photoVotes")
+        
+        databaseReference.observe(.value, with: { (snapshot) in
+            let enumerator = snapshot.children
+            
+            while let child = enumerator.nextObject() as? FIRDataSnapshot {
+                let key = child.key
+                let dictionary = child.value as! [String: AnyObject]
+                
+                guard let voteType = dictionary["voteType"] as? Bool else { return }
+                
+                if photoID == key && voteType == true {
+                    self.upvoteButton.isEnabled = false
+                    self.downvoteButton.isEnabled = true
+                }
+                else if photoID == key && voteType == false {
+                    self.downvoteButton.isEnabled = false
+                    self.upvoteButton.isEnabled = true
+                }
+            }
+        })
+    }
+    
     internal func vote(sender: UIButton) {
+        //if user is anonymous no upvoting or downvoting
+        guard let userIsAnonymous = FIRAuth.auth()?.currentUser?.isAnonymous else { return }
+        
+        if userIsAnonymous {
+            let alertController = UIAlertController(title: "Stranger danger!", message: "Please sign in or register to upvote/downvote!", preferredStyle: UIAlertControllerStyle.alert)
+            let okay = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+            alertController.addAction(okay)
+            self.present(alertController, animated: true, completion: nil)
+            return
+        }
+        
         guard let category = jashImage?.category,
-            let imageId = jashImage?.imageId else { return }
+            let imageId = jashImage?.imageId,
+            let userId = FIRAuth.auth()?.currentUser?.uid else { return }
+        
+        //reference to the imageID in the respective CATEGORY node
         let databaseReference = FIRDatabase.database().reference(withPath: "\(category)/\(imageId)")
         
-        //update upvote/downvote counter
         databaseReference.runTransactionBlock { (currentData: FIRMutableData) -> FIRTransactionResult in
-            
+            //update upvote/downvote counter
             if var imageInfo = currentData.value as? [String: AnyObject] {
                 var upvotes = imageInfo["upvotes"] as? Int
                 var downvotes = imageInfo["downvotes"] as? Int
@@ -120,18 +162,37 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                 imageInfo["upvotes"] = upvotes as AnyObject?
                 
                 currentData.value = imageInfo
+                
+                //update photoVotes node within USERS node
+                let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes")
+                let currentDateString = Date().convertToTimeString()
+                
+                if let pictureTitle = self.pictureTitle {
+                    
+                    let upvoteDict = [
+                        "voteType" : true as AnyObject,
+                        "title" : pictureTitle as AnyObject,
+                        "voteTime" : currentDateString as AnyObject
+                    ]
+                    let downvoteDict: [String: AnyObject] = [
+                        "voteType" : false as AnyObject,
+                        "title" : pictureTitle as AnyObject,
+                        "voteTime" : currentDateString as AnyObject
+                    ]
+                    
+                    sender.tag == 100 ? (userDBReference.child(imageId).setValue(upvoteDict)) : (userDBReference.child(imageId).setValue(downvoteDict))
+                }
             }
             return FIRTransactionResult.success(withValue: currentData)
         }
-        
         // update current users photoVotes node
-        guard let userId = FIRAuth.auth()?.currentUser?.uid else { return }
         
         let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes/\(imageId)")
         
         if let pictureTitle = self.pictureTitle {
             sender.tag == 100 ? (userDBReference.setValue(["voteType" : true, "title" : pictureTitle, "category" : category, "timeStamp" : FIRServerValue.timestamp()])) : (userDBReference.setValue(["voteType" : false, "title" : pictureTitle, "category" : category, "timeStamp" : FIRServerValue.timestamp()]))
         }  
+
     }
 
     //MARK: - Setup
@@ -210,10 +271,10 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         
         let vote = votes[indexPath.row]
         
-        //TO DO: Refactor to correct data
-        vote.1 == true ? (cell.voteDescription = "\(vote.0) voted up.") : (cell.voteDescription = "\(vote.0) voted down.")
+        //TO DO: account for imageIcon and profile picture
+        vote.type == true ? (cell.voteDescription = "\(vote.name) voted up.") : (cell.voteDescription = "\(vote.name) voted down.")
         cell.imageIcon = UIImage(named: "siberian-tiger-profile")
-        cell.date = Date()
+        cell.dateLabel.text = vote.time
         
         return cell
     }
@@ -238,7 +299,8 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                 self.photoImageView.isUserInteractionEnabled = true
             }
         }
-        
+        //perform upvote business logic and animate
+        vote(sender: self.upvoteButton)
         animator.startAnimation()
     }
 

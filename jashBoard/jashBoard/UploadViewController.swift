@@ -82,45 +82,65 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 return
         }
         
-        //update references in database
+        //update reference in respective CATEGORY node
         let databaseReference = FIRDatabase.database().reference().child("\(category)")
         let newItemReference = databaseReference.childByAutoId()
         let imageID = newItemReference.key
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
+        //update reference in USER node
         let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(uid)/uploads/\(imageID)")
-        print(userDBReference)
-        
-        let votesDict: [String : AnyObject] = [
-            "upvotes" : 0 as AnyObject,
-            "downvotes" : 0 as AnyObject,
-            "title" : titleText as AnyObject
-        ]
-        
-        let userInfo: [String: AnyObject] = [
-            "category" : category as AnyObject,
-            "title" : titleText as AnyObject
-            
-        ]
-        newItemReference.setValue(votesDict)
-        userDBReference.setValue(userInfo)
+        print("User DB Reference: \(userDBReference)")
         
         //update storage
         let storageReference = FIRStorage.storage().reference().child("\(category)").child("\(imageID)")
+        print("Storage Reference: \(storageReference)")
+        
         let uploadMetadata = FIRStorageMetadata()
         uploadMetadata.contentType = "image/jpeg"
         
         if let image = self.selectedImage,
             let imageData = UIImageJPEGRepresentation(image, 0.8) {
             
+            //upload image data to Storage reference
             let uploadTask = storageReference.put(imageData, metadata: uploadMetadata) { (metadata: FIRStorageMetadata?, error: Error?) in
                 if error != nil {
                     print("Encountered an error: \(error?.localizedDescription)")
                 }
                 else {
+                    guard let timestamp = metadata?.timeCreated else { return }
+                    let timeString = timestamp.convertToTimeString()
+                    
+                    let votesDict: [String : AnyObject] = [
+                        "upvotes" : 0 as AnyObject,
+                        "downvotes" : 0 as AnyObject,
+                        "title" : titleText as AnyObject,
+                        "creationDate" : timeString as AnyObject
+                    ]
+                    
+                    let userInfo: [String: AnyObject] = [
+                        "category" : category as AnyObject,
+                        "title" : titleText as AnyObject,
+                        "creationDate" : timeString as AnyObject
+                    ]
+                    
+                    newItemReference.setValue(votesDict)
+                    userDBReference.setValue(userInfo)
+                    
                     print("Upload complete: \(metadata)")
                     print("HERE'S YOUR DOWNLOAD URL: \(metadata?.downloadURL())")
                 }
+            }
+        }
+        //removes text from titleTextField and replaces placeholder attributed text.
+        self.titleTextfield.text = nil
+        titleTextfield.underLine(placeHolder: "Title")
+        
+        //removes selected category background color
+        for cell in categoryCollectionView.visibleCells {
+            if let categoryCell = cell as?  CatagoryTapInUploadCollectionViewCell {
+                categoryCell.catagoryLabel.backgroundColor = JashColors.primaryColor
+                categoryCell.catagoryLabel.textColor = JashColors.textAndIconColor
             }
         }
     }
