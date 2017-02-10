@@ -41,7 +41,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     var photoID: String!
     
     //tracking votes and users concurrently
-    var votes: [(name: String, type: Bool, time: String)] = []
+    var votes: [(name: String, type: Bool, time: String, voter: String)] = []
     var pictureTitle: String?
     
     //MARK: - Methods
@@ -71,9 +71,10 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         //Create listener and store handle
         self.dbHandle = self.dbReference.observe(.value, with: { (snapshot) in
             let enumerator = snapshot.children
-            var currentVotes: [(String, Bool, String)] = []
+            var currentVotes: [(String, Bool, String, String)] = []
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let dictionary = child.value as! [String: AnyObject]
+                let voter = child.key
                 
                 if let name = dictionary["name"] as? String,
                     let photoVotes = dictionary["photoVotes"],
@@ -94,7 +95,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                             self.upvoteButton.isEnabled = true
                         }
                     }
-                    currentVotes.append((name, voteType, voteTime))
+                    currentVotes.append((name, voteType, voteTime, voter))
                 }
             }
             //sorting results by time of vote
@@ -281,7 +282,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             vote.type == true ? (cell.voteDescription = "\(vote.name) voted up.") : (cell.voteDescription = "\(vote.name) voted down.")
             cell.dateLabel.text = vote.time
             
-            self.storageReference = FIRStorage.storage().reference().child("ProfilePictures/\(uid)")
+            self.storageReference = FIRStorage.storage().reference().child("ProfilePictures/\(vote.voter)")
             
             storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
                 if let imageData = data {
