@@ -11,7 +11,7 @@ import Firebase
 
 private let reuseIdentifier = "Cell"
 
-class CategoryPhotosCollectionViewController: UICollectionViewController, JashCollectionViewCellDelegate {
+class CategoryPhotosCollectionViewController: UICollectionViewController, JashCollectionViewCellDelegate,JashLoadingScreenProtocol{
     
     //MARK: - Properties
     var categoryTitle: String?
@@ -25,11 +25,12 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
     var dbReference: FIRDatabaseReference!
     var storageReference: FIRStorageReference!
     var dbHandle: UInt!
+    var loadingDelegate: JashLoadingScreenProtocol?
     
     //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.loadingDelegate = self
         initializeFirebaseReferences()
         setUpCollectionView()
     }
@@ -58,6 +59,8 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
             }
             self.jashImages = currentImages
         })
+        
+       // self.loadingDelegate?.showLoadingView()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -156,6 +159,20 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
     
     func hidePopUp() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    //MARK: JashLoadingScreen Delegae
+    
+    func showLoadingView() {
+        let loading = JashLoadingScreenViewController()
+        loading.modalTransitionStyle = .crossDissolve
+        loading.modalPresentationStyle = .overCurrentContext
+        
+        present(loading, animated: true, completion: nil)
+    }
+    
+    func dismissLoadingView() {
+        
     }
     
 }

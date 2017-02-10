@@ -7,7 +7,7 @@
 //
 
 import UIKit
-protocol JashLoadingProtocol{
+protocol JashLoadingScreenProtocol{
     func showLoadingView()
     func dismissLoadingView()
 }
