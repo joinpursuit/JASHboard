@@ -141,7 +141,8 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     let photo: UIImageView = {
         let imageView: UIImageView = UIImageView()
         // imageView.image = UIImage(named: "siberian-tiger-profile")
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
     

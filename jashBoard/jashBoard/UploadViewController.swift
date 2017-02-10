@@ -16,12 +16,13 @@ import FirebaseAuth
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate{
     
     //MARK: - Properties
-    var catagoryTitlesArr: [String] = ["ANIMALS", "BEACH DAYS" ,"CARS", "FLOWERS & PLANTS"]
+    var catagoryTitlesArr = CategoryManager.shared.catagoryTitlesArray
+
     var photoAssetsArr: [PHAsset] = []
     let manager = PHImageManager.default()
     var selectedCategory: String!
     var selectedImage: UIImage!
-
+    
     var progressDegelate: JashProgressBarDelegate?
     
     let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
@@ -96,10 +97,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 return
         }
         
-
+        
         self.dbReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)").childByAutoId()
         let imageID = self.dbReference.key
-
+        
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
         self.storageReference = FIRStorage.storage().reference().child("\(category)").child("\(imageID)")
@@ -144,13 +145,15 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 }
             }
             //MARK: - the progressView is named uploadProgressView in this case and does not exist yet.
-            self.showUploadProgress()
+            DispatchQueue.main.async {
+                self.showUploadProgress()
+            }
             
             uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
                 guard let progress = snapshot.progress else { return }
                 
                 self.progressDegelate?.upDateProgressbar(value: Float(progress.fractionCompleted))
-            
+                
                 
                 //self.uploadProgressView.progress = Float(progress.fractionCompleted)
                 

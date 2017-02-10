@@ -11,7 +11,8 @@ import UIKit
 class CategorySelectionTableViewController: UITableViewController {
     //MARK: - Properties
     //these values need to correspond with UploadViewController
-    var categories = ["Animals", "Beach Days", "Cars", "Flowers & Plants"]
+    var categories = CategoryManager.shared.catagoryTitlesArray
+    var cellBackgroundImage = CategoryManager.shared.catagoryImages
     
     //MARK: - Methods
     override func viewDidLoad() {
@@ -40,6 +41,7 @@ class CategorySelectionTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.cellIdentifier, for: indexPath) as! CategoryTableViewCell
 
         cell.categoryTitleLabel.text = categories[indexPath.row]
+        cell.cellBackgroundImage.image = cellBackgroundImage[indexPath.row]
         
         return cell
     }
