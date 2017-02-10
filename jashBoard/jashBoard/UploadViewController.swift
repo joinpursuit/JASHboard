@@ -86,6 +86,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     func uploadPhotoToFireBaseButtonPressed(_ sender: UIBarButtonItem) {
         print("UPLOADING.")
+        self.titleTextfield.resignFirstResponder()
         
         guard let category = self.selectedCategory,
             let titleText = self.titleTextfield.text,
