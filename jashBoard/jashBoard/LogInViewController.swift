@@ -161,6 +161,10 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             guard let validUser = user else { return }
             //self.signInUser = validUser
             self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
+            
+            //clear password text field but keep username
+            self.passwordTextField.text = nil
+            self.passwordTextField.underLine(placeHolder: "Password")
         })
     }
     
@@ -169,6 +173,12 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         registerNewUserViewController.userEmailTextField.text = self.usernameTextField.text
         registerNewUserViewController.passwordTextField.text = self.passwordTextField.text
         self.navigationController?.pushViewController(registerNewUserViewController, animated: true)
+        
+        //clear password text field but keep username
+        self.usernameTextField.text = nil
+        self.usernameTextField.underLine(placeHolder: "Username")
+        self.passwordTextField.text = nil
+        self.passwordTextField.underLine(placeHolder: "Password")
     }
     
     // Refactored to be in app delegate
