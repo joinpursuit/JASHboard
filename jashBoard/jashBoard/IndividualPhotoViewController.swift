@@ -80,13 +80,15 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                     let voteResult = photoVotes[self.photoID] as? [String: AnyObject],
                     let voteType = voteResult["voteType"] as? Bool,
                     let voteTime = voteResult["voteTime"] as? String {
-                    
+                    print("Vote Result: \(voteResult)")
                     //handling
-                    if self.photoID == photoVotes.key && voteType == true {
+//                    if self.photoID == photoVotes.key && voteType == true {
+                    if voteResult != nil && voteType == true {
                         self.upvoteButton.isEnabled = false
                         self.downvoteButton.isEnabled = true
                     }
-                    else if self.photoID == photoVotes.key && voteType == false {
+//                    else if self.photoID == photoVotes.key && voteType == false {
+                    else if voteResult != nil && voteType == false {
                         self.downvoteButton.isEnabled = false
                         self.upvoteButton.isEnabled = true
                     }
@@ -127,7 +129,6 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             }
         })
     }
-    
     
     internal func vote(sender: UIButton) {
         //if user is anonymous no upvoting or downvoting
