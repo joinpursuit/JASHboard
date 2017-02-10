@@ -7,21 +7,21 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>97735392390-efbg8tpuhejggqgcd6f1e1o9elv6agp2.apps.googleusercontent.com</string>
+	<string>476787089886-gj4dk4mg2m125nq3bi94q51fbi7h0etl.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.97735392390-efbg8tpuhejggqgcd6f1e1o9elv6agp2</string>
+	<string>com.googleusercontent.apps.476787089886-gj4dk4mg2m125nq3bi94q51fbi7h0etl</string>
 	<key>API_KEY</key>
-	<string>AIzaSyC4LUyJEbinHpS-yar9t5R-HDMIoz8NEC0</string>
+	<string>AIzaSyBckAfnhPlqDr-qgwzjf3XTPC_uzTjCDKM</string>
 	<key>GCM_SENDER_ID</key>
-	<string>97735392390</string>
+	<string>476787089886</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>nyc.c4q.harichandansingh.FireBase-Storage-Test</string>
+	<string>nyc.c4q.jashBoard</string>
 	<key>PROJECT_ID</key>
-	<string>jash-2cb75</string>
+	<string>jashv2avoidingcategories</string>
 	<key>STORAGE_BUCKET</key>
-	<string>jash-2cb75.appspot.com</string>
+	<string>jashv2avoidingcategories.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<true/>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -33,8 +33,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:97735392390:ios:9c9fc47ab64b5c00</string>
+	<string>1:476787089886:ios:ac6a646d04120342</string>
 	<key>DATABASE_URL</key>
-	<string>https://jash-2cb75.firebaseio.com</string>
+	<string>https://jashv2avoidingcategories.firebaseio.com</string>
 </dict>
 </plist>
