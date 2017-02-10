@@ -44,4 +44,7 @@ class CatagoryTapInUploadCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    override func prepareForReuse() {
+        self.backgroundColor = UIColor.clear
+    }
 }
