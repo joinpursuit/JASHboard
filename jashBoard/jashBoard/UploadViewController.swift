@@ -12,7 +12,8 @@ import Photos
 import Firebase
 import FirebaseAuth
 
-class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate {
+
+class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate{
     
     //MARK: - Properties
     var catagoryTitlesArr: [String] = ["ANIMALS", "BEACH DAYS" ,"CARS", "FLOWERS & PLANTS"]
@@ -20,6 +21,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     let manager = PHImageManager.default()
     var selectedCategory: String!
     var selectedImage: UIImage!
+
+    var progressDegelate: JashProgressBarDelegate?
+    
     let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
     
     var dbReference: FIRDatabaseReference!
@@ -92,8 +96,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 return
         }
         
+
         self.dbReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)").childByAutoId()
         let imageID = self.dbReference.key
+
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
         self.storageReference = FIRStorage.storage().reference().child("\(category)").child("\(imageID)")
@@ -137,6 +143,19 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     print("HERE'S YOUR DOWNLOAD URL: \(metadata?.downloadURL())")
                 }
             }
+            //MARK: - the progressView is named uploadProgressView in this case and does not exist yet.
+            self.showUploadProgress()
+            
+            uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
+                guard let progress = snapshot.progress else { return }
+                
+                self.progressDegelate?.upDateProgressbar(value: Float(progress.fractionCompleted))
+            
+                
+                //self.uploadProgressView.progress = Float(progress.fractionCompleted)
+                
+            }
+            
         }
         
         //MARK: - the progressView is named uploadProgressView in this case and does not exist yet.
@@ -145,7 +164,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         //
         //            self.uploadProgressView.progress = Float(progress.fractionCompleted)
         //        }
-        
         
         //removes text from titleTextField and replaces placeholder attributed text.
         self.titleTextfield.text = nil
@@ -169,6 +187,14 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         //get assets from PHFetchResult<PHAsset> object and populate the array we populate the collectionview with.
         allPhotosResult.enumerateObjects({ self.photoAssetsArr.append($0.0) })
+    }
+    
+    private func showUploadProgress(){
+        let uploadProgressAlert = JashProgressViewController()
+        uploadProgressAlert.modalPresentationStyle = .overCurrentContext
+        uploadProgressAlert.modalTransitionStyle = .crossDissolve
+        self.progressDegelate = uploadProgressAlert
+        present(uploadProgressAlert, animated: true, completion: nil)
     }
     
     // MARK: - CollectionViewDelegate & CollectionViewDataSource Methods
