@@ -34,6 +34,15 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
         self.userLastNameTextField.underLine(placeHolder: "last name")
         self.userEmailTextField.underLine(placeHolder: "email")
         self.passwordTextField.underLine(placeHolder: "password")
+        
+    }
+    
+    override func viewDidLayoutSubviews() {
+        //Add animation to profilePictureImageView
+        let pulse = Pulsing(numberOfPalses: 100, radius: 150, position: self.profilePictureImageView.center)
+        pulse.animationDuration = 1
+        
+        self.view.layer.insertSublayer(pulse, below: profilePictureImageView.layer)
     }
     
     // MARK: - PhotoPicker Methods
