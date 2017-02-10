@@ -70,7 +70,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     // MARK: - Functions
     func uploadPhotoToFireBaseButtonPressed(_ sender: UIBarButtonItem) {
-        print("uploadPhotoToFireBaseButtonPressed")
+        print("UPLOADING.")
         
         guard let category = self.selectedCategory,
             let titleText = self.titleTextfield.text,
