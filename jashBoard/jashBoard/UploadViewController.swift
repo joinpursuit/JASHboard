@@ -132,6 +132,14 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 }
             }
         }
+        
+        //MARK: - the progressView is named uploadProgressView in this case and does not exist yet.
+//        uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
+//            guard let progress = snapshot.progress else { return }
+//            
+//            self.uploadProgressView.progress = Float(progress.fractionCompleted)
+//        }
+        
         //removes text from titleTextField and replaces placeholder attributed text.
         self.titleTextfield.text = nil
         titleTextfield.underLine(placeHolder: "Title")
