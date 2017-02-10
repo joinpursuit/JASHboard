@@ -155,6 +155,10 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             guard let validUser = user else { return }
             //self.signInUser = validUser
             self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
+            
+            //clear password text field but keep username
+            self.passwordTextField.text = nil
+            self.passwordTextField.underLine(placeHolder: "Password")
         })
     }
     
