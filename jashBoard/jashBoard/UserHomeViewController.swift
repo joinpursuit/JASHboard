@@ -261,6 +261,16 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         } catch let signOutError as NSError {
             print ("Error signing out: %@", signOutError)
         }
+        
+        //Instead of having a currentUser == nil, we force them to sign in Anonymously after logging out
+        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
+            if error != nil {
+                print("Error attempting to long in anonymously: \(error!)")
+            }
+            if user != nil {
+                print("Signed in anonymously!")
+            }
+        })
     }
     
     // MARK: - Views

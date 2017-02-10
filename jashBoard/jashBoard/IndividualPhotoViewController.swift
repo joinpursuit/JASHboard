@@ -126,6 +126,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     internal func vote(sender: UIButton) {
         //if user is anonymous no upvoting or downvoting
         guard let userIsAnonymous = FIRAuth.auth()?.currentUser?.isAnonymous else { return }
+        
         if userIsAnonymous {
             let alertController = UIAlertController(title: "Stranger danger!", message: "Please sign in or register to upvote/downvote!", preferredStyle: UIAlertControllerStyle.alert)
             let okay = UIAlertAction(title: "OK", style: .cancel, handler: nil)
