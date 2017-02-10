@@ -12,7 +12,7 @@ import Firebase
 private let reuseIdentifier = "Cell"
 
 class CategoryPhotosCollectionViewController: UICollectionViewController, JashCollectionViewCellDelegate {
-
+    
     //MARK: - Properties
     var categoryTitle: String?
     var jashImages: [JashImage] = [] {
@@ -22,35 +22,76 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
             }
         }
     }
-
+    var dbReference: FIRDatabaseReference!
+    var storageReference: FIRStorageReference!
+    var dbHandle: UInt!
+    
     //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        initializeFirebaseReferences()
         setUpCollectionView()
-        loadPhotosArray()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        guard let category = self.title?.uppercased() else { return }
+        
+        self.dbReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)")
+        
+        self.dbHandle = self.dbReference.observe(.value, with: { (snapshot) in
+            print("Number of pictures: \(snapshot.childrenCount)")
+            
+            //Because this is constantly observing for changes in votes we cant directly append into self.jashImages or we will see redundancies every time the view is loaded.
+            var currentImages: [JashImage] = []
+            
+            let enumerator = snapshot.children
+            while let child = enumerator.nextObject() as? FIRDataSnapshot {
+                
+                let votesDictionary = child.value as! [String: AnyObject]
+                guard let votes = Vote(snapshot: votesDictionary) else { return }
+                let jashImage = JashImage(votes: votes, imageId: child.key, category: category)
+                
+                currentImages.append(jashImage)
+            }
+            self.jashImages = currentImages
+        })
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        //Remove listener with handle
+        self.dbReference.removeObserver(withHandle: self.dbHandle)
+    }
+    
+    internal func initializeFirebaseReferences() {
+        //Initializing reference to Firebase
+        self.dbReference = FIRDatabase.database().reference()
+        self.storageReference = FIRStorage.storage().reference()
     }
     
     //MARK: UICollectionViewDataSource
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return jashImages.count
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.cellIdentifier, for: indexPath) as! CategoryCollectionViewCell
         let jashImage = jashImages[indexPath.row]
         
         // Configure the cell
-
-        cell.delegate = self
-    
-        let storageReference = FIRStorage.storage().reference().child("\(jashImage.category)/\(jashImage.imageId)")
         
-        storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
+        cell.delegate = self
+        self.storageReference = FIRStorage.storage().reference().child("\(jashImage.category)/\(jashImage.imageId)")
+        
+        self.storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
             
             DispatchQueue.main.async {
                 if let data = data {
@@ -94,30 +135,8 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
         collectionView?.showsVerticalScrollIndicator = false
         collectionView?.backgroundColor = JashColors.dividerColor
         collectionView?.collectionViewLayout = layout
-       // self.navigationController?.hidesBarsOnSwipe = true
+        // self.navigationController?.hidesBarsOnSwipe = true
         self.navigationController?.title = categoryTitle
-    }
-
-    private func loadPhotosArray() {
-        guard let category = self.title?.uppercased() else { return }
-        let databaseReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)")
-        
-        databaseReference.observe(.value, with: { (snapshot) in
-            print("Number of pictures: \(snapshot.childrenCount)")
-            //Because this is constantly observing for changes in votes we cant directly append into self.jashImages or we will see redundancies every time the view is loaded.
-            var currentImages: [JashImage] = []
-            
-            let enumerator = snapshot.children
-            while let child = enumerator.nextObject() as? FIRDataSnapshot {
-                
-                let votesDictionary = child.value as! [String: AnyObject]
-                guard let votes = Vote(snapshot: votesDictionary) else { return }
-                let jashImage = JashImage(votes: votes, imageId: child.key, category: category)
-                
-                currentImages.append(jashImage)
-            }
-            self.jashImages = currentImages
-        })
     }
     
     //MARK: JashCollectionViewCell Delegate
@@ -134,5 +153,5 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
     func hidePopUp() {
         dismiss(animated: true, completion: nil)
     }
-
+    
 }
