@@ -14,7 +14,6 @@ import AVKit
 import MobileCoreServices
 
 class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
     var signInUser: FIRUser?
     
     var capturedImages: [UIImage]! = []
@@ -34,17 +33,6 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
         self.userLastNameTextField.underLine(placeHolder: "last name")
         self.userEmailTextField.underLine(placeHolder: "email")
         self.passwordTextField.underLine(placeHolder: "password")
-        
-        FIRAuth.auth()?.addStateDidChangeListener({ (auth, user) in
-            if user?.email == nil {
-                self.registerButton.isEnabled = true
-                self.registerButton.isUserInteractionEnabled = true
-            } else {
-                self.registerButton.isEnabled = false
-                self.registerButton.isUserInteractionEnabled = false
-            }
-        })
-        
     }
     
     override func viewDidLayoutSubviews() {
@@ -276,36 +264,32 @@ class RegisterNewUserViewController: UIViewController, UITextFieldDelegate, UIIm
             //creating users for db
             let uid = newUser.uid
             let databaseReference = FIRDatabase.database().reference().child("USERS/\(uid)")
-            
             let info: [String: AnyObject] = [
                 "name" : "\(firstName) \(lastName)" as AnyObject,
                 "email" : userName as AnyObject
                 ]
-            
             databaseReference.setValue(info)
-            // TO DO: ADD IN PROFILE PICTURE
-            let storageReference = FIRStorage.storage().reference().child("ProfilePictures").child("\(uid)")
             
-            let uploadMetadata = FIRStorageMetadata()
-            uploadMetadata.contentType = "image/jpeg"
-            
+            // UPLOAD PROFILE PICTURE
             if let image = self.profilePictureImageView.image,
+                image != #imageLiteral(resourceName: "default-placeholder"),
                 let imageData = UIImageJPEGRepresentation(image, 0.8) {
+                
+                let storageReference = FIRStorage.storage().reference().child("ProfilePictures").child("\(uid)")
+                let uploadMetadata = FIRStorageMetadata()
+                uploadMetadata.contentType = "image/jpeg"
                 
                 //upload image data to Storage reference
                 let uploadTask = storageReference.put(imageData, metadata: uploadMetadata) { (metadata: FIRStorageMetadata?, error: Error?) in
-                    
-                    DispatchQueue.main.async {
-                        print("Encountered an error: \(error?.localizedDescription)")
-                        self.signInUser = validUser
-                        self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
+                    if let error = error {
+                        print("Encountered an error: \(error.localizedDescription)")
                     }
-                    
                 }
             }
-            
             self.signInUser = validUser
-            self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
+            let userHomeVC = UserHomeViewController()
+            userHomeVC.photoImageView.image = self.profilePictureImageView.image
+            self.navigationController?.pushViewController(userHomeVC, animated: true)
         })
     }
     

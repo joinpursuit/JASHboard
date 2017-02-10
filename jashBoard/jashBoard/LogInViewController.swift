@@ -24,8 +24,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         
         setupViewHierarchy()
         configureConstraints()
-        //        loginAnonymously() // Refactored into App Delegate
-
         
         // Textfield Delegate
         usernameTextField.delegate = self
@@ -38,6 +36,8 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         //FirAuth
         
         //MARK: - TO DO: after logging in and clicking the tab again, we return to the LOGIN/REGISTER screen with these buttons disabled but maybe we should hide them and or add a logout button since there is no way to log out otherwise. Re-factor this function.
+        
+        // Commenting this out because it's not necessary
 //        FIRAuth.auth()?.addStateDidChangeListener({ (auth, user) in
 //            if user?.email == nil {
 //                self.loginButton.isEnabled = true
@@ -148,6 +148,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Actions
     
     internal func didTapLogin(sender: UIButton) {
+        print("-------LOGIN TAPPED-----")
         guard let userName = usernameTextField.text,
             let password = passwordTextField.text else { return }
         self.loginButton.isEnabled = false
@@ -171,6 +172,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     }
     
     internal func didTapRegister(sender: UIButton) {
+        print("-----did tap register------")
         let registerNewUserViewController = RegisterNewUserViewController()
         registerNewUserViewController.userEmailTextField.text = self.usernameTextField.text
         registerNewUserViewController.passwordTextField.text = self.passwordTextField.text
