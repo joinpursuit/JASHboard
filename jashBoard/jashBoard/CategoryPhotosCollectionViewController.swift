@@ -99,14 +99,14 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
         cell.delegate = self
         self.storageReference = FIRStorage.storage().reference().child("\(jashImage.category)/\(jashImage.imageId)")
         
+        self.imageSetCounter += 1
         self.storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
-            
             DispatchQueue.main.async {
                 if let data = data {
                     cell.cellImage = UIImage(data: data)
                     UIView.animate(withDuration: 0.5, animations: {
                         cell.alpha = 1
-                        self.imageSetCounter += 1
+                        self.imageSetCounter -= 1
                         self.loadingDelegate?.dismissLoadingView()
                     })
                 }
@@ -178,7 +178,7 @@ class CategoryPhotosCollectionViewController: UICollectionViewController, JashCo
     }
     
     func dismissLoadingView() {
-        if imageSetCounter == imagesTotal || imagesTotal == 0{
+        if imageSetCounter == 0 || imagesTotal == 0{
             dismiss(animated: true, completion: nil)
         }
     }

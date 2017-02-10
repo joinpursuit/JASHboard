@@ -15,6 +15,7 @@ protocol JashProgressBarDelegate{
 class JashProgressViewController: UIViewController,JashProgressBarDelegate {
     
     let dismissButton: UIButton = UIButton(type: UIButtonType.roundedRect)
+     private let tapGuesture = UITapGestureRecognizer()
 
     private var dismissAnimate = true
     
@@ -25,6 +26,9 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
         self.view.backgroundColor = .clear
         self.dismissButton.addTarget(self, action: #selector(uploadSucess), for: .touchUpInside)
         setUpViews()
+        
+        
+        tapGuesture.addTarget(self, action: #selector(dismissView))
     }
     
     
@@ -39,6 +43,8 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
         viewControllerTint.snp.makeConstraints { (view) in
             view.top.bottom.trailing.leading.equalToSuperview()
         }
+        
+        viewControllerTint.addGestureRecognizer(tapGuesture)
         
         dismissButton.isHidden = true
         container.snp.makeConstraints { (view) in
@@ -152,6 +158,10 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
         }
         
         animator.startAnimation()
+    }
+    
+    func dismissView(){
+        dismiss(animated: true, completion: nil)
     }
     
     private let viewControllerTint: UIView = {

@@ -87,7 +87,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             view.size.equalTo(CGSize(width: 200, height: 200))
         }
         
-       // testButton.isHidden = true
+        testButton.isHidden = true
         
         // username
         usernameTextField.snp.makeConstraints { (textField) in

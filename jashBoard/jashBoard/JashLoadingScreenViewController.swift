@@ -17,6 +17,7 @@ class JashLoadingScreenViewController: UIViewController {
     private var gravity: UIGravityBehavior?
     private var collosion: UICollisionBehavior?
     private var bounceBehavior: UIDynamicItemBehavior?
+    private let tapGuesture = UITapGestureRecognizer()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,11 +26,13 @@ class JashLoadingScreenViewController: UIViewController {
         view.addSubview(viewTint)
         view.addSubview(barrier)
         
+        tapGuesture.addTarget(self, action: #selector(dismissView))
         
         barrier.snp.makeConstraints { (view) in
             view.centerY.leading.trailing.equalToSuperview()
             view.height.equalTo(10)
         }
+        viewTint.addGestureRecognizer(tapGuesture)
         viewTint.snp.makeConstraints { (view) in
             view.leading.trailing.top.bottom.equalToSuperview()
         }
@@ -82,6 +85,9 @@ class JashLoadingScreenViewController: UIViewController {
         bounceBehavior?.addItem(ball)
     }
     
+    func dismissView(){
+        dismiss(animated: true, completion: nil)
+    }
     private var randomColor: UIColor?{
         let colorsArray = [JashColors.accentColor,JashColors.textAndIconColor,JashColors.lightPrimaryColor]
         let randIndex = Int(arc4random_uniform(3))
