@@ -14,21 +14,9 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     //MARK: - Properties
     var jashImage: JashImage? = nil {
         didSet {
+            self.photoID = jashImage?.imageId
             self.upvoteCount = jashImage?.votes.upvotes
             self.downvoteCount = jashImage?.votes.downvotes
-            
-            guard let category = jashImage?.category else { return }
-            guard let imageId = jashImage?.imageId else { return }
-            let storageReference = FIRStorage.storage().reference().child("\(category)/\(imageId)")
-            
-            //update picture
-            storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
-                DispatchQueue.main.async {
-                    if let data = data {
-                        self.photoImageView.image = UIImage(data: data)
-                    }
-                }
-            })
         }
     }
     var upvoteCount: Int? = nil {
@@ -47,6 +35,10 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     }
     var selectedPhoto: UIImage!
     private let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer()
+    var dbReference: FIRDatabaseReference!
+    var storageReference: FIRStorageReference!
+    var dbHandle: UInt!
+    var photoID: String!
     
     //tracking votes and users concurrently
     var votes: [(name: String, type: Bool, time: String)] = []
@@ -55,11 +47,12 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     //MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        initializeFirebaseReferences()
+        
+        loadImage()
         
         setupViewHierarchy()
         configureConstraints()
-        populateVotesArray()
-        handleButtonsAndVotes()
         
         doubleTap.numberOfTapsRequired = 2
         doubleTap.addTarget(self, action: #selector(self.doubleTapImage))
@@ -70,24 +63,35 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         tableView.rowHeight = UITableViewAutomaticDimension
     }
     
-    internal func populateVotesArray() {
-        guard let photoID = jashImage?.imageId else { return }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        let databaseRef = FIRDatabase.database().reference(withPath: "USERS")
+        self.dbReference = FIRDatabase.database().reference().child("USERS")
         
-        //in order to update the tableview in real-time we have to constantly observe for a change in value of votes
-        databaseRef.observe(.value, with: { (snapshot) in
+        //Create listener and store handle
+        self.dbHandle = self.dbReference.observe(.value, with: { (snapshot) in
             let enumerator = snapshot.children
             var currentVotes: [(String, Bool, String)] = []
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
                 let dictionary = child.value as! [String: AnyObject]
                 
-                if let name = dictionary["name"],
+                if let name = dictionary["name"] as? String,
                     let photoVotes = dictionary["photoVotes"],
-                    let voteResult = photoVotes[photoID] as? [String: AnyObject],
-                    let voteType = voteResult["voteType"],
-                    let voteTime = voteResult["voteTime"]{
-                    currentVotes.append((name as! String, voteType as! Bool, voteTime as! String))
+                    let voteResult = photoVotes[self.photoID] as? [String: AnyObject],
+                    let voteType = voteResult["voteType"] as? Bool,
+                    let voteTime = voteResult["voteTime"] as? String {
+                    
+                    //handling
+                    if self.photoID == photoVotes.key && voteType == true {
+                        self.upvoteButton.isEnabled = false
+                        self.downvoteButton.isEnabled = true
+                    }
+                    else if self.photoID == photoVotes.key && voteType == false {
+                        self.downvoteButton.isEnabled = false
+                        self.upvoteButton.isEnabled = true
+                    }
+                    
+                    currentVotes.append((name, voteType, voteTime))
                 }
             }
             //sorting results by time of vote
@@ -96,32 +100,34 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         })
     }
     
-    internal func handleButtonsAndVotes() {
-        guard let uid = FIRAuth.auth()?.currentUser?.uid,
-            let photoID = jashImage?.imageId else { return }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         
-        let databaseReference = FIRDatabase.database().reference().child("USERS/\(uid)/photoVotes")
-        
-        databaseReference.observe(.value, with: { (snapshot) in
-            let enumerator = snapshot.children
-            
-            while let child = enumerator.nextObject() as? FIRDataSnapshot {
-                let key = child.key
-                let dictionary = child.value as! [String: AnyObject]
-                
-                guard let voteType = dictionary["voteType"] as? Bool else { return }
-                
-                if photoID == key && voteType == true {
-                    self.upvoteButton.isEnabled = false
-                    self.downvoteButton.isEnabled = true
-                }
-                else if photoID == key && voteType == false {
-                    self.downvoteButton.isEnabled = false
-                    self.upvoteButton.isEnabled = true
+        //Remove listener with handle
+        self.dbReference.removeObserver(withHandle: self.dbHandle)
+    }
+    
+    internal func initializeFirebaseReferences() {
+        //Initializing reference to Firebase
+        self.dbReference = FIRDatabase.database().reference()
+        self.storageReference = FIRStorage.storage().reference()
+    }
+    
+    internal func loadImage() {
+        guard let category = jashImage?.category else { return }
+        guard let id = self.photoID else { return }
+        print(category)
+        self.storageReference = FIRStorage.storage().reference().child("\(category)/\(id)")
+        print(self.storageReference)
+        self.storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
+            DispatchQueue.main.async {
+                if let data = data {
+                    self.photoImageView.image = UIImage(data: data)
                 }
             }
         })
     }
+    
     
     internal func vote(sender: UIButton) {
         //if user is anonymous no upvoting or downvoting
@@ -140,9 +146,10 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             let userId = FIRAuth.auth()?.currentUser?.uid else { return }
         
         //reference to the imageID in the respective CATEGORY node
-        let databaseReference = FIRDatabase.database().reference(withPath: "CATEGORIES/\(category)/\(imageId)")
+        self.dbReference = FIRDatabase.database().reference(withPath: "CATEGORIES/\(category)/\(imageId)")
         
-        databaseReference.runTransactionBlock { (currentData: FIRMutableData) -> FIRTransactionResult in
+        self.dbReference.runTransactionBlock({ (currentData: FIRMutableData) -> FIRTransactionResult in
+            
             //update upvote/downvote counter
             if var imageInfo = currentData.value as? [String: AnyObject] {
                 var upvotes = imageInfo["upvotes"] as? Int
@@ -163,8 +170,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                 
                 currentData.value = imageInfo
                 
-                //update photoVotes node within USERS node
-                let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes")
+                self.dbReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes")
                 let currentDateString = Date().convertToTimeString()
                 
                 if let pictureTitle = self.pictureTitle {
@@ -180,21 +186,20 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
                         "voteTime" : currentDateString as AnyObject
                     ]
                     
-                    sender.tag == 100 ? (userDBReference.child(imageId).setValue(upvoteDict)) : (userDBReference.child(imageId).setValue(downvoteDict))
+                    sender.tag == 100 ? (self.dbReference.child(imageId).setValue(upvoteDict)) : (self.dbReference.child(imageId).setValue(downvoteDict))
                 }
             }
             return FIRTransactionResult.success(withValue: currentData)
-        }
-        // update current users photoVotes node
-        
-        let userDBReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes/\(imageId)")
+        })
+            // update current users photoVotes node
+            self.dbReference = FIRDatabase.database().reference().child("USERS/\(userId)/photoVotes/\(imageId)")
         
         if let pictureTitle = self.pictureTitle {
-            sender.tag == 100 ? (userDBReference.setValue(["voteType" : true, "title" : pictureTitle, "category" : category, "timeStamp" : FIRServerValue.timestamp()])) : (userDBReference.setValue(["voteType" : false, "title" : pictureTitle, "category" : category, "timeStamp" : FIRServerValue.timestamp()]))
-        }  
-
+            sender.tag == 100 ? (self.dbReference.setValue(["voteType" : true, "title" : pictureTitle, "category" : category, "timeStamp" : FIRServerValue.timestamp()])) : (self.dbReference.setValue(["voteType" : false, "title" : pictureTitle, "category" : category, "timeStamp" : FIRServerValue.timestamp()]))
+        }
+        
     }
-
+    
     //MARK: - Setup
     private func setupViewHierarchy() {
         self.view.addSubview(photoImageView)
@@ -214,7 +219,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             view.bottom.equalTo(self.view.snp.centerY)
         }
         
-       //photoImageView.isUserInteractionEnabled = true
+        //photoImageView.isUserInteractionEnabled = true
         photoImageView.addGestureRecognizer(doubleTap)
         
         //labels
@@ -274,7 +279,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
             vote.type == true ? (cell.voteDescription = "\(vote.name) voted up.") : (cell.voteDescription = "\(vote.name) voted down.")
             cell.dateLabel.text = vote.time
             
-            let storageReference = FIRStorage.storage().reference().child("ProfilePictures/\(uid)")
+            self.storageReference = FIRStorage.storage().reference().child("ProfilePictures/\(uid)")
             
             storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
                 if let imageData = data {
@@ -286,7 +291,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         }
         return cell
     }
-
+    
     //MARK: Utilities
     internal func doubleTapImage(){
         let animator :UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
@@ -311,7 +316,7 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
         vote(sender: self.upvoteButton)
         animator.startAnimation()
     }
-
+    
     //MARK: - Views
     
     //tableView
