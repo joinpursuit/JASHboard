@@ -85,6 +85,8 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
             view.size.equalTo(CGSize(width: 200, height: 200))
         }
         
+        testButton.isHidden = true
+        
         // username
         usernameTextField.snp.makeConstraints { (textField) in
             textField.top.equalTo(view.snp.bottom).offset(20)
@@ -260,7 +262,6 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         
         logoUp.addAnimations{
             self.logo.transform = CGAffineTransform(translationX: 0, y: 5)
-
         }
         
         logoUp.addCompletion { (position) in
