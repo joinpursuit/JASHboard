@@ -249,6 +249,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoInUploadCollectionViewCell.identifier, for: indexPath) as! PhotoInUploadCollectionViewCell
         cell.alpha = 0
         let imageID = self.photoIds[indexPath.row]
+        cell.imageView.contentMode = .scaleAspectFill
         
         let storageReference = FIRStorage.storage().reference(withPath: "\(imageID.category)/\(imageID.id)")
         print("Storage reference: \(storageReference)")
@@ -339,7 +340,6 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
         collectionView.collectionViewLayout = layout
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .yellow
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = JashColors.lightPrimaryColor
         return collectionView
