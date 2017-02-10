@@ -13,16 +13,17 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     //we are not actually using this property for anything in this file. Re-factor by removing it and all references to it.
     //var signInUser: FIRUser?
     let testButton: UIButton = UIButton(type: UIButtonType.roundedRect)
-
+    private var shouldAnimateLogo: Bool = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "LOGIN/REGISTER"
         self.tabBarItem.title = ""
         self.view.backgroundColor = JashColors.primaryColor
-
+        
         setupViewHierarchy()
         configureConstraints()
-//        loginAnonymously() // Refactored into App Delegate
+        //        loginAnonymously() // Refactored into App Delegate
         
         // Textfield Delegate
         usernameTextField.delegate = self
@@ -51,7 +52,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.animateLogin()
+        self.animateLogo()
     }
     
     // MARK: Tab Gesture Selector
@@ -78,29 +79,30 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         
         // logo
         logo.snp.makeConstraints { (view) in
-           // view.top.equalToSuperview().offset(16.0)
-            view.centerY.centerX.equalToSuperview()
+            // view.top.equalToSuperview().offset(16.0)
+            view.centerY.equalToSuperview().offset(-8)
+            view.centerX.equalToSuperview()
             view.size.equalTo(CGSize(width: 200, height: 200))
         }
         
         // username
         usernameTextField.snp.makeConstraints { (textField) in
-            textField.top.equalTo(logo.snp.bottom).offset(20)
+            textField.top.equalTo(view.snp.bottom).offset(20)
             textField.centerX.equalToSuperview()
         }
         usernameTextField.underLine(placeHolder: "username")
-   
+        
         // password
         passwordTextField.snp.makeConstraints { (textField) in
-            textField.top.equalTo(usernameTextField.snp.bottom).offset(20)
+            textField.top.equalTo(usernameTextField.snp.bottom).offset(30)
             textField.centerX.equalToSuperview()
         }
-
+        
         testButton.setTitle("PROGRESS!!", for: .normal)
         testButton.snp.makeConstraints { (view) in
             view.centerX.centerY.equalToSuperview()
         }
-
+        
         passwordTextField.underLine(placeHolder: "password")
         
         // register button
@@ -168,19 +170,19 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         registerNewUserViewController.passwordTextField.text = self.passwordTextField.text
         self.navigationController?.pushViewController(registerNewUserViewController, animated: true)
     }
-  
+    
     // Refactored to be in app delegate
-//    static func loginAnonymously() {
-//        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
-//            if error != nil {
-//                print("Error attempting to long in anonymously: \(error!)")
-//            }
-//            if user != nil {
-//                print("Signed in anonymously!")
-//                // self.signInUser = user
-//            }
-//        })
-//    }
+    //    static func loginAnonymously() {
+    //        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
+    //            if error != nil {
+    //                print("Error attempting to long in anonymously: \(error!)")
+    //            }
+    //            if user != nil {
+    //                print("Signed in anonymously!")
+    //                // self.signInUser = user
+    //            }
+    //        })
+    //    }
     
     // MARK: - Navigation
     
@@ -190,29 +192,93 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         alert.modalTransitionStyle = .crossDissolve
         present(alert, animated: true, completion: nil)
     }
-
+    
     func showUserHomeVC() {
         self.navigationController?.pushViewController(UserHomeViewController(), animated: true)
     }
     
     //MARK:- Animations
     
-    private func animateLogin(){
-        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1.5, dampingRatio: 0.5)
+    private func animateLogo(){
+        let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 2, dampingRatio: 0.8)
         
-        logo.snp.remakeConstraints { (view) in
-            view.top.equalToSuperview().offset(16.0)
-            view.centerX.equalToSuperview()
-            view.size.equalTo(CGSize(width: 150, height: 150))
+        if shouldAnimateLogo {
+            
+            animator.addAnimations({
+                self.logo.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+            }, delayFactor: 1)
+            
+            animator.addAnimations({
+                self.logo.snp.remakeConstraints { (view) in
+                    view.top.equalToSuperview().offset(16.0)
+                    view.centerX.equalToSuperview()
+                    view.size.equalTo(CGSize(width: 150, height: 150))
+                }
+                self.view.layoutIfNeeded()
+            }, delayFactor: 0.5)
+            
+            animator.addAnimations({
+                self.usernameTextField.snp.remakeConstraints{ (textField) in
+                    textField.top.equalTo(self.logo.snp.bottom).offset(30)
+                    textField.centerX.equalToSuperview()
+                }
+                self.usernameTextField.underLine(placeHolder: "username")
+                self.view.layoutIfNeeded()
+            }, delayFactor: 0.7)
+            
+            
+            animator.addCompletion { (position) in
+                
+                if position == .end{
+                    self.animateButtons()
+                }
+            }
+            
+            animator.startAnimation()
+            
+            shouldAnimateLogo = !shouldAnimateLogo
+            
+        }else{
+            
+            logoUpAnimate()
         }
-       animator.addAnimations({ 
-        self.view.layoutIfNeeded()
-       }, delayFactor: 0.5)
+    }
+    
+    //Fix animation won't restart after coming to new tab
+    private func logoUpAnimate(){
+        let logoUp: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, curve: .easeInOut)
         
-        animator.startAnimation()
+        logoUp.addAnimations{
+            self.logo.transform = CGAffineTransform(translationX: 0, y: 5)
+
+        }
+        
+        logoUp.addCompletion { (position) in
+            if position == .end{
+                self.logoDown()
+            }
+        }
+        
+        logoUp.startAnimation()
         
     }
-
+    
+    private func logoDown(){
+        let logoDown: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, curve: .easeInOut)
+        
+        logoDown.addAnimations {
+            self.logo.transform = CGAffineTransform(translationX: 0, y: -5)
+        }
+        
+        logoDown.addCompletion { (position) in
+            if position == .end{
+                self.logoUpAnimate()
+            }
+        }
+        
+        logoDown.startAnimation()
+    }
+    
     private func animateButtons(){
         let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 2, dampingRatio: 0.5)
         
@@ -224,26 +290,37 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         self.loginButton.layer.add(shadowAnim, forKey: "shadowOpacity")
         self.registerButton.layer.add(shadowAnim, forKey: "shadowOpacity")
         
-
+        
         animator.addAnimations {
+            self.loginButton.alpha = 1
+            self.registerButton.alpha = 1
             self.loginButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
             self.registerButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-           
+            
             self.loginButton.layer.shadowColor = UIColor.black.cgColor
             self.loginButton.layer.shadowOffset = CGSize(width: 5, height: 5)
             self.loginButton.layer.shadowRadius = 5
             self.loginButton.layer.shadowOpacity = 0.8
+            
         }
         
-        animator.addAnimations({ 
+        animator.addAnimations({
             self.loginButton.layer.shadowOpacity = 0
             self.loginButton.transform = CGAffineTransform.identity
             
         }, delayFactor: 0.3)
         
-        animator.addAnimations({ 
+        animator.addAnimations({
             self.registerButton.transform = CGAffineTransform.identity
+            self.logo.transform = CGAffineTransform.identity
+            
         }, delayFactor: 0.5)
+        
+        animator.addCompletion { (position) in
+            if position == .end{
+                self.logoUpAnimate()
+            }
+        }
         
         animator.startAnimation()
     }
@@ -255,10 +332,10 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         let imageView: UIImageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-       // imageView.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        // imageView.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
         return imageView
     }()
-
+    
     // text fields
     internal lazy var usernameTextField: UITextField = {
         let textField = UITextField()
@@ -267,7 +344,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         textField.autocorrectionType = .no
         //our users will have to use email to log in so this is a small little ux change
         textField.keyboardType = .emailAddress
-       // textField.underLine(placeHolder: "Username")
+        // textField.underLine(placeHolder: "Username")
         return textField
     }()
     
@@ -280,15 +357,17 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         textField.isSecureTextEntry = true
         return textField
     }()
-
+    
     // buttons
     internal let loginButton: JashButton = {
         let button = JashButton(title: "Login")
+        button.alpha = 0
         return button
     }()
     
     internal lazy var registerButton: UIButton = {
-      let button = JashButton(title: "Register")
+        let button = JashButton(title: "Register")
+        button.alpha = 0
         return button
     }()
 }
