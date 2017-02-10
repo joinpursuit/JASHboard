@@ -268,14 +268,22 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
-        
         let vote = votes[indexPath.row]
-        
-        //TO DO: account for imageIcon and profile picture
-        vote.type == true ? (cell.voteDescription = "\(vote.name) voted up.") : (cell.voteDescription = "\(vote.name) voted down.")
-        cell.imageIcon = UIImage(named: "siberian-tiger-profile")
-        cell.dateLabel.text = vote.time
-        
+        if let uid = FIRAuth.auth()?.currentUser?.uid {
+            
+            vote.type == true ? (cell.voteDescription = "\(vote.name) voted up.") : (cell.voteDescription = "\(vote.name) voted down.")
+            cell.dateLabel.text = vote.time
+            
+            let storageReference = FIRStorage.storage().reference().child("ProfilePictures/\(uid)")
+            
+            storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
+                if let imageData = data {
+                    DispatchQueue.main.async {
+                        cell.imageIcon = UIImage(data: imageData)
+                    }
+                }
+            })
+        }
         return cell
     }
 
