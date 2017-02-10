@@ -70,7 +70,9 @@ class JashProgressViewController: UIViewController,JashProgressBarDelegate {
     
     //MARK: - Progress bar delegate method
     func upDateProgressbar(value: Float) {
-        progressBar.progress = value
+        DispatchQueue.main.async {
+            self.progressBar.progress = value
+        }
         print(value)
         
         if value == 1.0 && dismissAnimate{
