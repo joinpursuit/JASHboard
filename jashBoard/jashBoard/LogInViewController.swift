@@ -332,7 +332,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         
         animator.addCompletion { (position) in
             if position == .end{
-                //self.logoUpAnimate()
+                self.logoUpAnimate()
             }
         }
         

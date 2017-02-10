@@ -25,7 +25,6 @@ class PreviewPopViewController: UIViewController {
         animator.startAnimation()
     }
     
-    
     private func setUpView(){
         
         self.view.addSubview(blurView)
