@@ -170,7 +170,7 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         
         //clear password text field but keep username
         self.usernameTextField.text = nil
-        self.usernameTextField.underLine(placeHolder: "Password")
+        self.usernameTextField.underLine(placeHolder: "Username")
         self.passwordTextField.text = nil
         self.passwordTextField.underLine(placeHolder: "Password")
     }
