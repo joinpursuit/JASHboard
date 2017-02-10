@@ -24,16 +24,16 @@ class IndividualPhotoViewController: UIViewController, UITableViewDelegate, UITa
     //Calling dispatch queue here bogged UI down
     var upvoteCount: Int? = nil {
         willSet {
-        //    DispatchQueue.main.async {
+            DispatchQueue.main.async {
                 self.upvoteNumberLabel.text = String(describing: newValue!)
-         //   }
+            }
         }
     }
     var downvoteCount: Int? = nil {
         willSet {
-        //    DispatchQueue.main.async {
+            DispatchQueue.main.async {
                 self.downvoteNumberLabel.text = String(describing: newValue!)
-         //   }
+            }
         }
     }
     var selectedPhoto: UIImage!
