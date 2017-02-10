@@ -10,7 +10,8 @@ import UIKit
 
 class CategorySelectionTableViewController: UITableViewController {
     //MARK: - Properties
-    var categories = ["Animals", "Beach Days", "Flowers & Plants"]
+    //these values need to correspond with UploadViewController
+    var categories = ["Animals", "Beach Days", "Cars", "Flowers & Plants"]
     
     //MARK: - Methods
     override func viewDidLoad() {

@@ -11,11 +11,17 @@ import Firebase
 
 private let reuseIdentifier = "Cell"
 
-class CategoryPhotosCollectionViewController: UICollectionViewController,JashCollectionViewCellDelegate {
+class CategoryPhotosCollectionViewController: UICollectionViewController, JashCollectionViewCellDelegate {
 
     //MARK: - Properties
     var categoryTitle: String?
-    var jashImages: [JashImage] = []
+    var jashImages: [JashImage] = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.collectionView?.reloadData()
+            }
+        }
+    }
 
     //MARK: - Methods
     override func viewDidLoad() {
@@ -42,19 +48,18 @@ class CategoryPhotosCollectionViewController: UICollectionViewController,JashCol
 
         cell.delegate = self
     
-
         let storageReference = FIRStorage.storage().reference().child("\(jashImage.category)/\(jashImage.imageId)")
         
         storageReference.data(withMaxSize: Int64.max, completion: { (data: Data?, error: Error?) in
             
             DispatchQueue.main.async {
                 if let data = data {
-                cell.cellImage = UIImage(data: data)
+                    cell.cellImage = UIImage(data: data)
                 }
             }
         })
         
-        //replace this?
+        //this needs to occur after the asynchronous block completes or the votes appear as 0
         cell.upCount = jashImage.votes.upvotes
         cell.downCount = jashImage.votes.downvotes
         
@@ -97,8 +102,10 @@ class CategoryPhotosCollectionViewController: UICollectionViewController,JashCol
         guard let category = self.title?.uppercased() else { return }
         let databaseReference = FIRDatabase.database().reference().child("\(category)")
         
-        databaseReference.observeSingleEvent(of: .value, with: { (snapshot) in
+        databaseReference.observe(.value, with: { (snapshot) in
             print("Number of pictures: \(snapshot.childrenCount)")
+            //Because this is constantly observing for changes in votes we cant directly append into self.jashImages or we will see redundancies every time the view is loaded.
+            var currentImages: [JashImage] = []
             
             let enumerator = snapshot.children
             while let child = enumerator.nextObject() as? FIRDataSnapshot {
@@ -107,9 +114,9 @@ class CategoryPhotosCollectionViewController: UICollectionViewController,JashCol
                 guard let votes = Vote(snapshot: votesDictionary) else { return }
                 let jashImage = JashImage(votes: votes, imageId: child.key, category: category)
                 
-                self.jashImages.append(jashImage)
+                currentImages.append(jashImage)
             }
-            self.collectionView?.reloadData()
+            self.jashImages = currentImages
         })
     }
     
@@ -127,6 +134,5 @@ class CategoryPhotosCollectionViewController: UICollectionViewController,JashCol
     func hidePopUp() {
         dismiss(animated: true, completion: nil)
     }
-
 
 }

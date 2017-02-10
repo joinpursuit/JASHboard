@@ -32,5 +32,5 @@ class JashTextField: UITextField {
         self.layer.masksToBounds = true
 
     }
-    
+
 }

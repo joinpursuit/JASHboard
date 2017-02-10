@@ -12,7 +12,7 @@ import Photos
 import Firebase
 import FirebaseAuth
 
-class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate, UITextFieldDelegate {
+class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UITextFieldDelegate {
 
     //MARK: - Properties
     var catagoryTitlesArr: [String] = ["ANIMALS", "BEACH DAYS" ,"CARS", "FLOWERS & PLANTS"]
@@ -20,6 +20,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     let manager = PHImageManager.default()
     var selectedCategory: String!
     var selectedImage: UIImage!
+    
+    let animator: UIViewPropertyAnimator = UIViewPropertyAnimator(duration: 1, dampingRatio: 0.5)
     
     //MARK: - Methods
     override func viewDidLoad() {
@@ -68,59 +70,79 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     // MARK: - Functions
     func uploadPhotoToFireBaseButtonPressed(_ sender: UIBarButtonItem) {
         print("uploadPhotoToFireBaseButtonPressed")
-        //need to create a unique picture ID for for DB and storage each time we upload an image.
-        guard let category = self.selectedCategory else {
-            let alertController = UIAlertController(title: "Wait a minute!", message: "Select a category before uploading.", preferredStyle: UIAlertControllerStyle.alert)
-            let okay = UIAlertAction(title: "OK", style: .cancel, handler: nil)
-            alertController.addAction(okay)
-            self.present(alertController, animated: true, completion: nil)
-            return
+        
+        guard let category = self.selectedCategory,
+            let titleText = self.titleTextfield.text,
+            titleText.characters.count > 0
+            else {
+                let alertController = UIAlertController(title: "Wait a minute!", message: "Select a category and title before uploading.", preferredStyle: UIAlertControllerStyle.alert)
+                let okay = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                alertController.addAction(okay)
+                self.present(alertController, animated: true, completion: nil)
+                return
         }
         
-        //update real time database
+        //update reference in respective CATEGORY node
         let databaseReference = FIRDatabase.database().reference().child("\(category)")
         let newItemReference = databaseReference.childByAutoId()
-        let id = newItemReference.key
+        let imageID = newItemReference.key
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         
-        guard let userId = FIRAuth.auth()?.currentUser?.uid else { return }
-        
-        let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(userId)")
-        
-        userDBReference.child("uploads").updateChildValues(["\(id)": category])
-        
-
-        let newItemDetails: [String : AnyObject] = [
-            "upvotes" : 0 as AnyObject,
-            "downvotes" : 0 as AnyObject
-        ]
-        
-        newItemReference.setValue(newItemDetails)
+        //update reference in USER node
+        let userDBReference = FIRDatabase.database().reference().child("USERS").child("\(uid)/uploads/\(imageID)")
+        print("User DB Reference: \(userDBReference)")
         
         //update storage
-        let storageReference = FIRStorage.storage().reference().child("\(category)").child("\(id)")
+        let storageReference = FIRStorage.storage().reference().child("\(category)").child("\(imageID)")
+        print("Storage Reference: \(storageReference)")
+        
         let uploadMetadata = FIRStorageMetadata()
         uploadMetadata.contentType = "image/jpeg"
         
         if let image = self.selectedImage,
             let imageData = UIImageJPEGRepresentation(image, 0.8) {
             
+            //upload image data to Storage reference
             let uploadTask = storageReference.put(imageData, metadata: uploadMetadata) { (metadata: FIRStorageMetadata?, error: Error?) in
                 if error != nil {
                     print("Encountered an error: \(error?.localizedDescription)")
                 }
                 else {
+                    guard let timestamp = metadata?.timeCreated else { return }
+                    let timeString = timestamp.convertToTimeString()
+                    
+                    let votesDict: [String : AnyObject] = [
+                        "upvotes" : 0 as AnyObject,
+                        "downvotes" : 0 as AnyObject,
+                        "title" : titleText as AnyObject,
+                        "creationDate" : timeString as AnyObject
+                    ]
+                    
+                    let userInfo: [String: AnyObject] = [
+                        "category" : category as AnyObject,
+                        "title" : titleText as AnyObject,
+                        "creationDate" : timeString as AnyObject
+                    ]
+                    
+                    newItemReference.setValue(votesDict)
+                    userDBReference.setValue(userInfo)
+                    
                     print("Upload complete: \(metadata)")
                     print("HERE'S YOUR DOWNLOAD URL: \(metadata?.downloadURL())")
                 }
-                
-                
             }
         }
-        //Update the progress bar
-//        uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
-//            guard let progress = snapshot.progress else { return }
-//            self.progressView.progress = Float(progress.fractionCompleted)
-//        }
+        //removes text from titleTextField and replaces placeholder attributed text.
+        self.titleTextfield.text = nil
+        titleTextfield.underLine(placeHolder: "Title")
+        
+        //removes selected category background color
+        for cell in categoryCollectionView.visibleCells {
+            if let categoryCell = cell as?  CatagoryTapInUploadCollectionViewCell {
+                categoryCell.catagoryLabel.backgroundColor = JashColors.primaryColor
+                categoryCell.catagoryLabel.textColor = JashColors.textAndIconColor
+            }
+        }
     }
 
     func fetchPhotos() {
@@ -199,6 +221,16 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 //To Do: Need to update some logic
                 self.selectedImage = image
             })
+            if let cell = collectionView.cellForItem(at: indexPath) {
+                cell.superview?.bringSubview(toFront: cell)
+                
+                self.animator.addAnimations({
+                    cell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                    cell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                })
+                
+                animator.startAnimation()
+            }
         case categoryCollectionView:
             print(catagoryTitlesArr[indexPath.row])
             self.selectedCategory = catagoryTitlesArr[indexPath.row]
@@ -217,12 +249,33 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             selectedCell.catagoryLabel.backgroundColor = JashColors.accentColor
             selectedCell.catagoryLabel.textColor = JashColors.textAndIconColor
             self.catagoryContainerView.reloadInputViews()
+            
+                selectedCell.superview?.bringSubview(toFront: selectedCell)
+                
+                self.animator.addAnimations({
+                    selectedCell.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+                    selectedCell.transform = CGAffineTransform(scaleX: 1, y: 1)
+                })
+                
+                animator.startAnimation()
         
         case imageSelectedWithPagingCollectionView:
             print(photoAssetsArr[indexPath.row])
-            
         default:
             print(catagoryTitlesArr[indexPath.row])
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        switch collectionView {
+        case imagePickerCollectionView:
+            return CGSize(width: self.imagePickerCollectionView.frame.height, height: self.imagePickerCollectionView.frame.height)
+        case categoryCollectionView:
+            return CGSize(width: 150, height: 36)
+        case imageSelectedWithPagingCollectionView:
+            return CGSize(width: self.view.frame.width, height: self.view.frame.width)
+        default:
+            return CGSize(width: self.imagePickerCollectionView.frame.height, height: self.imagePickerCollectionView.frame.height)
         }
     }
     
@@ -272,7 +325,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
 
     // MARK: - TextField Delegate Methods
-    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.placeholder = ""
     }
@@ -283,6 +335,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         
         textField.resignFirstResponder()
+        textField.shake()
         return true
     }
 
@@ -316,17 +369,17 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         //containerView
         containerView.snp.makeConstraints { (view) in
             view.top.equalTo(self.topLayoutGuide.snp.bottom)
-            view.leading.trailing.bottom.equalToSuperview()
+            view.leading.trailing.equalToSuperview()
+            view.bottom.equalTo(self.bottomLayoutGuide.snp.top)
         }
         
         //titleAndCatagoryContainerView's Subviews
-
         titleTextfield.snp.makeConstraints { (textField) in
             textField.top.equalToSuperview().offset(16)
             textField.centerX.equalToSuperview()
-//            textField.trailing.equalToSuperview().inset(16)
         }
         titleTextfield.underLine(placeHolder: "Title")
+        
         //catagoryCollectionView
         catagoryContainerView.snp.makeConstraints { (collectionView) in
             collectionView.leading.trailing.equalToSuperview()
@@ -385,6 +438,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     lazy var titleTextfield: UITextField = {
         let textField = UITextField()
+        textField.textColor = JashColors.textAndIconColor
+        textField.tintColor = JashColors.accentColor
         return textField
     }()
     
@@ -399,12 +454,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = CGSize(width: 150, height: 36)
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
-        cView.collectionViewLayout = layout
         cView.backgroundColor = JashColors.primaryColor
         cView.allowsMultipleSelection = false
         cView.delegate = self
@@ -417,12 +470,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = CGSize(width: self.view.frame.width, height: self.view.frame.height)
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
-        cView.collectionViewLayout = layout
+        cView.backgroundColor = .clear
         cView.isPagingEnabled = true
         cView.delegate = self
         cView.dataSource = self
@@ -440,15 +492,13 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = CGSize(width: 130, height: 130)
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 1
+        layout.minimumLineSpacing = 1
         
         let cView = UICollectionView(frame: self.catagoryContainerView.frame, collectionViewLayout: layout)
-        cView.collectionViewLayout = layout
+        cView.backgroundColor = .clear
         cView.bounces = false
         cView.showsHorizontalScrollIndicator = false
-        cView.isPagingEnabled = true
         cView.allowsMultipleSelection = false
         cView.delegate = self
         cView.dataSource = self
