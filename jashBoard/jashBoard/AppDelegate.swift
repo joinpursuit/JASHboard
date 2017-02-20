@@ -7,15 +7,57 @@
 //
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        FIRApp.configure()
+        
+        let tabController = UITabBarController()
+        
+        let categorySelectionTVC = CategorySelectionTableViewController()
+        
+        let uploadVC = UploadViewController()
+        let logInVC = LogInViewController()
+        
+        let galleryIcon = UITabBarItem(title: nil, image: UIImage(named: "gallery_icon")?.withRenderingMode(.alwaysTemplate), tag: 0)
+        let cameraIcon = UITabBarItem(title: nil, image: UIImage(named: "camera_icon")?.withRenderingMode(.alwaysTemplate), tag: 1)
+        let userIcon = UITabBarItem(title: nil, image: UIImage(named: "user_icon")?.withRenderingMode(.alwaysTemplate), tag: 2)
+
+        categorySelectionTVC.tabBarItem = galleryIcon
+        uploadVC.tabBarItem = cameraIcon
+        logInVC.tabBarItem = userIcon
+        
+        let rootVCForCategorySelection = UINavigationController(rootViewController: categorySelectionTVC)
+        let rootVCForUploadVC = UINavigationController(rootViewController: uploadVC)
+        let rootVCForLogin = UINavigationController(rootViewController: logInVC)
+        
+        tabController.viewControllers = [rootVCForCategorySelection, rootVCForUploadVC, rootVCForLogin]
+        
+        tabController.tabBar.barTintColor = JashColors.lightPrimaryColor
+       // tabController.tabBar.tintColor = JashColors.accentColor
+        tabController.selectedIndex = 2 // Shows login as the first view
+        
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+
+        self.window?.rootViewController = tabController
+        self.window?.makeKeyAndVisible()
+
+        // Logs in anonymously at start of app
+        FIRAuth.auth()?.signInAnonymously(completion: { (user: FIRUser?, error: Error?) in
+            if error != nil {
+                print("Error attempting to long in anonymously: \(error!)")
+            }
+            if user != nil {
+                print("Signed in anonymously!")
+            }
+        })
+
         return true
     }
 
@@ -39,6 +81,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+       
+        let navigationBarAppearace = UINavigationBar.appearance()
+        navigationBarAppearace.titleTextAttributes = [NSForegroundColorAttributeName:UIColor.white,
+                                                      NSFontAttributeName:UIFont.systemFont(ofSize: 20)]
+        navigationBarAppearace.tintColor = JashColors.accentColor
+        navigationBarAppearace.barTintColor = JashColors.darkPrimaryColor
+        
+        UIApplication.shared.statusBarStyle = .lightContent
+        
+        return true
     }
 
 
