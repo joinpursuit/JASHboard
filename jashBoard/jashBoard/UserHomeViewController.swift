@@ -188,6 +188,7 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: VoteTableViewCell.cellIdentifier, for: indexPath) as! VoteTableViewCell
+        cell.imageIcon = UIImage()
         cell.alpha = 0
         
         let voteAndUpload = tableViewData[indexPath.row]
@@ -202,10 +203,12 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
             storageReference.data(withMaxSize: Int64.max) { (data: Data?, error: Error?) in
                 if let data = data {
                     DispatchQueue.main.async {
-                        cell.imageIcon = UIImage(data: data)
-                        UIView.animate(withDuration: 0.5, animations: {
-                            cell.alpha = 1
-                        })
+                        if let cell = tableView.cellForRow(at: indexPath) as? VoteTableViewCell {
+                            cell.imageIcon = UIImage(data: data)
+                            UIView.animate(withDuration: 0.5, animations: {
+                                cell.alpha = 1
+                            })
+                        }
                     }
                 }
             }
@@ -223,10 +226,12 @@ class UserHomeViewController: UIViewController, UITableViewDelegate, UITableView
             storageReference.data(withMaxSize: Int64.max) { (data: Data?, error: Error?) in
                 if let data = data {
                     DispatchQueue.main.async {
-                        cell.imageIcon = UIImage(data: data)
-                        UIView.animate(withDuration: 0.5, animations: {
-                            cell.alpha = 1
-                        })
+                        if let cell = tableView.cellForRow(at: indexPath) as? VoteTableViewCell {
+                            cell.imageIcon = UIImage(data: data)
+                            UIView.animate(withDuration: 0.5, animations: {
+                                cell.alpha = 1
+                            })
+                        }
                     }
                 }
             }
