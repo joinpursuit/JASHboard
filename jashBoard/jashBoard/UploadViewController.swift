@@ -99,7 +99,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 return
         }
         
-        
         self.dbReference = FIRDatabase.database().reference().child("CATEGORIES/\(category)").childByAutoId()
         let imageID = self.dbReference.key
         
@@ -137,7 +136,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                         "category" : category as AnyObject,
                         "title" : titleText as AnyObject,
                         "creationDate" : timeString as AnyObject,
-                        "timeStamp" : FIRServerValue.timestamp() as AnyObject
+                        "timeStamp" : FIRServerValue.timestamp() as  AnyObject
                     ]
                     
                     self.dbReference = FIRDatabase.database().reference().child("USERS").child("\(uid)/uploads/\(imageID)")
@@ -155,10 +154,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             
             uploadTask.observe(.progress) { (snapshot: FIRStorageTaskSnapshot) in
                 guard let progress = snapshot.progress else { return }
-                
-                self.progressDegelate?.upDateProgressbar(value: Float(progress.fractionCompleted))
-                
-                
+                DispatchQueue.main.async {
+                    self.progressDegelate?.upDateProgressbar(value: Float(progress.fractionCompleted))
+                }
                 //self.uploadProgressView.progress = Float(progress.fractionCompleted)
                 
             }
@@ -433,7 +431,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         //titleAndCatagoryContainerView's Subviews
         titleTextfield.snp.makeConstraints { (textField) in
             textField.top.equalToSuperview().offset(16)
-            textField.centerX.equalToSuperview()
+            textField.leading.equalToSuperview().offset(16)
+            //textField.centerX.equalToSuperview()
         }
         titleTextfield.underLine(placeHolder: "Title")
         
