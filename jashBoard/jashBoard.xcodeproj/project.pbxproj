@@ -235,7 +235,7 @@
 				TargetAttributes = {
 					4759A6B01E490D7F00F21794 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = R7DWEPXN5Y;
+						DevelopmentTeam = P29FUG645U;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -465,11 +465,11 @@
 			baseConfigurationReference = F792D325396F289052B4E114 /* Pods-jashBoard.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = R7DWEPXN5Y;
+				DEVELOPMENT_TEAM = P29FUG645U;
 				INFOPLIST_FILE = jashBoard/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = nyc.c4q.jashBoard;
+				PRODUCT_BUNDLE_IDENTIFIER = nyc.jashBoard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -480,11 +480,11 @@
 			baseConfigurationReference = 0841D9FD5BE52B7E49871A7F /* Pods-jashBoard.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = R7DWEPXN5Y;
+				DEVELOPMENT_TEAM = P29FUG645U;
 				INFOPLIST_FILE = jashBoard/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = nyc.c4q.jashBoard;
+				PRODUCT_BUNDLE_IDENTIFIER = nyc.jashBoard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

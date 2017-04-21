@@ -92,14 +92,18 @@ class LogInViewController: UIViewController, UITextFieldDelegate {
         // username
         usernameTextField.snp.makeConstraints { (textField) in
             textField.top.equalTo(view.snp.bottom).offset(20)
-            textField.centerX.equalToSuperview()
+            textField.leading.equalToSuperview().offset(16)
+            textField.trailing.equalToSuperview().inset(16)
+            //textField.centerX.equalToSuperview()
         }
         usernameTextField.underLine(placeHolder: "username")
         
         // password
         passwordTextField.snp.makeConstraints { (textField) in
             textField.top.equalTo(usernameTextField.snp.bottom).offset(30)
-            textField.centerX.equalToSuperview()
+            textField.leading.equalToSuperview().offset(16)
+            textField.trailing.equalToSuperview().inset(16)
+            //textField.centerX.equalToSuperview()
         }
         
         testButton.setTitle("PROGRESS Test", for: .normal)
